@@ -19,10 +19,12 @@
         .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); }
         .nav-active { color: #6366f1; transform: scale(1.1); font-weight: 800; }
         .cat-icon-pro { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
-        @keyframes flash-green { 0% { background: #f0fdf4; } 100% { background: white; } }
-        @keyframes flash-red { 0% { background: #fef2f2; } 100% { background: white; } }
+        @keyframes flash-green { 0% { background: #f0fdf4; border-color: #10b981; } 100% { background: white; border-color: white; } }
+        @keyframes flash-red { 0% { background: #fef2f2; border-color: #ef4444; } 100% { background: white; border-color: white; } }
         .flash-inc { animation: flash-green 1.2s ease-out; }
         .flash-exp { animation: flash-red 1.2s ease-out; }
+        .ai-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body class="min-h-screen">
@@ -30,8 +32,8 @@
     <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-12">
         <div class="flex justify-between items-start mb-8">
             <div>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Portafoglio</h1>
-                <p id="month-label" class="text-indigo-500 font-bold text-[11px] uppercase tracking-[0.2em] mt-1"></p>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">Wallet</h1>
+                <p id="month-label" class="text-indigo-500 font-bold text-[11px] uppercase tracking-[0.2em] mt-2"></p>
             </div>
             <select id="month-select" onchange="updateMonth(this.value)" class="glass-card px-3 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-500"></select>
         </div>
@@ -57,7 +59,9 @@
 
         <div class="mb-10 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar"><div id="quick-actions-container" class="flex gap-3"></div></div>
 
-        <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-10 space-y-4 border border-white transition-all">
+        <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-10 space-y-4 border border-white transition-all relative">
+            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-100 text-indigo-600 px-2 py-1 rounded-md uppercase ai-badge tracking-widest">Suggerita</div>
+            
             <div class="flex gap-2">
                 <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 font-extrabold text-xl outline-none">
                 <select id="usr" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 text-xs font-bold text-indigo-600 outline-none">
@@ -68,7 +72,6 @@
             <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai pagato?" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-medium">
             <div class="relative">
                 <select id="cat" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600 appearance-none"></select>
-                <div id="ai-badge" class="hidden absolute top-1/2 right-4 -translate-y-1/2 text-[8px] font-black bg-indigo-100 text-indigo-600 px-2 py-1 rounded tracking-tighter">AI</div>
             </div>
             <div class="flex gap-3 pt-2">
                 <button onclick="save('inc')" class="flex-1 bg-slate-900 text-emerald-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest">+ Ricevuto</button>
@@ -76,7 +79,7 @@
             </div>
         </div>
 
-        <div class="glass-card rounded-[2.5rem] p-7 mb-10 space-y-10 shadow-sm">
+        <div class="glass-card rounded-[2.5rem] p-7 mb-10 space-y-10 shadow-sm border border-white">
             <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
             <div class="pt-8 border-t border-slate-100"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
         </div>
@@ -84,9 +87,9 @@
     </div>
 
     <div id="page-settings" class="max-w-md mx-auto px-6 pt-12 hidden">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-10 tracking-tight text-center">Configurazione</h1>
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-10 tracking-tight text-center italic">Opzioni</h1>
         <div class="space-y-8 pb-10">
-            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm">
+            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white">
                 <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
                 <div id="settings-quick-list" class="space-y-3 mb-6"></div>
                 <div class="bg-slate-100/50 p-4 rounded-3xl space-y-3">
@@ -98,12 +101,12 @@
                     <button onclick="addQuickSetting()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest">+ Aggiungi</button>
                 </div>
             </div>
-            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm">
+            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white">
                 <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Categorie</p>
                 <div id="settings-cat-list" class="space-y-2 mb-6"></div>
                 <div class="flex gap-2"><input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-xl p-3 text-sm outline-none font-medium"><button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button></div>
             </div>
-            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase py-10 opacity-40 tracking-[0.3em]">Resetta Tutto</button>
+            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase py-10 opacity-40 tracking-[0.3em]">Resetta Dispositivo</button>
         </div>
     </div>
 
@@ -115,19 +118,60 @@
     <script>
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4'];
-        const keywordsMap = { 'spesa': 'Spesa', 'esselunga': 'Spesa', 'conad': 'Spesa', 'affitto': 'Casa', 'fibra': 'Casa', 'stipendio': 'Lavoro', 'pizza': 'Svago' };
+        
+        // Mappa Intelligente per Auto-Categoria
+        const keywordsMap = { 
+            'spesa': 'Spesa', 'esselunga': 'Spesa', 'conad': 'Spesa', 'coop': 'Spesa', 'lidl': 'Spesa', 'carrefour': 'Spesa',
+            'affitto': 'Casa', 'bolletta': 'Casa', 'fibra': 'Casa', 'enel': 'Casa', 'luce': 'Casa', 'gas': 'Casa',
+            'stipendio': 'Lavoro', 'bonus': 'Lavoro', 'lavoro': 'Lavoro',
+            'pizza': 'Svago', 'cena': 'Svago', 'ristorante': 'Svago', 'aperitivo': 'Svago', 'bar': 'Svago',
+            'pannolini': 'Riccardo', 'nido': 'Riccardo', 'asilo': 'Riccardo', 'giochi': 'Riccardo',
+            'benzina': 'Mezzi', 'diesel': 'Mezzi', 'treno': 'Mezzi', 'autobus': 'Mezzi', 'parcheggio': 'Mezzi'
+        };
 
-        let transactions = JSON.parse(localStorage.getItem('fin_v15_trans')) || [];
-        let quickSettings = JSON.parse(localStorage.getItem('fin_v15_quick')) || [
+        let transactions = JSON.parse(localStorage.getItem('fin_v16_trans')) || [];
+        let quickSettings = JSON.parse(localStorage.getItem('fin_v16_quick')) || [
             { label: 'Casa', amt: 600, type: 'exp' },
             { label: 'Fibra', amt: 30, type: 'exp' },
             { label: 'Stipendio', amt: 1800, type: 'inc' }
         ];
-        let categories = JSON.parse(localStorage.getItem('fin_v15_cats')) || ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro"];
+        let categories = JSON.parse(localStorage.getItem('fin_v16_cats')) || ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Mezzi"];
         let currentMonth = new Date().getMonth();
         let pieChart = null, lineChart = null, sparkline = null;
 
         function vibrate() { if (window.navigator?.vibrate) window.navigator.vibrate(30); }
+
+        function predictCategory(text) {
+            const input = text.toLowerCase();
+            const badge = document.getElementById('ai-badge');
+            const select = document.getElementById('cat');
+            let found = false;
+
+            // Cerca nelle parole chiave
+            for (let key in keywordsMap) {
+                if (input.includes(key)) {
+                    const target = keywordsMap[key];
+                    if (categories.includes(target)) {
+                        select.value = target;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            // Se non trova nulla, prova a cercare se il testo contiene il nome di una categoria
+            if (!found) {
+                for (let cat of categories) {
+                    if (input.includes(cat.toLowerCase())) {
+                        select.value = cat;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            
+            badge.classList.toggle('hidden', !found);
+        }
 
         function switchTab(p) {
             vibrate();
@@ -142,13 +186,13 @@
             document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `
                 <div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center font-black text-[9px] ${s.type==='inc'?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'}">${s.type==='inc'?'IN':'OUT'}</div>
-                    <div class="flex-1 text-xs font-bold text-slate-700">${s.label} - €${s.amt}</div>
+                    <div class="flex-1 text-xs font-bold text-slate-700 italic">${s.label} - €${s.amt}</div>
                     <button onclick="removeQuickSetting(${i})" class="text-slate-300 font-bold px-2">✕</button>
                 </div>
             `).join('');
             document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `
                 <div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl border border-slate-100">
-                    <div class="flex items-center gap-3"><span class="text-sm font-bold text-slate-700">${c}</span></div>
+                    <span class="text-sm font-bold text-slate-700">${c}</span>
                     <button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-2">✕</button>
                 </div>
             `).join('');
@@ -159,22 +203,22 @@
             const a = document.getElementById('new-q-amt').value;
             if(!l || !a) return;
             quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value });
-            localStorage.setItem('fin_v15_quick', JSON.stringify(quickSettings)); renderSettingsPage(); vibrate();
+            localStorage.setItem('fin_v16_quick', JSON.stringify(quickSettings)); renderSettingsPage(); vibrate();
         }
-        function removeQuickSetting(i) { quickSettings.splice(i, 1); localStorage.setItem('fin_v15_quick', JSON.stringify(quickSettings)); renderSettingsPage(); }
+        function removeQuickSetting(i) { quickSettings.splice(i, 1); localStorage.setItem('fin_v16_quick', JSON.stringify(quickSettings)); renderSettingsPage(); }
         function addCategory() { 
             const val = document.getElementById('new-cat-name').value.trim();
-            if(!val) return; categories.push(val); localStorage.setItem('fin_v15_cats', JSON.stringify(categories)); 
+            if(!val) return; categories.push(val); localStorage.setItem('fin_v16_cats', JSON.stringify(categories)); 
             document.getElementById('new-cat-name').value = ''; renderSettingsPage(); vibrate();
         }
-        function removeCategory(i) { categories.splice(i, 1); localStorage.setItem('fin_v15_cats', JSON.stringify(categories)); renderSettingsPage(); }
+        function removeCategory(i) { categories.splice(i, 1); localStorage.setItem('fin_v16_cats', JSON.stringify(categories)); renderSettingsPage(); }
 
         function render() {
             document.getElementById('cat').innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `
-                <button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[2rem] shadow-sm shrink-0 active:scale-95 transition-all">
+                <button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[2rem] shadow-sm shrink-0 active:scale-95 transition-all text-center">
                     <p class="text-[9px] font-black uppercase text-indigo-500 mb-1">${s.label}</p>
-                    <p class="text-sm font-black text-slate-800 tracking-tighter">€${s.amt}</p>
+                    <p class="text-sm font-black text-slate-800 italic tracking-tighter">€${s.amt}</p>
                 </button>
             `).join('');
 
@@ -191,81 +235,8 @@
             document.getElementById('list').innerHTML = filtered.map(t => `
                 <div class="glass-card p-5 rounded-[2rem] flex justify-between items-center border border-white mb-3">
                     <div class="truncate flex-1 pr-4">
-                        <p class="font-extrabold text-slate-800 text-sm truncate">${t.dsc}</p>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${t.usr} • ${t.cat}</p>
+                        <p class="font-extrabold text-slate-800 text-sm truncate tracking-tight">${t.dsc}</p>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] italic">${t.usr} • ${t.cat}</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} text-xs italic">€${t.amt.toFixed(2)}</p>
-                        <button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-200 px-1 font-bold text-lg">✕</button>
-                    </div>
-                </div>
-            `).join('');
-            updateCharts(filtered);
-        }
-
-        function predictCategory(text) {
-            const input = text.toLowerCase();
-            const badge = document.getElementById('ai-badge');
-            const select = document.getElementById('cat');
-            let found = false;
-            for (let key in keywordsMap) { if (input.includes(key) && categories.includes(keywordsMap[key])) { select.value = keywordsMap[key]; found = true; break; } }
-            badge.classList.toggle('hidden', !found);
-        }
-
-        function deleteEntry(id) {
-            if(confirm("Eliminare?")) { transactions = transactions.filter(t => t.id !== id); localStorage.setItem('fin_v15_trans', JSON.stringify(transactions)); render(); }
-        }
-
-        function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
-
-        function save(type) {
-            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
-            if(!a || !d) return alert("Dati mancanti!");
-            vibrate();
-            transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
-            localStorage.setItem('fin_v15_trans', JSON.stringify(transactions));
-            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
-            const card = document.getElementById('input-card');
-            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
-            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1200);
-            render();
-        }
-
-        function updateCharts(data) {
-            const last6 = [];
-            for(let i = 5; i >= 0; i--) last6.push((new Date().getMonth() - i + 12) % 12);
-            const lineData = last6.map(m => transactions.filter(t => new Date(t.date).getMonth() === m && t.type === 'exp').reduce((s, t) => s + t.amt, 0));
-
-            const sCtx = document.getElementById('sparklineChart')?.getContext('2d');
-            if(sCtx) {
-                if(sparkline) sparkline.destroy();
-                sparkline = new Chart(sCtx, { type: 'line', data: { labels: last6, datasets: [{ data: lineData, borderColor: '#10b981', borderWidth: 2, pointRadius: 0, tension: 0.4 }] }, options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, responsive: true, maintainAspectRatio: false } });
-            }
-
-            const exp = data.filter(t => t.type === 'exp');
-            const cats = [...new Set(exp.map(t => t.cat))];
-            const pData = cats.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
-
-            const pCtx = document.getElementById('chartPie')?.getContext('2d');
-            if(pCtx) {
-                if(pieChart) pieChart.destroy();
-                pieChart = new Chart(pCtx, { type: 'doughnut', data: { labels: cats, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 4, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9, weight: 'bold' } } } }, cutout: '70%' } });
-            }
-
-            const lCtx = document.getElementById('chartLine')?.getContext('2d');
-            if(lCtx) {
-                if(lineChart) lineChart.destroy();
-                lineChart = new Chart(lCtx, { type: 'line', data: { labels: last6.map(m => monthNames[m].substring(0,3)), datasets: [{ borderColor: '#6366f1', data: lineData, tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } } } });
-            }
-        }
-
-        function clearAllData() { if(confirm("Cancellare tutto?")) { localStorage.clear(); location.reload(); } }
-
-        window.onload = () => {
-            const mSel = document.getElementById('month-select');
-            monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
-            render();
-        };
-    </script>
-</body>
-</html>
+                        <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} text-xs italic
