@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 120px; background: #f8fafc; }
@@ -24,7 +24,6 @@
 <body class="min-h-screen">
 
     <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-12">
-        
         <div class="flex justify-between items-start mb-8 text-left">
             <div>
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight italic text-left">Wallet</h1>
@@ -40,6 +39,7 @@
             <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-2 italic">Patrimonio</p>
             <div class="flex justify-center items-end gap-3 mb-6">
                 <h2 id="total-balance" class="text-4xl font-extrabold tracking-tighter italic">€ 0,00</h2>
+                <div class="w-12 h-6"><canvas id="sparklineChart"></canvas></div>
             </div>
             <div class="flex justify-around items-center gap-4 bg-white/5 p-4 rounded-3xl backdrop-blur-md">
                 <div class="text-center">
@@ -53,9 +53,7 @@
             </div>
         </div>
 
-        <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth">
-            <div id="quick-actions-container" class="flex gap-3"></div>
-        </div>
+        <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth"><div id="quick-actions-container" class="flex gap-3"></div></div>
 
         <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-8 space-y-4 border border-white relative transition-all">
             <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter">AI</div>
@@ -98,7 +96,7 @@
                     <button onclick="addQuickSetting()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-[10px] shadow-lg">+ Aggiungi</button>
                 </div>
             </div>
-
+            
             <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white text-center">
                 <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Categorie</p>
                 <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-bold uppercase text-slate-600"></div>
@@ -122,202 +120,12 @@
     </nav>
 
     <script>
-        // ==========================================
-        // 1. COSTANTI E CONFIGURAZIONE INIZIALE
-        // ==========================================
-        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#3b82f6', '#d946ef', '#14b8a6'];
-        
-        // Motore Semantico Completo
-        const brain = {
-            'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
-            'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
-            'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino'],
-            'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
-            'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
-            'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
-            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
-            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
-            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
-            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
-            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
-            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
-        };
-
-        const defaultCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
-        const defaultQuick = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
-
-        // ==========================================
-        // 2. GESTIONE SICURA DEI DATI (LOCAL STORAGE)
-        // ==========================================
-        function getSafeData(key, fallback) {
-            try {
-                const data = localStorage.getItem(key);
-                if (!data) return fallback;
-                const parsed = JSON.parse(data);
-                return Array.isArray(parsed) ? parsed : fallback;
-            } catch(e) { return fallback; }
-        }
-
-        function setSafeData(key, data) {
-            try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
-        }
-
-        // AUTO-AGGIORNAMENTO CATEGORIE: Se hai vecchie categorie in memoria, le unisce a quelle nuove
-        let savedCats = getSafeData('fin_v22_cats', defaultCats);
-        defaultCats.forEach(c => {
-            if(!savedCats.includes(c)) savedCats.push(c);
-        });
-
-        // 3. Stato Globale dell'App
-        const App = {
-            tx: getSafeData('fin_v22_trans', []),
-            quick: getSafeData('fin_v22_quick', defaultQuick),
-            cats: savedCats, 
-            month: new Date().getMonth(),
-            year: new Date().getFullYear(),
-            charts: { pie: null, line: null } // Rimosso sparkline object
-        };
-
-        // Salviamo subito le categorie aggiornate
-        setSafeData('fin_v22_cats', App.cats);
-
-        // 4. Funzioni
-        window.vibrate = function() { try { if (window.navigator?.vibrate) window.navigator.vibrate(30); } catch(e){} };
-
-        window.predictCategory = function(text) {
-            try {
-                const val = text.toLowerCase();
-                const badge = document.getElementById('ai-badge');
-                const select = document.getElementById('cat');
-                let found = false;
-                for (let cat in brain) {
-                    if (brain[cat].some(k => val.includes(k)) && App.cats.includes(cat)) {
-                        select.value = cat; found = true; break;
-                    }
-                }
-                if (badge) badge.classList.toggle('hidden', !found);
-            } catch(e) { console.error(e); }
-        };
-
-        window.switchTab = function(p) {
-            window.vibrate();
-            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
-            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
-            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
-            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
-            if(p === 'dashboard') window.render(); else window.renderSettingsPage();
-        };
-
-        window.renderSettingsPage = function() {
-            try {
-                document.getElementById('settings-quick-list').innerHTML = App.quick.map((s, i) => `<div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100 text-[10px] font-bold uppercase text-left"><div class="flex-1">${s.label} - €${s.amt}</div><button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-2 text-lg">✕</button></div>`).join('');
-                document.getElementById('settings-cat-list').innerHTML = App.cats.map((c, i) => `<div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl mb-2 italic"><span>${c}</span><button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-2 text-lg">✕</button></div>`).join('');
-            } catch(e) {}
-        };
-
-        window.updateDateFilter = function() {
-            try {
-                App.month = parseInt(document.getElementById('month-select').value);
-                App.year = parseInt(document.getElementById('year-select').value);
-                window.render();
-            } catch(e) {}
-        };
-
-        window.render = function() {
-            try {
-                const catSelect = document.getElementById('cat');
-                if (catSelect) {
-                    const catVal = catSelect.value;
-                    catSelect.innerHTML = App.cats.map(c => `<option value="${c}">${c}</option>`).join('');
-                    if (App.cats.includes(catVal)) catSelect.value = catVal;
-                }
-
-                document.getElementById('quick-actions-container').innerHTML = App.quick.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[2rem] shadow-sm shrink-0 active:scale-95 transition-all text-center"><p class="text-[9px] font-black uppercase text-indigo-500 mb-1 italic tracking-tighter text-left">${s.label}</p><p class="text-sm font-black text-slate-800 tracking-tighter italic">€${s.amt}</p></button>`).join('');
-
-                const filtered = App.tx.filter(t => {
-                    if (!t || !t.date) return false;
-                    const d = new Date(t.date);
-                    return d.getMonth() === App.month && d.getFullYear() === App.year;
-                });
-
-                const total = App.tx.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
-                const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
-                const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
-
-                document.getElementById('date-label').innerText = `${monthNames[App.month]} ${App.year}`;
-                document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
-                document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
-                document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
-
-                document.getElementById('list').innerHTML = filtered.map(t => `<div class="glass-card p-4 rounded-[2rem] flex justify-between items-center border border-white mb-3 text-sm pr-6 text-left"><div class="truncate flex-1 pr-4 text-left"><p class="font-extrabold text-slate-800 truncate tracking-tight italic text-left">${t.dsc}</p><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic text-left">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3 text-left"><p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} italic">€${t.amt.toFixed(2)}</p><button onclick="deleteEntry(${t.id})" class="text-slate-200 font-bold px-1 text-lg italic text-left">✕</button></div></div>`).join('');
-                
-                setTimeout(() => { safeUpdateCharts(filtered); }, 50);
-            } catch(e) {}
-        };
-
-        window.addQuickSetting = function() { const l = document.getElementById('new-q-label').value, a = document.getElementById('new-q-amt').value; if(!l || !a) return; App.quick.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); setSafeData('fin_v22_quick', App.quick); window.renderSettingsPage(); };
-        window.removeQuickSetting = function(i) { App.quick.splice(i, 1); setSafeData('fin_v22_quick', App.quick); window.renderSettingsPage(); };
-        
-        window.addCategory = function() { const v = document.getElementById('new-cat-name').value.trim(); if(!v) return; App.cats.push(v); setSafeData('fin_v22_cats', App.cats); document.getElementById('new-cat-name').value = ''; window.renderSettingsPage(); };
-        window.removeCategory = function(i) { App.cats.splice(i, 1); setSafeData('fin_v22_cats', App.cats); window.renderSettingsPage(); };
-
-        window.deleteEntry = function(id) { if(confirm("Eliminare?")) { App.tx = App.tx.filter(t => t.id !== id); setSafeData('fin_v22_trans', App.tx); window.render(); } };
-        window.addQuick = function(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; window.predictCategory(l); window.save(t); };
-
-        window.save = function(type) {
-            try {
-                const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
-                if(!a || !d) return alert("Dati mancanti!");
-                window.vibrate();
-                App.tx.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
-                setSafeData('fin_v22_trans', App.tx);
-                document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
-                document.getElementById('ai-badge').classList.add('hidden');
-                const card = document.getElementById('input-card');
-                card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
-                setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 800);
-                window.render();
-            } catch(e) {}
-        };
-
-        function safeUpdateCharts(data) {
-            if (typeof Chart === 'undefined') return;
-            try {
-                const last6 = []; for(let i = 5; i >= 0; i--) { let d = new Date(App.year, App.month - i, 1); last6.push({ m: d.getMonth(), y: d.getFullYear() }); }
-                const lineData = last6.map(obj => App.tx.filter(t => { if(!t || !t.date) return false; const d = new Date(t.date); return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp'; }).reduce((s, t) => s + t.amt, 0));
-                
-                // Rimosso sparkline logic qui
-
-                const exp = data.filter(t => t.type === 'exp');
-                const catsArr = [...new Set(exp.map(t => t.cat))];
-                const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
-                
-                const pEl = document.getElementById('chartPie');
-                if(pEl && catsArr.length > 0) { 
-                    if(App.charts.pie) App.charts.pie.destroy(); 
-                    App.charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 4, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9, weight: 'bold' } } } }, cutout: '70%', responsive: true } }); 
-                } else if(App.charts.pie) { App.charts.pie.destroy(); App.charts.pie = null; }
-
-                const lEl = document.getElementById('chartLine');
-                if(lEl) { 
-                    if(App.charts.line) App.charts.line.destroy(); 
-                    App.charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } }, responsive: true } }); 
-                }
-            } catch(e) {}
-        }
-
-        (function init() {
-            try {
-                const mSel = document.getElementById('month-select');
-                if(mSel) monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === App.month ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
-                
-                const ySel = document.getElementById('year-select');
-                if(ySel) { for(let y = App.year - 2; y <= App.year + 2; y++) ySel.innerHTML += `<option value="${y}" ${y === App.year ? 'selected' : ''}>${y}</option>`; }
-                
-                window.render();
-            } catch(e) {}
-        })();
-    </script>
-</body>
-</html>
+        (function() {
+            // 1. Costanti
+            const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+            const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#3b82f6', '#d946ef', '#14b8a6'];
+            
+            const brain = {
+                'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
+                'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
+                'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino
