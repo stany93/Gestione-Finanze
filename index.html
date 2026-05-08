@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Wallet Famiglia</title>
     
-    <!-- Meta Tag PWA per iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Wallet">
@@ -95,24 +94,31 @@
     </div>
 
     <!-- DASHBOARD -->
-    <div id="page-dashboard" class="max-w-xl mx-auto px-5 pt-8">
+    <div id="page-dashboard" class="max-w-xl mx-auto px-5 pt-16"> <!-- Aumentato pt-16 per iPhone -->
         
         <!-- HEADER & TEMA -->
-        <div class="flex justify-between items-start mb-6 text-left">
-            <div>
-                <!-- SELETTORE CONTO MULTIPLO -->
-                <div class="flex items-center gap-1.5 mb-1">
-                    <select id="account-select" onchange="window.switchAccount(this.value)" class="bg-transparent text-xs text-slate-500 dark:text-slate-400 font-bold outline-none cursor-pointer uppercase tracking-widest pr-4" style="appearance: none; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%2364748b\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right center; background-size: 0.8rem;">
-                        <!-- Generato da JS -->
-                    </select>
-                    <!-- Pallino di sincronizzazione (Verde = Cloud, Grigio = Locale) -->
-                    <span id="sync-status" class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" title="Stato Sincronizzazione"></span>
+        <div class="flex justify-between items-start mb-8 text-left">
+            <div class="space-y-3">
+                <!-- SELETTORE CONTO ESTETICO -->
+                <div class="relative inline-block">
+                    <select id="account-select" onchange="window.switchAccount(this.value)" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"></select>
+                    <div class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-full shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-brand">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+                        </svg>
+                        <span id="account-display-name" class="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Caricamento...</span>
+                        <span id="sync-status" class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                    </div>
                 </div>
-                <h1 class="text-3xl font-bold tracking-tighter">Wallet</h1>
+                <h1 class="text-4xl font-extrabold tracking-tighter">Wallet</h1>
             </div>
-            <button onclick="toggleTheme()" class="p-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm active:scale-95 transition-transform flex items-center justify-center">
-                <svg class="w-5 h-5 block dark:hidden text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
-                <svg class="w-5 h-5 hidden dark:block text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.757 17.834a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" /></svg>
+            <button onclick="toggleTheme()" class="mt-2 p-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm active:scale-95 transition-transform flex items-center justify-center">
+                <svg class="w-6 h-6 block dark:hidden text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                </svg>
+                <svg class="w-6 h-6 hidden dark:block text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.757 17.834a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                </svg>
             </button>
         </div>
 
@@ -163,82 +169,40 @@
             </div>
         </div>
 
-        <!-- CHARTS -->
+        <!-- CHARTS CON ASSI VISIBILI -->
         <div id="charts-container" class="bg-white dark:bg-slate-900 rounded-3xl p-6 mb-10 border border-slate-200 dark:border-slate-800 shadow-sm space-y-8 transition-colors">
-            <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
-            <div class="pt-8 border-t border-slate-200 dark:border-slate-800"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
+            <div class="h-56"><canvas id="chartPie"></canvas></div>
+            <div class="pt-8 border-t border-slate-200 dark:border-slate-800 h-56"><canvas id="chartLine"></canvas></div>
         </div>
         
         <!-- TRANSACTION LIST -->
         <div class="mb-5"><h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Transazioni Recenti</h3></div>
         <div id="list" class="space-y-3 mb-12 text-left"></div>
 
-        <!-- RECAP CATEGORIE SPESA -->
+        <!-- RECAP CATEGORIE -->
         <div class="mb-5"><h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Analisi Spese per Categoria</h3></div>
-        <div id="category-recap-list" class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 transition-colors pb-24 text-left mb-10">
-        </div>
-
+        <div id="category-recap-list" class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 transition-colors pb-24 text-left mb-10"></div>
     </div>
 
     <!-- SETTINGS -->
-    <div id="page-settings" class="max-w-xl mx-auto px-6 pt-8 hidden text-center">
+    <div id="page-settings" class="max-w-xl mx-auto px-6 pt-16 hidden text-center">
         <h1 class="text-3xl font-bold text-slate-950 dark:text-white mb-10 tracking-tighter text-left">Opzioni</h1>
         <div class="space-y-8 pb-24 text-left">
-
-            <!-- SEZIONE CONTI PERSONALI (NOVITÀ) -->
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-center">
                 <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-4 tracking-widest">I Tuoi Conti (Locali)</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Crea conti privati aggiuntivi. I dati resteranno solo su questo telefono e non saranno condivisi sul Cloud.</p>
                 <div id="settings-accounts-list" class="space-y-2 mb-6 text-left"></div>
                 <div class="flex gap-2">
                     <input type="text" id="new-account-name" placeholder="Nome (es. Conto Segreto)" class="flex-1 bg-slate-100 dark:bg-slate-800 dark:text-white border border-transparent dark:border-slate-700 rounded-xl p-3 text-sm font-medium">
-                    <button onclick="addAccount()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold active:scale-95">+</button>
+                    <button onclick="addAccount()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold">+</button>
                 </div>
             </div>
-
-            <!-- SEZIONE ESPORTA DATI -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-center">
-                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-4 tracking-widest">Esportazione Dati</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Scarica tutte le transazioni del <b class="text-slate-900 dark:text-white">conto attualmente selezionato</b> in formato CSV.</p>
-                <button onclick="exportToCSV()" class="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-[11px] tracking-wide active:scale-95 transition-transform shadow-md shadow-emerald-500/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                    Scarica CSV
-                </button>
-            </div>
-            
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest text-center">Tasti Rapidi (Locali)</p>
-                <div id="settings-quick-list" class="space-y-3 mb-6"></div>
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
-                    <input type="text" id="new-q-label" placeholder="Etichetta (es. Caffè)" class="w-full p-3 rounded-lg text-sm bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700">
-                    <div class="flex gap-2">
-                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-lg bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 font-semibold">
-                        <select id="new-q-type" class="w-1/2 rv-select p-3 rounded-lg bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 font-semibold">
-                            <option value="exp">Uscita</option>
-                            <option value="inc">Entrata</option>
-                        </select>
-                    </div>
-                    <button onclick="addQuickSetting()" class="w-full bg-brand text-white py-3 rounded-lg font-bold uppercase text-[10px] tracking-wide active:opacity-80">Aggiungi Tasto</button>
-                </div>
-            </div>
-            
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-center">
-                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest">Categorie (Locali)</p>
-                <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-semibold uppercase text-slate-700 dark:text-slate-300"></div>
-                <div class="flex gap-2">
-                    <input type="text" id="new-cat-name" placeholder="Nuova Categoria..." class="flex-1 bg-slate-100 dark:bg-slate-800 dark:text-white border border-transparent dark:border-slate-700 rounded-xl p-3 text-sm font-medium">
-                    <button onclick="addCategory()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                    </button>
-                </div>
-            </div>
-
-            <button onclick="confirmAction('Cancellare TUTTO (Account Locali, Categorie e Tasti Rapidi)? Le transazioni sul Cloud Famiglia NON verranno perse.', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Impostazioni Locali</button>
+            <button onclick="exportToCSV()" class="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-[11px] tracking-wide active:scale-95 shadow-md shadow-emerald-500/30">Esporta CSV</button>
+            <button onclick="confirmAction('Cancellare TUTTO (Account Locali, Categorie e Tasti Rapidi)?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 text-center">Resetta Impostazioni Locali</button>
         </div>
     </div>
 
     <!-- BOTTOM NAV -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 h-24 flex items-start justify-around z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-none border-t border-slate-200 dark:border-slate-800 px-6 pt-4 transition-colors pb-safe">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 h-24 flex items-start justify-around z-50 shadow-none border-t border-slate-200 dark:border-slate-800 px-6 pt-4 pb-safe transition-colors">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1.5 nav-active transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
             <span class="text-[10px] font-bold tracking-wide">Home</span>
@@ -266,107 +230,72 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Ascolta il Cloud ma salva le transazioni in una variabile separata
         const q = query(collection(db, "transactions"), orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
             window.sharedTransactions = [];
-            snapshot.forEach((doc) => {
-                window.sharedTransactions.push({ id: doc.id, ...doc.data() });
-            });
-            // Se sto guardando il conto condiviso, aggiorno la UI in tempo reale
+            snapshot.forEach((doc) => { window.sharedTransactions.push({ id: doc.id, ...doc.data() }); });
             if (window.currentAccount === 'shared') {
                 window.transactions = [...window.sharedTransactions];
                 window.render();
             }
         });
 
-        // Funzione di Salvataggio Rielaborata (Cloud vs Locale)
         window.save = async function(type) {
             const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
-            if(!a || !d) {
-                document.getElementById('modal-message').innerText = "Inserisci l'importo e la descrizione prima di salvare.";
-                document.getElementById('modal-confirm-btn').classList.add('hidden');
-                document.querySelector('#custom-modal button').innerText = "Ok, ho capito";
-                const modal = document.getElementById('custom-modal');
-                modal.classList.remove('hidden');
-                setTimeout(() => { modal.querySelector('.transform').classList.remove('scale-95'); modal.querySelector('.transform').classList.add('scale-100'); }, 10);
-                const originalClose = window.closeModal;
-                window.closeModal = function() { originalClose(); setTimeout(() => { document.getElementById('modal-confirm-btn').classList.remove('hidden'); document.querySelector('#custom-modal button').innerText = "Annulla"; }, 200); };
+            if(!a || !d) { 
+                window.confirmAction("Inserisci importo e descrizione.", () => {}, true);
                 return;
             }
             window.vibrate();
-            
-            const newTx = {
-                amt: parseFloat(a), dsc: d,
-                cat: document.getElementById('cat').value,
-                usr: document.getElementById('usr').value,
-                type: type, date: new Date().toISOString()
-            };
-
-            const finalizeSave = () => {
-                document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
-                document.getElementById('ai-badge').classList.add('hidden');
-                const card = document.getElementById('input-card');
-                card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
-                setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
-            };
+            const newTx = { amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type, date: new Date().toISOString() };
 
             if (window.currentAccount === 'shared') {
-                try {
-                    await addDoc(collection(db, "transactions"), newTx);
-                    finalizeSave();
-                } catch(e) {
-                    console.error("Errore salvataggio Cloud:", e);
-                    alert("Errore di connessione al Cloud. Riprova.");
-                }
+                await addDoc(collection(db, "transactions"), newTx);
             } else {
-                // Salvataggio 100% LOCALE
                 newTx.id = Date.now().toString();
                 window.transactions.unshift(newTx);
                 localStorage.setItem('fin_v22_trans_' + window.currentAccount, JSON.stringify(window.transactions));
-                finalizeSave();
                 window.render();
             }
+            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
+            const card = document.getElementById('input-card');
+            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
+            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
         };
 
-        // Funzione Cancellazione Rielaborata
-        window.deleteEntry = function(id) {
-            if (window.currentAccount === 'shared') {
-                window.confirmAction("Vuoi eliminare questa transazione dal Cloud per entrambi?", async () => {
-                    try { await deleteDoc(doc(db, "transactions", id)); } catch (e) {}
-                });
-            } else {
-                window.confirmAction("Vuoi eliminare questa transazione dal tuo conto personale?", () => {
+        window.deleteEntry = async function(id) {
+            window.confirmAction("Eliminare la transazione?", async () => {
+                if (window.currentAccount === 'shared') {
+                    await deleteDoc(doc(db, "transactions", id));
+                } else {
                     window.transactions = window.transactions.filter(t => t.id !== id);
                     localStorage.setItem('fin_v22_trans_' + window.currentAccount, JSON.stringify(window.transactions));
                     window.render();
-                });
-            }
+                }
+            });
         };
     </script>
 
     <!-- UI E LOGICA LOCALE -->
     <script>
-        // GESTIONE ACCOUNT
         window.sharedTransactions = [];
         window.transactions = []; 
         window.currentAccount = localStorage.getItem('fin_v22_currentAccount') || 'shared';
-        window.accounts = JSON.parse(localStorage.getItem('fin_v22_accounts')) || [{ id: 'shared', name: 'Conto Famiglia (Condiviso)', type: 'cloud' }];
+        window.accounts = JSON.parse(localStorage.getItem('fin_v22_accounts')) || [{ id: 'shared', name: 'Conto Famiglia', type: 'cloud' }];
         
         window.switchAccount = function(id) {
             window.currentAccount = id;
             localStorage.setItem('fin_v22_currentAccount', id);
-            
             const syncStatus = document.getElementById('sync-status');
+            const accObj = window.accounts.find(a => a.id === id);
+            document.getElementById('account-display-name').innerText = accObj ? accObj.name : 'Conto';
             
             if (id === 'shared') {
                 window.transactions = [...window.sharedTransactions];
                 syncStatus.className = 'w-2 h-2 bg-emerald-400 rounded-full animate-pulse';
-                syncStatus.title = "Sincronizzato sul Cloud";
             } else {
                 window.transactions = JSON.parse(localStorage.getItem('fin_v22_trans_' + id)) || [];
                 syncStatus.className = 'w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full';
-                syncStatus.title = "Conto Solo Locale";
             }
             window.render();
         };
@@ -378,26 +307,8 @@
             window.accounts.push({ id, name, type: 'local' });
             localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts));
             document.getElementById('new-account-name').value = '';
-            
             window.populateAccountsDropdown();
             window.switchAccount(id);
-            window.switchTab('dashboard');
-        };
-
-        window.removeAccount = function(indexInArray) {
-            const acc = window.accounts[indexInArray];
-            if(acc.id === 'shared') return;
-            window.confirmAction(`Eliminare definitivamente il conto "${acc.name}" e tutte le sue transazioni?`, () => {
-                localStorage.removeItem('fin_v22_trans_' + acc.id);
-                window.accounts.splice(indexInArray, 1);
-                localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts));
-                
-                if (window.currentAccount === acc.id) {
-                    window.switchAccount('shared');
-                }
-                window.populateAccountsDropdown();
-                window.renderSettingsPage();
-            });
         };
 
         window.populateAccountsDropdown = function() {
@@ -405,304 +316,113 @@
             if(!sel) return;
             sel.innerHTML = window.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
             sel.value = window.currentAccount;
+            const accObj = window.accounts.find(a => a.id === window.currentAccount);
+            document.getElementById('account-display-name').innerText = accObj ? accObj.name : 'Conto';
         };
-
 
         window.toggleTheme = function() {
             document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('fin_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('fin_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
             window.render(); 
         };
 
-        window.saveCurrentUser = function(val) {
-            try { localStorage.setItem('fin_v22_currentUser', val); } catch(e) {}
-        };
-
-        let pendingAction = null;
-        window.confirmAction = function(message, actionCallback) {
-            window.vibrate();
+        window.confirmAction = function(message, actionCallback, isAlert = false) {
             document.getElementById('modal-message').innerText = message;
-            pendingAction = actionCallback;
-            const modal = document.getElementById('custom-modal');
-            modal.classList.remove('hidden');
-            setTimeout(() => { modal.querySelector('.transform').classList.remove('scale-95'); modal.querySelector('.transform').classList.add('scale-100'); }, 10);
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            confirmBtn.style.display = isAlert ? 'none' : 'block';
+            window.pendingAction = actionCallback;
+            document.getElementById('custom-modal').classList.remove('hidden');
         };
 
-        window.closeModal = function() {
-            const modal = document.getElementById('custom-modal');
-            modal.querySelector('.transform').classList.remove('scale-100');
-            modal.querySelector('.transform').classList.add('scale-95');
-            setTimeout(() => { modal.classList.add('hidden'); pendingAction = null; }, 200);
-        };
+        window.closeModal = function() { document.getElementById('custom-modal').classList.add('hidden'); };
+        document.getElementById('modal-confirm-btn').addEventListener('click', () => { if (window.pendingAction) window.pendingAction(); window.closeModal(); });
 
-        document.getElementById('modal-confirm-btn').addEventListener('click', () => { if (pendingAction) { pendingAction(); } window.closeModal(); });
-
-        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        const monthNames = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
         const catColors = ['#0075EB', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#3B82F6', '#D946EF', '#14B8A6'];
-        const closeIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
-
-        const brain = {
-            'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
-            'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
-            'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino'],
-            'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
-            'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
-            'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
-            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
-            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
-            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
-            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
-            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
-            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
-        };
-
-        window.quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
-        try { const qSaved = localStorage.getItem('fin_v22_quick'); if(qSaved) window.quickSettings = JSON.parse(qSaved); } catch(e) {}
-        
-        const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
-        window.categories = [];
-        try {
-            const cSaved = localStorage.getItem('fin_v22_cats');
-            if (cSaved) window.categories = JSON.parse(cSaved);
-            if (!Array.isArray(window.categories) || window.categories.length === 0) window.categories = baseCats;
-            else baseCats.forEach(c => { if (!window.categories.includes(c)) window.categories.push(c); });
-        } catch(e) { window.categories = baseCats; }
-        
-        const now = new Date();
-        let currentMonth = now.getMonth();
-        let currentYear = now.getFullYear();
         let charts = { pie: null, line: null };
-
-        window.vibrate = function() { try { if (window.navigator?.vibrate) window.navigator.vibrate(20); } catch(e){} };
-
-        window.predictCategory = function(text) {
-            const val = text.toLowerCase();
-            const badge = document.getElementById('ai-badge');
-            const select = document.getElementById('cat');
-            let found = false;
-            for (let categoryName in brain) {
-                if (brain[categoryName].some(k => val.includes(k))) {
-                    if (window.categories.includes(categoryName)) {
-                        select.value = categoryName; found = true; break;
-                    }
-                }
-            }
-            if(badge) badge.classList.toggle('hidden', !found);
-        };
-
-        window.switchTab = function(p) {
-            window.vibrate();
-            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
-            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
-            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
-            document.getElementById('btn-dash').classList.toggle('text-slate-400', p !== 'dashboard');
-            document.getElementById('btn-dash').classList.toggle('dark:text-slate-500', p !== 'dashboard');
-            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
-            document.getElementById('btn-set').classList.toggle('text-slate-400', p !== 'settings');
-            document.getElementById('btn-set').classList.toggle('dark:text-slate-500', p !== 'settings');
-            if(p === 'dashboard') window.render(); else window.renderSettingsPage();
-        };
-
-        window.renderSettingsPage = function() {
-            // Render Lista Conti Personali
-            document.getElementById('settings-accounts-list').innerHTML = window.accounts.filter(a => a.id !== 'shared').map((a) => {
-                const realIndex = window.accounts.findIndex(acc => acc.id === a.id);
-                return `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl mb-2 shadow-sm"><span class="text-sm font-semibold text-slate-900 dark:text-white">${a.name}</span><button onclick="window.removeAccount(${realIndex})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`;
-            }).join('');
-
-            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-xs font-semibold shadow-sm"><div class="truncate flex-1">${s.label} - <span class="font-bold text-brand">€${s.amt}</span></div><button onclick="window.removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
-            document.getElementById('settings-cat-list').innerHTML = window.categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl mb-2 shadow-sm"><span>${c}</span><button onclick="window.removeCategory(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
-        };
-
-        window.updateDateFilter = function() {
-            currentMonth = parseInt(document.getElementById('month-select').value);
-            currentYear = parseInt(document.getElementById('year-select').value);
-            window.render();
-        };
 
         window.render = function() {
             const catSelect = document.getElementById('cat');
-            if(catSelect) {
-                const catVal = catSelect.value;
-                catSelect.innerHTML = window.categories.map(c => `<option value="${c}">${c}</option>`).join('');
-                if (window.categories.includes(catVal)) catSelect.value = catVal;
-            }
+            const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
+            if(catSelect) catSelect.innerHTML = baseCats.map(c => `<option value="${c}">${c}</option>`).join('');
 
-            document.getElementById('quick-actions-container').innerHTML = window.quickSettings.map(s => `<button onclick="window.addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-5 py-3 rounded-full shrink-0 active:scale-95 transition-transform shadow-sm text-center"><p class="text-[11px] font-bold text-slate-900 dark:text-white">${s.label}</p></button>`).join('');
-
+            const now = new Date();
             const filtered = window.transactions.filter(t => {
-                if(!t || !t.date) return false;
                 const d = new Date(t.date);
-                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+                return d.getMonth() === parseInt(document.getElementById('month-select').value) && d.getFullYear() === parseInt(document.getElementById('year-select').value);
             });
 
             const total = window.transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
             const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
             const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
 
-            document.getElementById('date-label').innerText = `${monthNames[currentMonth]} ${currentYear}`;
             document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
             document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
             document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
-            document.getElementById('list').innerHTML = filtered.map(t => {
-                const dObj = new Date(t.date);
-                const day = dObj.getDate();
-                const monthShort = dObj.toLocaleDateString('it-IT', { month: 'short' }).replace('.', '');
-                const formattedDate = `${day} ${monthShort}`;
-
-                return `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3">
-                    <div class="truncate flex-1 pr-4">
-                        <p class="font-semibold text-slate-900 dark:text-white truncate">${t.dsc}</p>
-                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-0.5">
-                            ${t.usr} • ${t.cat} • ${formattedDate}
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <p class="font-bold ${t.type === 'inc' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'}">€${t.amt.toFixed(2)}</p>
-                        <button onclick="window.vibrate(); window.deleteEntry('${t.id}')" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 p-1">${closeIconSvg}</button>
-                    </div>
-                </div>`;
-            }).join('');
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3">
+                <div class="truncate flex-1 pr-4 text-left">
+                    <p class="font-semibold text-slate-900 dark:text-white truncate uppercase tracking-tight">${t.dsc}</p>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-0.5">${t.usr} • ${t.cat} • ${new Date(t.date).getDate()} ${monthNames[new Date(t.date).getMonth()]}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <p class="font-bold ${t.type === 'inc' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'}">€${t.amt.toFixed(2)}</p>
+                    <button onclick="window.deleteEntry('${t.id}')" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 p-1">✕</button>
+                </div></div>`).join('');
             
-            renderCategoryRecap(filtered, mExp);
-            setTimeout(() => { updateCharts(filtered); }, 150);
+            updateCharts(filtered);
         };
-
-        function renderCategoryRecap(filteredTransactions, totalMonthlyExpenses) {
-            const recapContainer = document.getElementById('category-recap-list');
-            if (!recapContainer) return;
-            const expenses = filteredTransactions.filter(t => t.type === 'exp');
-            const categoryTotals = expenses.reduce((acc, t) => { acc[t.cat] = (acc[t.cat] || 0) + t.amt; return acc; }, {});
-            const sortedCategories = Object.entries(categoryTotals).map(([name, total]) => ({ name, total })).sort((a, b) => b.total - a.total);
-            if (sortedCategories.length === 0) { recapContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 text-center py-4">Nessuna spesa registrata per questo mese.</p>`; return; }
-            recapContainer.innerHTML = sortedCategories.map((cat, index) => {
-                const percentage = totalMonthlyExpenses > 0 ? (cat.total / totalMonthlyExpenses * 100).toFixed(0) : 0;
-                const barColor = catColors[index % catColors.length];
-                return `<div class="space-y-2"><div class="flex justify-between items-baseline text-sm"><p class="font-semibold text-slate-900 dark:text-slate-100 truncate">${cat.name}</p><div class="text-right pl-3 shrink-0"><p class="font-bold text-slate-900 dark:text-slate-100">€ ${cat.total.toFixed(2)}</p><p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">${percentage}%</p></div></div><div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-200/50 dark:border-slate-700/50"><div class="h-full rounded-full transition-all duration-500" style="width: ${percentage}%; background-color: ${barColor}"></div></div></div>`;
-            }).join('');
-        }
-
-        window.exportToCSV = function() {
-            if (!window.transactions || window.transactions.length === 0) { alert("Nessun dato da esportare nel conto selezionato."); return; }
-            const headers = ["ID Transazione", "Data e Ora", "Tipo", "Importo", "Categoria", "Descrizione", "Utente"];
-            const csvRows = [headers.join(",")];
-            window.transactions.forEach(t => {
-                const dateStr = new Date(t.date).toLocaleString('it-IT');
-                const typeStr = t.type === 'inc' ? 'Entrata' : 'Uscita';
-                const dscEscaped = `"${t.dsc.replace(/"/g, '""')}"`;
-                const row = [t.id, `"${dateStr}"`, typeStr, t.amt, `"${t.cat}"`, dscEscaped, `"${t.usr}"`];
-                csvRows.push(row.join(","));
-            });
-            const csvContent = csvRows.join("\n");
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            
-            const currentAccName = window.accounts.find(a => a.id === window.currentAccount)?.name || 'Wallet';
-            const today = new Date().toISOString().split('T')[0];
-            link.setAttribute("download", `Export_${currentAccName}_${today}.csv`.replace(/\s+/g, '_'));
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        };
-
-        window.addQuickSetting = function() { 
-            const l = document.getElementById('new-q-label').value; const a = document.getElementById('new-q-amt').value; 
-            if(!l || !a) return; 
-            window.quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); 
-            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); }catch(e){} 
-            window.renderSettingsPage(); 
-            document.getElementById('new-q-label').value = ''; document.getElementById('new-q-amt').value = '';
-        };
-
-        window.removeQuickSetting = function(i) { 
-            window.confirmAction("Vuoi eliminare questo tasto rapido?", () => {
-                window.quickSettings.splice(i, 1); 
-                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); }catch(e){} 
-                window.renderSettingsPage(); 
-            });
-        };
-
-        window.addCategory = function() { 
-            const v = document.getElementById('new-cat-name').value.trim(); if(!v) return; 
-            window.categories.push(v); 
-            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); }catch(e){} 
-            document.getElementById('new-cat-name').value = ''; 
-            window.renderSettingsPage(); 
-        };
-
-        window.removeCategory = function(i) { 
-            window.confirmAction("Vuoi eliminare questa categoria?", () => {
-                window.categories.splice(i, 1); 
-                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); }catch(e){} 
-                window.renderSettingsPage(); 
-            });
-        };
-
-        window.addQuick = function(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; window.predictCategory(l); window.save(t); };
 
         function updateCharts(data) {
-            if (typeof Chart === 'undefined') return;
             const isDark = document.documentElement.classList.contains('dark');
-            const chartBorderColor = isDark ? '#0f172a' : '#ffffff'; 
-            const last6 = [];
-            for(let i = 5; i >= 0; i--) { let d = new Date(currentYear, currentMonth - i, 1); last6.push({ m: d.getMonth(), y: d.getFullYear() }); }
-            const lineData = last6.map(obj => window.transactions.filter(t => { const d = new Date(t.date); return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp'; }).reduce((s, t) => s + t.amt, 0));
+            const gridColor = isDark ? '#1e293b' : '#e2e8f0';
+            const labelColor = isDark ? '#94a3b8' : '#64748b';
+
+            // Pie Chart
             const exp = data.filter(t => t.type === 'exp');
-            const catsArr = [...new Set(exp.map(t => t.cat))];
-            const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
+            const catTotals = exp.reduce((acc, t) => { acc[t.cat] = (acc[t.cat] || 0) + t.amt; return acc; }, {});
             
-            const pEl = document.getElementById('chartPie');
-            if(pEl && catsArr.length > 0) {
-                if(charts.pie) charts.pie.destroy();
-                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 3, borderColor: chartBorderColor }] }, options: { plugins: { legend: { position: 'bottom', labels: { color: isDark ? '#f1f5f9' : '#0f172a', usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, cutout: '80%', responsive: true } });
-            }
-            const lEl = document.getElementById('chartLine');
-            if(lEl) {
-                if(charts.line) charts.line.destroy();
-                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 3, tension: 0.3, fill: true, backgroundColor: isDark ? 'rgba(0, 117, 235, 0.1)' : 'rgba(0, 117, 235, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { size: 10, weight: '600' } } } }, responsive: true } });
-            }
+            if(charts.pie) charts.pie.destroy();
+            charts.pie = new Chart(document.getElementById('chartPie'), {
+                type: 'doughnut',
+                data: { labels: Object.keys(catTotals), datasets: [{ data: Object.values(catTotals), backgroundColor: catColors, borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '75%' }
+            });
+
+            // Line Chart con ASSI VISIBILI
+            const last6 = [];
+            const curM = parseInt(document.getElementById('month-select').value);
+            const curY = parseInt(document.getElementById('year-select').value);
+            for(let i = 5; i >= 0; i--) { let d = new Date(curY, curM - i, 1); last6.push({ m: d.getMonth(), y: d.getFullYear() }); }
+            
+            const lineData = last6.map(obj => window.transactions.filter(t => { 
+                const d = new Date(t.date); return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp'; 
+            }).reduce((s, t) => s + t.amt, 0));
+
+            if(charts.line) charts.line.destroy();
+            charts.line = new Chart(document.getElementById('chartLine'), {
+                type: 'line',
+                data: { labels: last6.map(o => monthNames[o.m]), datasets: [{ data: lineData, borderColor: '#0075EB', tension: 0.4, fill: false, pointRadius: 4 }] },
+                options: { 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: labelColor, font: { size: 10 } }, grid: { color: gridColor } },
+                        x: { ticks: { color: labelColor, font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
         }
 
-        window.dismissInstallPrompt = function() { document.getElementById('install-popup').classList.add('translate-y-[200%]'); localStorage.setItem('hide_install_prompt', 'true'); };
-
-        function initApp() {
-            try {
-                const mSel = document.getElementById('month-select');
-                if(mSel) { mSel.innerHTML = ''; monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; }); }
-                const ySel = document.getElementById('year-select');
-                if(ySel) { ySel.innerHTML = ''; for(let y = currentYear - 2; y <= currentYear + 2; y++) { ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`; } }
-                
-                const savedUser = localStorage.getItem('fin_v22_currentUser');
-                if(savedUser) {
-                    const usrSel = document.getElementById('usr');
-                    if(usrSel) usrSel.value = savedUser;
-                }
-
-                // Inizializza i conti
-                window.populateAccountsDropdown();
-                window.switchAccount(window.currentAccount);
-                
-                if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) return;
-                if (localStorage.getItem('hide_install_prompt')) return;
-                const ua = window.navigator.userAgent;
-                const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-                const isAndroid = /Android/.test(ua);
-                if (isIOS || isAndroid) {
-                    const popup = document.getElementById('install-popup');
-                    const text = document.getElementById('install-instructions');
-                    if (isIOS) { text.innerHTML = `Tocca l'icona <b class="text-brand font-bold">Condividi</b> in basso al browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi alla schermata Home"</b>.`; } 
-                    else { text.innerHTML = `Tocca il <b class="text-brand font-bold">Menu (⋮)</b> del browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi a schermata Home"</b>.`; }
-                    setTimeout(() => { popup.classList.remove('translate-y-[200%]'); }, 2000);
-                }
-            } catch(e) {}
-        }
-
-        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initApp); } else { initApp(); }
+        window.onload = () => {
+            const mSel = document.getElementById('month-select');
+            const ySel = document.getElementById('year-select');
+            const now = new Date();
+            monthNames.forEach((m, i) => mSel.innerHTML += `<option value="${i}" ${i === now.getMonth() ? 'selected' : ''}>${m}</option>`);
+            for(let y = now.getFullYear() - 1; y <= now.getFullYear() + 1; y++) ySel.innerHTML += `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`;
+            window.populateAccountsDropdown();
+            window.switchAccount(window.currentAccount);
+        };
     </script>
 </body>
 </html>
