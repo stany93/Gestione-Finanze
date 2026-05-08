@@ -2,182 +2,203 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finanze Famiglia AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Finanze Famiglia Pro</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/192/6366f1/ffffff?text=€">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        body { -webkit-tap-highlight-color: transparent; padding-bottom: 130px; font-family: 'Inter', system-ui, sans-serif; }
-        .hidden { display: none !important; }
-        .nav-active { color: #6366f1; transform: translateY(-5px); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         
-        @keyframes flash-green { 0% { background: #ecfdf5; border-color: #10b981; } 100% { background: white; border-color: transparent; } }
-        @keyframes flash-red { 0% { background: #fef2f2; border-color: #ef4444; } 100% { background: white; border-color: transparent; } }
-        .flash-inc { animation: flash-green 1.2s ease-out; }
-        .flash-exp { animation: flash-red 1.2s ease-out; }
-
-        .cat-icon {
-            width: 44px; height: 44px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 14px; flex-shrink: 0;
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent; 
+            padding-bottom: env(safe-area-inset-bottom, 120px);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         }
-        .ai-badge { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-active { color: #6366f1; transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3)); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        @keyframes flash-green { 
+            0% { box-shadow: 0 0 0 0px rgba(16, 185, 129, 0.4); background: #f0fdf4; } 
+            100% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); background: white; } 
+        }
+        @keyframes flash-red { 
+            0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.4); background: #fef2f2; } 
+            100% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); background: white; } 
+        }
+        .flash-inc { animation: flash-green 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .flash-exp { animation: flash-red 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        .cat-icon-pro {
+            width: 48px; height: 48px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px;
+        }
+
+        input, select { border: none !important; box-shadow: none !important; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="min-h-screen">
 
-    <div id="page-dashboard" class="max-w-md mx-auto px-4 pt-8">
-        <div class="flex justify-between items-end mb-8 px-1">
+    <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-12">
+        
+        <div class="flex justify-between items-start mb-10">
             <div>
-                <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-1">Riepilogo</p>
-                <h1 id="month-label" class="text-3xl font-black text-slate-800 capitalize italic"></h1>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">Wallet</h1>
+                <p id="month-label" class="text-indigo-500 font-bold text-[11px] uppercase tracking-[0.2em] mt-2"></p>
             </div>
-            <select id="month-select" onchange="updateMonth(this.value)" class="bg-white px-3 py-2 rounded-xl shadow-sm border border-slate-100 text-[11px] font-bold uppercase outline-none text-slate-500"></select>
+            <select id="month-select" onchange="updateMonth(this.value)" class="glass-card px-4 py-2 rounded-2xl shadow-sm text-[11px] font-extrabold uppercase outline-none text-slate-600 cursor-pointer"></select>
         </div>
 
-        <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl mb-10 relative overflow-hidden">
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2">Disponibilità</p>
-            <h2 id="total-balance" class="text-4xl font-black tracking-tighter mb-8 italic">€ 0.00</h2>
-            <div class="grid grid-cols-2 gap-6 pt-6 border-t border-slate-800">
-                <div><p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Entrate</p><p id="m-inc" class="font-bold text-emerald-400 text-lg"></p></div>
-                <div><p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Uscite</p><p id="m-exp" class="font-bold text-rose-400 text-lg"></p></div>
+        <div class="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl mb-12 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] mb-4 text-center">Net Worth</p>
+            <h2 id="total-balance" class="text-5xl font-extrabold text-center tracking-tighter mb-10 italic">€ 0.00</h2>
+            <div class="flex justify-around items-center gap-4 bg-white/5 p-5 rounded-3xl backdrop-blur-md">
+                <div class="text-center">
+                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1">Incomes</p>
+                    <p id="m-inc" class="font-extrabold text-emerald-400 text-lg"></p>
+                </div>
+                <div class="w-[1px] h-8 bg-slate-700"></div>
+                <div class="text-center">
+                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1">Expenses</p>
+                    <p id="m-exp" class="font-extrabold text-rose-400 text-lg"></p>
+                </div>
             </div>
         </div>
 
-        <div class="mb-10 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar">
-            <div id="quick-actions-container" class="flex gap-3 px-1"></div>
+        <div class="mb-12 overflow-x-auto whitespace-nowrap pb-4 no-scrollbar">
+            <div id="quick-actions-container" class="flex gap-4 px-1"></div>
         </div>
 
-        <div id="input-card" class="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-slate-200/50 mb-10 space-y-4 border-2 border-transparent transition-all relative">
-            <div id="ai-indicator" class="hidden absolute top-4 right-6 text-[9px] font-black text-indigo-400 ai-badge uppercase tracking-widest italic">AI Suggerita</div>
-            
+        <div id="input-card" class="glass-card rounded-[2.5rem] p-7 shadow-xl mb-12 space-y-5 transition-all">
             <div class="flex gap-3">
-                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-50 rounded-2xl p-5 font-black text-xl outline-none focus:bg-slate-100 transition-colors">
-                <select id="usr" class="w-1/2 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-indigo-600 outline-none"></select>
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100/50 rounded-2xl p-5 font-extrabold text-2xl text-slate-800 outline-none placeholder:text-slate-300">
+                <select id="usr" class="w-1/2 bg-slate-100/50 rounded-2xl p-5 text-sm font-bold text-indigo-600 outline-none cursor-pointer"></select>
             </div>
             
-            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai pagato?" class="w-full bg-slate-50 rounded-2xl p-5 outline-none focus:bg-slate-100 transition-colors">
+            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Dettagli spesa..." class="w-full bg-slate-100/50 rounded-2xl p-5 text-sm outline-none font-medium">
             
-            <select id="cat" class="w-full bg-slate-50 rounded-2xl p-5 outline-none text-slate-600 font-bold border-none appearance-none"></select>
-            
-            <div class="flex gap-3 pt-2">
-                <button onclick="save('inc')" class="flex-1 bg-emerald-500 text-white py-5 rounded-2xl font-black shadow-lg shadow-emerald-100 active:scale-95 transition-all text-xs uppercase tracking-widest">+ Ricevuto</button>
-                <button onclick="save('exp')" class="flex-1 bg-rose-500 text-white py-5 rounded-2xl font-black shadow-lg shadow-rose-100 active:scale-95 transition-all text-xs uppercase tracking-widest">- Speso</button>
+            <div class="relative">
+                <select id="cat" class="w-full bg-slate-100/50 rounded-2xl p-5 text-sm outline-none font-bold text-slate-600 appearance-none cursor-pointer"></select>
+                <div id="ai-badge" class="hidden absolute top-1/2 right-5 -translate-y-1/2 text-[8px] font-black bg-indigo-100 text-indigo-600 px-2 py-1 rounded-md uppercase">AI</div>
+            </div>
+
+            <div class="flex gap-3 pt-4">
+                <button onclick="save('inc')" class="flex-1 bg-slate-900 text-emerald-400 py-5 rounded-2xl font-extrabold shadow-lg active:scale-95 transition-all text-[11px] uppercase tracking-widest border border-slate-800">Ricevuto</button>
+                <button onclick="save('exp')" class="flex-1 bg-slate-900 text-rose-400 py-5 rounded-2xl font-extrabold shadow-lg active:scale-95 transition-all text-[11px] uppercase tracking-widest border border-slate-800">Speso</button>
             </div>
         </div>
 
-        <div class="bg-white rounded-[2.5rem] p-8 shadow-sm mb-10 border border-slate-100 space-y-10">
-            <canvas id="chartPie" class="max-h-52 mx-auto"></canvas>
-            <canvas id="chartLine" class="max-h-40 mx-auto"></canvas>
+        <div class="glass-card rounded-[2.5rem] p-8 shadow-sm mb-12 border border-white/50 space-y-12">
+            <div>
+                <p class="text-slate-400 font-extrabold text-[10px] uppercase mb-8 text-center tracking-widest">Allocation</p>
+                <canvas id="chartPie" class="max-h-52 mx-auto"></canvas>
+            </div>
+            <div class="pt-8 border-t border-slate-100">
+                <p class="text-slate-400 font-extrabold text-[10px] uppercase mb-8 text-center tracking-widest">Trend</p>
+                <canvas id="chartLine" class="max-h-40 mx-auto"></canvas>
+            </div>
         </div>
 
-        <div id="list" class="space-y-4 pb-12"></div>
+        <div id="list" class="space-y-4 pb-20"></div>
     </div>
 
-    <div id="page-settings" class="max-w-md mx-auto px-4 pt-8 hidden">
-        <h1 class="text-3xl font-black text-slate-800 mb-10 px-2">Opzioni</h1>
+    <div id="page-settings" class="max-w-md mx-auto px-6 pt-12 hidden">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-12 tracking-tight">Settings</h1>
+        
         <div class="space-y-8 pb-10">
-            <div class="bg-white rounded-[2.5rem] p-7 shadow-sm border border-slate-100">
-                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Ricorrenti</p>
-                <div id="settings-quick-list" class="space-y-3 mb-6"></div>
-                <div class="p-4 bg-slate-50 rounded-2xl space-y-3">
-                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full p-3 bg-white rounded-xl text-sm border-none shadow-sm outline-none">
-                    <div class="flex gap-2">
-                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 bg-white rounded-xl text-sm outline-none shadow-sm font-bold">
-                        <select id="new-q-type" class="w-1/2 p-3 bg-white rounded-xl text-sm outline-none shadow-sm font-bold">
-                            <option value="exp">Uscita</option>
-                            <option value="inc">Entrata</option>
+            <div class="glass-card rounded-[2.5rem] p-7 shadow-sm">
+                <p class="text-[10px] font-black text-indigo-500 uppercase mb-8 tracking-widest text-center">Quick Actions</p>
+                <div id="settings-quick-list" class="space-y-4 mb-8"></div>
+                <div class="bg-slate-100/50 p-5 rounded-3xl space-y-4">
+                    <input type="text" id="new-q-label" placeholder="Nome Tasto" class="w-full p-4 bg-white rounded-2xl text-sm outline-none">
+                    <div class="flex gap-3">
+                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-4 bg-white rounded-2xl text-sm outline-none font-bold">
+                        <select id="new-q-type" class="w-1/2 p-4 bg-white rounded-2xl text-sm font-bold">
+                            <option value="exp">Out</option>
+                            <option value="inc">In</option>
                         </select>
                     </div>
-                    <button onclick="addQuickSetting()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest">+ Tasto</button>
+                    <button onclick="addQuickSetting()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-extrabold text-[11px] uppercase tracking-widest">Aggiungi</button>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] p-7 shadow-sm border border-slate-100">
-                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Categorie</p>
-                <div id="settings-cat-list" class="space-y-2 mb-6"></div>
-                <div class="flex gap-2">
-                    <input type="text" id="new-cat-name" placeholder="Nome..." class="flex-1 bg-slate-50 rounded-xl p-4 text-sm outline-none border-none">
-                    <button onclick="addCategory()" class="bg-slate-800 text-white px-6 rounded-xl font-bold">+</button>
+            <div class="glass-card rounded-[2.5rem] p-7 shadow-sm">
+                <p class="text-[10px] font-black text-indigo-500 uppercase mb-8 tracking-widest text-center">Categories</p>
+                <div id="settings-cat-list" class="space-y-3 mb-8"></div>
+                <div class="flex gap-3">
+                    <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-medium">
+                    <button onclick="addCategory()" class="bg-slate-900 text-white px-6 rounded-2xl font-bold">+</button>
                 </div>
             </div>
 
-            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase tracking-[0.3em]">Reset Totale</button>
+            <button onclick="clearAllData()" class="w-full text-rose-300 text-[11px] font-black uppercase py-10 tracking-[0.4em] opacity-50">Reset Device</button>
         </div>
     </div>
 
-    <nav class="fixed bottom-6 left-6 right-6 bg-slate-900 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl">
-        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all duration-300">
-            <span class="text-xl">📊</span><span class="text-[8px] uppercase font-black tracking-widest text-white/50">Wallet</span>
+    <nav class="fixed bottom-8 left-8 right-8 bg-slate-900/95 backdrop-blur-xl h-20 rounded-full flex items-center justify-around z-50 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/10">
+        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all">
+            <span class="text-xl">💳</span>
+            <span class="text-[8px] uppercase font-black tracking-widest">Wallet</span>
         </button>
-        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all duration-300">
-            <span class="text-xl">⚙️</span><span class="text-[8px] uppercase font-black tracking-widest">Config</span>
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all">
+            <span class="text-xl">⚙️</span>
+            <span class="text-[8px] uppercase font-black tracking-widest">Config</span>
         </button>
     </nav>
 
     <script>
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316'];
-
-        // Dizionario per l'inferenza (Auto-Category)
+        
         const keywordsMap = {
-            'spesa': 'Spesa', 'esselunga': 'Spesa', 'conad': 'Spesa', 'coop': 'Spesa', 'lidl': 'Spesa', 'carrefour': 'Spesa',
-            'affitto': 'Casa', 'condominio': 'Casa', 'bolletta': 'Casa', 'luce': 'Casa', 'gas': 'Casa', 'enel': 'Casa', 'fibra': 'Casa',
-            'pizza': 'Svago', 'cena': 'Svago', 'ristorante': 'Svago', 'aperitivo': 'Svago', 'cinema': 'Svago', 'pub': 'Svago',
-            'benzina': 'Mezzi', 'diesel': 'Mezzi', 'treno': 'Mezzi', 'autobus': 'Mezzi', 'tper': 'Mezzi', 'parcheggio': 'Mezzi',
-            'stipendio': 'Lavoro', 'bonus': 'Lavoro', 'rimborso': 'Lavoro',
-            'pannolini': 'Riccardo', 'nido': 'Riccardo', 'giochi': 'Riccardo', 'asilo': 'Riccardo',
-            'farmacia': 'Salute', 'medico': 'Salute', 'dentista': 'Salute'
+            'spesa': 'Spesa', 'esselunga': 'Spesa', 'conad': 'Spesa', 'coop': 'Spesa', 'lidl': 'Spesa', 'pizza': 'Svago', 'cena': 'Svago', 'affitto': 'Casa', 'bolletta': 'Casa', 'fibra': 'Casa', 'benzina': 'Mezzi', 'tper': 'Mezzi', 'stipendio': 'Lavoro', 'nido': 'Riccardo', 'pannolini': 'Riccardo'
         };
 
-        let transactions = JSON.parse(localStorage.getItem('fin_v12_trans')) || [];
-        let quickSettings = JSON.parse(localStorage.getItem('fin_v12_quick')) || [
+        let transactions = JSON.parse(localStorage.getItem('fin_v13_trans')) || [];
+        let quickSettings = JSON.parse(localStorage.getItem('fin_v13_quick')) || [
             { label: 'Casa', amt: 600, type: 'exp' },
             { label: 'Fibra', amt: 30, type: 'exp' },
             { label: 'Stipendio', amt: 1800, type: 'inc' }
         ];
-        let categories = JSON.parse(localStorage.getItem('fin_v12_cats')) || ["Casa", "Spesa", "Riccardo", "Svago", "Mezzi", "Lavoro", "Salute"];
+        let categories = JSON.parse(localStorage.getItem('fin_v13_cats')) || ["Casa", "Spesa", "Riccardo", "Svago", "Mezzi", "Lavoro"];
         let users = ["Stany", "Giulia"];
 
         let currentMonth = new Date().getMonth();
         let pieChart = null, lineChart = null;
 
-        function vibrate() { if (window.navigator?.vibrate) window.navigator.vibrate(35); }
+        function vibrate() { if (window.navigator?.vibrate) window.navigator.vibrate(25); }
 
         function predictCategory(text) {
             const input = text.toLowerCase();
-            const indicator = document.getElementById('ai-indicator');
+            const badge = document.getElementById('ai-badge');
             const select = document.getElementById('cat');
-            
             let found = false;
 
-            // 1. Controllo mappa parole chiave
             for (let key in keywordsMap) {
-                if (input.includes(key)) {
-                    const targetCat = keywordsMap[key];
-                    if (categories.includes(targetCat)) {
-                        select.value = targetCat;
-                        found = true;
-                        break;
-                    }
+                if (input.includes(key) && categories.includes(keywordsMap[key])) {
+                    select.value = keywordsMap[key];
+                    found = true; break;
                 }
             }
-
-            // 2. Controllo se il testo contiene direttamente il nome di una categoria
-            if (!found) {
-                for (let cat of categories) {
-                    if (input.includes(cat.toLowerCase())) {
-                        select.value = cat;
-                        found = true;
-                        break;
-                    }
-                }
-            }
-
-            // Mostra/nascondi indicatore AI
-            indicator.classList.toggle('hidden', !found);
+            badge.classList.toggle('hidden', !found);
         }
 
         function switchTab(page) {
@@ -192,76 +213,44 @@
 
         function getCatIcon(name, index) {
             const color = catColors[index % catColors.length];
-            return `<div class="cat-icon" style="background: ${color}15; color: ${color}">${name.charAt(0).toUpperCase()}</div>`;
+            return `<div class="cat-icon-pro" style="background: ${color}10; color: ${color}">${name.charAt(0).toUpperCase()}</div>`;
         }
 
         function renderSettingsPage() {
             document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `
-                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <div class="flex-1">
-                        <p class="text-[11px] font-black uppercase text-slate-700">${s.label}</p>
-                        <p class="text-[10px] font-bold text-slate-400 italic">€ ${s.amt} (${s.type==='inc'?'Entrata':'Uscita'})</p>
-                    </div>
-                    <button onclick="removeQuickSetting(${i})" class="text-slate-300 px-2 font-bold text-xl">✕</button>
+                <div class="flex items-center gap-4 bg-slate-100/50 p-4 rounded-3xl">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-[10px] ${s.type==='inc'?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'}">${s.type==='inc'?'IN':'OUT'}</div>
+                    <div class="flex-1"><p class="text-[11px] font-black uppercase text-slate-700">${s.label}</p><p class="text-[10px] font-bold text-slate-400">€ ${s.amt}</p></div>
+                    <button onclick="removeQuickSetting(${i})" class="text-slate-300 px-3 text-xl font-bold">✕</button>
                 </div>
             `).join('');
 
             document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `
-                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <div class="flex items-center gap-3">
-                        ${getCatIcon(c, i)}
-                        <span class="text-sm font-bold text-slate-700">${c}</span>
-                    </div>
-                    <button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-3">✕</button>
+                <div class="flex justify-between items-center bg-slate-100/50 p-4 rounded-3xl">
+                    <div class="flex items-center gap-4">${getCatIcon(c, i)}<span class="text-sm font-bold text-slate-700">${c}</span></div>
+                    <button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-4">✕</button>
                 </div>
             `).join('');
         }
 
         function addQuickSetting() {
-            const label = document.getElementById('new-q-label').value.trim();
+            const label = document.getElementById('new-q-label').value;
             const amt = document.getElementById('new-q-amt').value;
-            const type = document.getElementById('new-q-type').value;
             if(!label || !amt) return;
-            quickSettings.push({ label, amt: parseFloat(amt), type });
-            localStorage.setItem('fin_v12_quick', JSON.stringify(quickSettings));
-            document.getElementById('new-q-label').value = '';
-            document.getElementById('new-q-amt').value = '';
-            renderSettingsPage();
-            vibrate();
+            quickSettings.push({ label, amt: parseFloat(amt), type: document.getElementById('new-q-type').value });
+            localStorage.setItem('fin_v13_quick', JSON.stringify(quickSettings));
+            renderSettingsPage(); vibrate();
         }
 
-        function removeQuickSetting(i) {
-            quickSettings.splice(i, 1);
-            localStorage.setItem('fin_v12_quick', JSON.stringify(quickSettings));
-            renderSettingsPage();
-        }
-
-        function addCategory() {
-            const val = document.getElementById('new-cat-name').value.trim();
-            if(!val) return;
-            categories.push(val);
-            localStorage.setItem('fin_v12_cats', JSON.stringify(categories));
-            document.getElementById('new-cat-name').value = '';
-            renderSettingsPage();
-            vibrate();
-        }
-
-        function removeCategory(i) {
-            if(confirm("Eliminare?")) {
-                categories.splice(i, 1);
-                localStorage.setItem('fin_v12_cats', JSON.stringify(categories));
-                renderSettingsPage();
-            }
-        }
+        function removeQuickSetting(i) { quickSettings.splice(i, 1); localStorage.setItem('fin_v13_quick', JSON.stringify(quickSettings)); renderSettingsPage(); }
 
         function render() {
             document.getElementById('cat').innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('usr').innerHTML = users.map(u => `<option value="${u}">${u}</option>`).join('');
-            
             document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `
-                <button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white px-6 py-4 rounded-[2rem] shadow-sm border border-slate-100 shrink-0 text-center active:scale-95 transition-all">
-                    <p class="text-[9px] font-black uppercase text-indigo-500 mb-1 tracking-tighter">${s.label}</p>
-                    <p class="text-sm font-black text-slate-800 italic">€${s.amt}</p>
+                <button onclick="vibrate(); addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-8 py-5 rounded-[2rem] shadow-sm border border-white shrink-0 text-center active:scale-95 transition-all">
+                    <p class="text-[9px] font-black uppercase text-indigo-500 mb-1">${s.label}</p>
+                    <p class="text-lg font-extrabold text-slate-800 tracking-tighter">€${s.amt}</p>
                 </button>
             `).join('');
 
@@ -276,44 +265,40 @@
             document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
             document.getElementById('list').innerHTML = filtered.map(t => `
-                <div class="bg-white p-5 rounded-[2.2rem] shadow-sm flex justify-between items-center border border-slate-50 mb-4">
-                    <div class="flex items-center gap-4 truncate">
+                <div class="glass-card p-6 rounded-[2.5rem] flex justify-between items-center border border-white shadow-sm mb-4">
+                    <div class="flex items-center gap-5 truncate">
                         ${getCatIcon(t.cat, categories.indexOf(t.cat))}
                         <div class="truncate">
-                            <p class="font-bold text-slate-800 text-sm truncate">${t.dsc}</p>
-                            <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">${t.usr} • ${t.cat}</p>
+                            <p class="font-extrabold text-slate-800 text-sm truncate tracking-tight">${t.dsc}</p>
+                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${t.usr} • ${t.cat}</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} text-sm whitespace-nowrap italic">€${t.amt.toFixed(2)}</p>
-                        <button onclick="deleteEntry(${t.id})" class="text-slate-200 hover:text-rose-400 font-bold px-2 text-xl">✕</button>
+                    <div class="flex items-center gap-5">
+                        <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} text-sm whitespace-nowrap">€${t.amt.toFixed(2)}</p>
+                        <button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-200 px-2 text-xl font-bold">✕</button>
                     </div>
                 </div>
             `).join('');
-            
             updateCharts(filtered);
         }
 
         function deleteEntry(id) {
             if(confirm("Eliminare?")) {
-                vibrate();
-                transactions = transactions.filter(t => t.id !== id);
-                localStorage.setItem('fin_v12_trans', JSON.stringify(transactions));
-                render();
+                vibrate(); transactions = transactions.filter(t => t.id !== id);
+                localStorage.setItem('fin_v13_trans', JSON.stringify(transactions)); render();
             }
         }
 
         function addQuick(label, amt, type) {
             document.getElementById('amt').value = amt;
             document.getElementById('dsc').value = label;
-            predictCategory(label);
-            save(type);
+            predictCategory(label); save(type);
         }
 
         function save(type) {
             const a = document.getElementById('amt').value;
             const d = document.getElementById('dsc').value;
-            if(!a || !d) return alert("Compila tutto!");
+            if(!a || !d) return alert("Inserisci importo e descrizione");
             vibrate();
 
             transactions.unshift({
@@ -323,15 +308,14 @@
                 type: type, date: new Date().toISOString()
             });
 
-            localStorage.setItem('fin_v12_trans', JSON.stringify(transactions));
+            localStorage.setItem('fin_v13_trans', JSON.stringify(transactions));
             document.getElementById('amt').value = '';
             document.getElementById('dsc').value = '';
-            document.getElementById('ai-indicator').classList.add('hidden');
             
             const card = document.getElementById('input-card');
             const flashClass = type === 'inc' ? 'flash-inc' : 'flash-exp';
             card.classList.add(flashClass);
-            setTimeout(() => card.classList.remove(flashClass), 1200);
+            setTimeout(() => card.classList.remove(flashClass), 1500);
             render();
         }
 
@@ -343,7 +327,7 @@
             if(pieChart) pieChart.destroy();
             pieChart = new Chart(document.getElementById('chartPie').getContext('2d'), {
                 type: 'doughnut',
-                data: { labels: cats, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 8, borderColor: '#ffffff', hoverOffset: 4 }] },
+                data: { labels: cats, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 8, borderColor: '#ffffff' }] },
                 options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10, weight: 'bold' } } } }, cutout: '70%' }
             });
 
@@ -356,7 +340,7 @@
                 type: 'line',
                 data: {
                     labels: last6.map(m => monthNames[m].substring(0,3)),
-                    datasets: [{ borderColor: '#6366f1', data: lData, tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 4, pointBackgroundColor: '#fff', borderWeight: 3 }]
+                    datasets: [{ borderColor: '#6366f1', data: lData, tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }]
                 },
                 options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } } }
             });
@@ -365,7 +349,7 @@
         const mSel = document.getElementById('month-select');
         monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
         function updateMonth(v) { currentMonth = parseInt(v); render(); }
-        function clearAllData() { if(confirm("Resettare l'app?")) { localStorage.clear(); location.reload(); } }
+        function clearAllData() { if(confirm("Cancellare tutto?")) { localStorage.clear(); location.reload(); } }
 
         window.onload = () => render();
     </script>
