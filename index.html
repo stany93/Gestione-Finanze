@@ -1,439 +1,406 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Wallet</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body{font-family:Arial,sans-serif;background:#f8fafc;padding-bottom:120px;-webkit-tap-highlight-color:transparent}
-    .hidden{display:none!important}
-    .glass-card{background:#fff;border:1px solid #e5e7eb;box-shadow:0 8px 24px rgba(0,0,0,.06)}
-    .nav-active{color:#0f766e;font-weight:700}
-    .no-scrollbar::-webkit-scrollbar{display:none}
-    @keyframes flash-inc{0%{background:#f0fdf4}100%{background:#fff}}
-    @keyframes flash-exp{0%{background:#fef2f2}100%{background:#fff}}
-    .flash-inc{animation:flash-inc .8s ease-out}
-    .flash-exp{animation:flash-exp .8s ease-out}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Wallet Famiglia</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --rv-blue: #0075EB;
+            --rv-black: #191C1F;
+            --rv-gray-100: #F6F8F9;
+            --rv-gray-200: #E5E7EB;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            padding-bottom: 110px; 
+            background: #FFFFFF; 
+            color: var(--rv-black);
+        }
+
+        .hidden { display: none !important; }
+
+        /* Revolut inputs */
+        input, select {
+            border: 1px solid var(--rv-gray-200) !important;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--rv-blue) !important;
+            ring: 1px var(--rv-blue) !important;
+        }
+
+        .nav-active { color: var(--rv-blue); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        @keyframes flash-inc { 0% { background: #ECFDF5; } 100% { background: white; } }
+        @keyframes flash-exp { 0% { background: #FEF2F2; } 100% { background: white; } }
+        .flash-inc { animation: flash-inc 0.8s ease-out; }
+        .flash-exp { animation: flash-exp 0.8s ease-out; }
+
+        .action-btn {
+            background-color: var(--rv-blue);
+            color: white;
+            transition: opacity 0.2s;
+        }
+        .action-btn:active { opacity: 0.8; }
+    </style>
 </head>
 <body class="min-h-screen">
-  <style>input,select,button{pointer-events:auto} input,select{position:relative;z-index:1}</style>
 
-  <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-10">
-    <div class="mb-4 flex gap-2">
-      <button type="button" onclick="switchTab('dashboard')" class="glass-card flex-1 py-3 rounded-2xl text-sm font-bold">Home</button>
-      <button type="button" onclick="switchTab('settings')" class="glass-card flex-1 py-3 rounded-2xl text-sm font-bold">Set</button>
-    </div>
-    <div class="flex justify-between items-start mb-8 text-left gap-3">
-      <div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Wallet</h1>
-        <p id="date-label" class="text-teal-700 font-bold text-[10px] uppercase mt-1 tracking-widest"></p>
-      </div>
-      <div class="flex gap-2">
-        <button id="theme-toggle" class="glass-card px-3 py-2 rounded-xl text-xs font-bold">Tema</button>
-        <select id="month-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-bold uppercase outline-none text-slate-500 cursor-pointer"></select>
-        <select id="year-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-bold uppercase outline-none text-slate-500 cursor-pointer"></select>
-      </div>
-    </div>
-
-    <div class="bg-slate-900 rounded-[2rem] p-7 text-white shadow-2xl mb-8 text-center">
-      <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2">Patrimonio</p>
-      <h2 id="total-balance" class="text-4xl font-extrabold tracking-tighter">â‚¬ 0,00</h2>
-      <p class="text-slate-400 text-sm mt-1 mb-6">Saldo complessivo</p>
-      <div class="flex justify-around items-center gap-4 bg-white/5 p-4 rounded-3xl">
-        <div class="text-center">
-          <p class="text-slate-400 text-[9px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
-          <p id="m-inc" class="font-extrabold text-emerald-400 text-base">â‚¬ 0</p>
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="max-w-xl mx-auto px-5 pt-8">
+        <div class="flex justify-between items-center mb-10 text-left">
+            <div>
+                <p class="text-xs text-slate-500 font-medium">Conto Principale</p>
+                <h1 class="text-2xl font-bold text-slate-950 tracking-tighter">Wallet</h1>
+            </div>
+            <div class="flex gap-2">
+                <select id="month-select" onchange="updateDateFilter()" class="bg-rv-gray-100 px-3 py-2 rounded-full text-xs font-semibold outline-none text-slate-700 cursor-pointer border-none"></select>
+                <select id="year-select" onchange="updateDateFilter()" class="bg-rv-gray-100 px-3 py-2 rounded-full text-xs font-semibold outline-none text-slate-700 cursor-pointer border-none"></select>
+            </div>
         </div>
-        <div class="text-center">
-          <p class="text-slate-400 text-[9px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
-          <p id="m-exp" class="font-extrabold text-rose-400 text-base">â‚¬ 0</p>
+
+        <!-- BILANCIO REVOLUT STYLE -->
+        <div class="mb-10 text-center">
+            <p id="total-balance" class="text-5xl font-extrabold tracking-tighter text-slate-950">€ 0,00</p>
+            <p id="date-label" class="text-xs text-slate-500 font-medium mt-1 tracking-wide"></p>
         </div>
-      </div>
-    </div>
 
-    <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar"><div id="quick-actions-container" class="flex gap-3"></div></div>
-
-    <div id="input-card" class="glass-card rounded-[2rem] p-6 mb-8 space-y-4">
-      <div class="flex gap-2">
-        <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100 rounded-2xl p-4 font-extrabold text-xl outline-none border-none">
-        <select id="usr" class="w-1/2 bg-slate-100 rounded-2xl p-4 text-xs font-bold text-teal-700 outline-none border-none">
-          <option value="Stany">Stany</option>
-          <option value="Giulia">Giulia</option>
-        </select>
-      </div>
-      <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-100 rounded-2xl p-4 text-sm outline-none font-medium border-none">
-      <select id="cat" class="w-full bg-slate-100 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600 appearance-none border-none"></select>
-      <div class="flex gap-3 pt-2">
-        <button onclick="save('inc')" class="flex-1 bg-slate-900 text-emerald-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest">+ Ricevuto</button>
-        <button onclick="save('exp')" class="flex-1 bg-slate-900 text-rose-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest">- Speso</button>
-      </div>
-    </div>
-
-    <div id="charts-container" class="glass-card rounded-[2rem] p-6 mb-8 space-y-8">
-      <div>
-        <div class="flex items-center justify-between mb-3">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Distribuzione uscite</p>
-          <p id="pie-empty" class="text-[10px] text-slate-400 hidden">Nessuna uscita</p>
+        <div class="flex justify-around items-center gap-4 border border-gray-100 p-5 rounded-3xl mb-10 shadow-sm bg-white">
+            <div class="text-center flex-1">
+                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
+                <p id="m-inc" class="font-bold text-emerald-600 text-lg">+ €0</p>
+            </div>
+            <div class="w-px h-10 bg-rv-gray-200"></div>
+            <div class="text-center flex-1">
+                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
+                <p id="m-exp" class="font-bold text-rose-600 text-lg">- €0</p>
+            </div>
         </div>
-        <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
-      </div>
-      <div class="pt-6 border-t border-slate-100">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3">Ultimi 6 mesi</p>
-        <canvas id="chartLine" class="max-h-40 mx-auto"></canvas>
-      </div>
-    </div>
 
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Movimenti</h2>
-      <button onclick="exportCSV()" class="glass-card px-3 py-2 rounded-xl text-[10px] font-bold uppercase">Export CSV</button>
-    </div>
-    <div id="list" class="space-y-4 pb-20 text-left"></div>
-  </div>
+        <div class="mb-10 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth"><div id="quick-actions-container" class="flex gap-2"></div></div>
 
-  <div id="page-settings" class="max-w-md mx-auto px-6 pt-10 hidden text-center">
-    <h1 class="text-3xl font-extrabold text-slate-900 mb-8 tracking-tight">Opzioni</h1>
-    <div class="space-y-8 pb-10 text-left">
-      <div class="glass-card rounded-[2rem] p-6">
-        <p class="text-[10px] font-bold text-teal-700 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
-        <div id="settings-quick-list" class="space-y-3 mb-6"></div>
-        <div class="bg-slate-100 p-4 rounded-3xl space-y-3">
-          <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full p-3 rounded-xl text-sm outline-none border-none">
-          <div class="flex gap-2">
-            <input type="number" id="new-q-amt" placeholder="â‚¬" class="w-1/2 p-3 rounded-xl outline-none font-bold border-none">
-            <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold outline-none border-none"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
-          </div>
-          <button onclick="addQuickSetting()" class="w-full bg-teal-700 text-white py-3 rounded-xl font-bold uppercase text-[10px]">+ Aggiungi</button>
+        <!-- INPUT FORM MODERNO -->
+        <div id="input-card" class="bg-white rounded-3xl p-6 border border-gray-100 shadow-lg mb-10 space-y-4 relative transition-all">
+            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[9px] font-bold bg-rv-gray-100 text-rv-blue px-2 py-1 rounded-md uppercase tracking-tighter">AI AUTOMATION</div>
+            <div class="flex gap-2">
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-white rounded-xl p-4 font-bold text-2xl outline-none">
+                <select id="usr" class="w-1/2 bg-rv-gray-100 rounded-xl p-4 text-xs font-bold text-rv-blue outline-none border-none appearance-none">
+                    <option value="Stany">Stany</option>
+                    <option value="Giulia">Giulia</option>
+                </select>
+            </div>
+            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-white rounded-xl p-4 text-sm outline-none font-medium">
+            <select id="cat" class="w-full bg-rv-gray-100 rounded-xl p-4 text-sm outline-none font-semibold text-slate-700 appearance-none border-none"></select>
+            <div class="flex gap-3 pt-2">
+                <button onclick="save('exp')" class="flex-1 action-btn py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform">- Speso</button>
+                <button onclick="save('inc')" class="flex-1 bg-rv-gray-100 text-slate-900 py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform">+ Ricevuto</button>
+            </div>
         </div>
-      </div>
 
-      <div class="glass-card rounded-[2rem] p-6 text-center">
-        <p class="text-[10px] font-bold text-teal-700 uppercase mb-6 tracking-widest">Categorie</p>
-        <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-bold uppercase text-slate-600"></div>
-        <div class="flex gap-2">
-          <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100 rounded-xl p-3 outline-none text-sm font-medium border-none text-left">
-          <button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button>
+        <!-- CHARTS -->
+        <div id="charts-container" class="bg-white rounded-3xl p-6 mb-10 border border-gray-100 shadow-sm space-y-8">
+            <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
+            <div class="pt-8 border-t border-gray-100"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
         </div>
-      </div>
-
-      <button onclick="clearAllData()" class="w-full text-rose-400 text-[10px] font-bold uppercase py-6 opacity-80">Resetta App</button>
+        
+        <!-- TRANSACTION LIST -->
+        <div class="mb-5"><h3 class="text-sm font-semibold text-slate-500">Transazioni Recenti</h3></div>
+        <div id="list" class="space-y-3 pb-20 text-left"></div>
     </div>
-  </div>
 
-  <nav class="fixed bottom-6 left-6 right-6 bg-slate-900 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl border border-white/10">
-    <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all"><span class="text-xl">ðŸ“Š</span><span class="text-[8px] uppercase font-bold tracking-widest">Home</span></button>
-    <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all"><span class="text-xl">âš™ï¸</span><span class="text-[8px] uppercase font-bold tracking-widest">Set</span></button>
-  </nav>
+    <!-- SETTINGS -->
+    <div id="page-settings" class="max-w-xl mx-auto px-6 pt-8 hidden text-center">
+        <h1 class="text-2xl font-bold text-slate-950 mb-10 tracking-tighter">Opzioni</h1>
+        <div class="space-y-8 pb-10 text-left">
+            <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                <p class="text-[10px] font-black text-slate-500 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
+                <div id="settings-quick-list" class="space-y-3 mb-6"></div>
+                <div class="bg-rv-gray-100 p-4 rounded-2xl space-y-3">
+                    <input type="text" id="new-q-label" placeholder="Etichetta (es. Caffè)" class="w-full p-3 rounded-lg text-sm bg-white outline-none">
+                    <div class="flex gap-2">
+                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-lg bg-white outline-none font-semibold">
+                        <select id="new-q-type" class="w-1/2 p-3 rounded-lg bg-white font-semibold outline-none">
+                            <option value="exp">Uscita</option>
+                            <option value="inc">Entrata</option>
+                        </select>
+                    </div>
+                    <button onclick="addQuickSetting()" class="w-full action-btn py-3 rounded-lg font-bold uppercase text-[10px] tracking-wide">Aggiungi Tasto</button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm text-center">
+                <p class="text-[10px] font-black text-slate-500 uppercase mb-6 tracking-widest">Categorie</p>
+                <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-semibold uppercase text-slate-700"></div>
+                <div class="flex gap-2">
+                    <input type="text" id="new-cat-name" placeholder="Nuova Categoria..." class="flex-1 bg-white rounded-xl p-3 outline-none text-sm font-medium">
+                    <button onclick="addCategory()" class="bg-slate-900 text-white px-5 rounded-xl font-bold">
+                        <!-- Plus icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-  <div id="toast" class="hidden fixed bottom-28 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-xl z-50"></div>
+            <button onclick="clearAllData()" class="w-full text-rose-600 text-xs font-bold uppercase py-10 opacity-60 tracking-wider text-center">Resetta Applicazione</button>
+        </div>
+    </div>
 
-  <script>
-    var monthNames = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-    var catColors = ['#0f766e','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16','#3b82f6','#d946ef'];
-    var brain = {
-      'Casa':['affitto','bolletta','luce','gas','acqua','fibra','wifi','internet','condominio','tari','enel','ikea','leroy','casa','mutuo'],
-      'Spesa':['esselunga','conad','coop','lidl','macellaio','verdura','frutta','pane','forno','supermercato','carne','pesce','cibo','spesa','iper','eurospin'],
-      'Riccardo':['pannolini','nido','pappa','latte','giochi','asilo','biberon','scuola','riccardo','pediatra','vestiti bimbo','giocattoli','bambino'],
-      'Svago':['cinema','svago','pub','tabacco','aperitivo','bar','caffe','birra','concerto','discoteca','drink','serata','film'],
-      'Lavoro':['stipendio','bonus','rimborso','lavoro','fattura','cliente','busta paga'],
-      'Gatti':['gatto','gatti','croccantini','sabbietta','veterinario','cibo gatti','lettiera','cibo umido','scatolette','antiparassitario'],
-      'Macchina':['benzina','diesel','parcheggio','autostrada','meccanico','bollo','assicurazione','macchina','auto','telepass','carburante','lavaggio','gommista','casello'],
-      'Cene':['pizza','ristorante','cena','cene','sushi','mcdonald','burger','kebab','pranzo','osteria','trattoria','glovo','deliveroo','justeat','pizzeria'],
-      'Vestiti':['vestiti','scarpe','maglia','pantaloni','abbigliamento','zalando','zara','h&m','shopping','felpa','giubbotto','calze','intimo','vestito'],
-      'Vacanze':['vacanza','vacanze','hotel','volo','aereo','treno','bnb','booking','viaggio','ryanair','airbnb','traghetto','autobus','biglietto','frecciarossa'],
-      'Regali':['regalo','regali','compleanno','anniversario','natale','festa','pensiero','dono'],
-      'Salute':['farmacia','medico','dentista','visita','analisi','salute','farmaco','medicine','ticket','terapia','dottore','ospedale']
-    };
+    <!-- BOTTOM NAV REVOLUT STYLE -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white h-24 flex items-start justify-around z-50 shadow-[0_-1px_10px_rgba(0,0,0,0.05)] border-t border-gray-100 px-6 pt-4">
+        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1.5 nav-active transition-all">
+            <!-- Home icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <span class="text-[10px] font-semibold tracking-wide">Home</span>
+        </button>
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all">
+            <!-- Cog icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="user-agent
+    text-align: -webkit-center;
+}
+</style>
+            <span class="text-[10px] font-semibold tracking-wide">Opzioni</span>
+        </button>
+    </nav>
 
-    function fmt(value){
-      return value.toLocaleString('it-IT',{style:'currency',currency:'EUR'});
-    }
+    <script>
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        // Revolut palette per categorie
+        const catColors = ['#0075EB', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#3B82F6', '#D946EF', '#14B8A6'];
+        
+        const brain = {
+            'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
+            'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
+            'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino'],
+            'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
+            'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
+            'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
+            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
+            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
+            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
+            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
+            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
+            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
+        };
 
-    function safeGet(key, fallback){
-      try {
-        var v = localStorage.getItem(key);
-        if(v===null) return fallback;
-        return JSON.parse(v);
-      } catch(e){
-        return fallback;
-      }
-    }
+        // GESTIONE MEMORIA
+        let transactions = [];
+        try { transactions = JSON.parse(localStorage.getItem('fin_v22_trans')) || []; } catch(e) {}
+        if(!Array.isArray(transactions)) transactions = [];
 
-    function safeSet(key, value){
-      try { localStorage.setItem(key, JSON.stringify(value)); } catch(e){}
-    }
+        let quickSettings = [];
+        try { quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }]; } catch(e) {}
+        if(!Array.isArray(quickSettings)) quickSettings = [];
 
-    function safeRemove(key){
-      try { localStorage.removeItem(key); } catch(e){}
-    }
+        const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
+        let categories = [];
+        try {
+            let saved = JSON.parse(localStorage.getItem('fin_v22_cats'));
+            if (Array.isArray(saved) && saved.length > 0) {
+                categories = saved;
+                baseCats.forEach(c => { if (!categories.includes(c)) categories.push(c); });
+            } else { categories = baseCats; }
+        } catch(e) { categories = baseCats; }
+        
+        const now = new Date();
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+        let charts = { pie: null, line: null };
 
-    function toast(msg){
-      var t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.remove('hidden');
-      clearTimeout(window.toastTimer);
-      window.toastTimer = setTimeout(function(){ t.classList.add('hidden'); }, 1800);
-    }
+        function vibrate() { try { if (window.navigator?.vibrate) window.navigator.vibrate(20); } catch(e){} }
 
-    var baseCats = ['Casa','Spesa','Riccardo','Svago','Lavoro','Gatti','Macchina','Cene','Vestiti','Vacanze','Regali','Salute'];
-    var transactions = safeGet('fin_v24_trans', []);
-    if(!Array.isArray(transactions)) transactions = [];
-    var quickSettings = safeGet('fin_v24_quick', [{ label:'Casa', amt:600, type:'exp' }, { label:'Fibra', amt:30, type:'exp' }, { label:'Stipendio', amt:1800, type:'inc' }]);
-    if(!Array.isArray(quickSettings)) quickSettings = [];
-    var categories = safeGet('fin_v24_cats', baseCats.slice());
-    if(!Array.isArray(categories) || !categories.length) categories = baseCats.slice();
-    for(var i=0;i<baseCats.length;i++){ if(categories.indexOf(baseCats[i])===-1) categories.push(baseCats[i]); }
-
-    var now = new Date();
-    var currentMonth = now.getMonth();
-    var currentYear = now.getFullYear();
-    var charts = { pie:null, line:null };
-
-    function applyTheme(){
-      var theme = document.documentElement.getAttribute('data-theme');
-      if(theme === 'dark'){
-        document.documentElement.removeAttribute('data-theme');
-        document.body.classList.remove('bg-slate-900','text-white');
-      } else {
-        document.documentElement.setAttribute('data-theme','dark');
-        document.body.classList.add('bg-slate-900','text-white');
-      }
-    }
-
-    function predictCategory(text){
-      var val = String(text || '').toLowerCase();
-      var select = document.getElementById('cat');
-      for(var categoryName in brain){
-        var words = brain[categoryName];
-        for(var i=0;i<words.length;i++){
-          if(val.indexOf(words[i]) !== -1 && categories.indexOf(categoryName) !== -1){
-            select.value = categoryName;
-            return;
-          }
+        function predictCategory(text) {
+            const val = text.toLowerCase();
+            const badge = document.getElementById('ai-badge');
+            const select = document.getElementById('cat');
+            let found = false;
+            for (let categoryName in brain) {
+                if (brain[categoryName].some(k => val.includes(k))) {
+                    if (categories.includes(categoryName)) {
+                        select.value = categoryName;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if(badge) badge.classList.toggle('hidden', !found);
         }
-      }
-    }
 
-    function switchTab(p){
-      document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
-      document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
-      document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
-      document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
-      if(p === 'dashboard') render(); else renderSettingsPage();
-    }
+        function switchTab(p) {
+            vibrate();
+            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
+            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
+            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
+            document.getElementById('btn-dash').classList.toggle('text-slate-400', p !== 'dashboard');
+            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
+            document.getElementById('btn-set').classList.toggle('text-slate-400', p !== 'settings');
+            if(p === 'dashboard') render(); else renderSettingsPage();
+        }
 
-    function renderSettingsPage(){
-      document.getElementById('settings-quick-list').innerHTML = quickSettings.map(function(s, i){
-        return '<div class="flex items-center gap-3 bg-slate-100 p-3 rounded-2xl border border-slate-200 text-[10px] font-bold uppercase"><div class="flex-1">'+s.label+' - '+fmt(s.amt)+'</div><button onclick="removeQuickSetting('+i+')" class="text-rose-500 font-bold px-2 text-lg">âœ•</button></div>';
-      }).join('');
+        function renderSettingsPage() {
+            const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6 18 18" /></svg>`;
+            
+            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-rv-gray-100 p-4 rounded-xl text-xs font-semibold"><div class="truncate flex-1">${s.label} - <span class="font-bold">€${s.amt}</span></div><button onclick="removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500">${closeIcon}</button></div>`).join('');
+            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-rv-gray-100 p-3 rounded-lg mb-2"><span>${c}</span><button onclick="removeCategory(${i})" class="text-slate-400 hover:text-rose-500">${closeIcon}</button></div>`).join('');
+        }
 
-      document.getElementById('settings-cat-list').innerHTML = categories.map(function(c, i){
-        return '<div class="flex justify-between items-center bg-slate-100 p-3 rounded-2xl mb-2"><span>'+c+'</span><button onclick="removeCategory('+i+')" class="text-rose-400 font-bold px-2 text-lg">âœ•</button></div>';
-      }).join('');
-    }
+        function updateDateFilter() {
+            currentMonth = parseInt(document.getElementById('month-select').value);
+            currentYear = parseInt(document.getElementById('year-select').value);
+            render();
+        }
 
-    function updateDateFilter(){
-      currentMonth = parseInt(document.getElementById('month-select').value, 10);
-      currentYear = parseInt(document.getElementById('year-select').value, 10);
-      render();
-    }
+        function render() {
+            const catSelect = document.getElementById('cat');
+            if(catSelect) {
+                const catVal = catSelect.value;
+                catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                if (categories.includes(catVal)) catSelect.value = catVal;
+            }
 
-    function render(){
-      var catSelect = document.getElementById('cat');
-      var catVal = catSelect.value;
-      catSelect.innerHTML = categories.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
-      if(categories.indexOf(catVal) !== -1) catSelect.value = catVal;
+            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white border border-gray-100 px-5 py-3 rounded-full shadow-sm shrink-0 active:scale-95 transition-all text-center"><p class="text-[11px] font-bold text-slate-900">${s.label}</p></button>`).join('');
 
-      document.getElementById('quick-actions-container').innerHTML = quickSettings.map(function(s){
-        return '<button onclick="addQuick('+JSON.stringify(s.label)+','+s.amt+',\''+s.type+'\')" class="glass-card px-5 py-4 rounded-[1.5rem] shrink-0 text-left min-w-32"><p class="text-[9px] font-bold uppercase text-teal-700 mb-1 tracking-widest">'+s.label+'</p><p class="text-sm font-extrabold text-slate-800">'+fmt(s.amt)+'</p></button>';
-      }).join('');
+            const filtered = transactions.filter(t => {
+                if(!t || !t.date) return false;
+                const d = new Date(t.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
 
-      var filtered = transactions.filter(function(t){
-        if(!t || !t.date) return false;
-        var d = new Date(t.date);
-        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-      }).sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
+            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
+            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
 
-      var total = transactions.reduce(function(s,t){ return t.type === 'inc' ? s + t.amt : s - t.amt; }, 0);
-      var mInc = filtered.filter(function(t){ return t.type === 'inc'; }).reduce(function(s,t){ return s + t.amt; }, 0);
-      var mExp = filtered.filter(function(t){ return t.type === 'exp'; }).reduce(function(s,t){ return s + t.amt; }, 0);
+            document.getElementById('date-label').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
+            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
-      document.getElementById('date-label').innerText = monthNames[currentMonth] + ' ' + currentYear;
-      document.getElementById('total-balance').innerText = fmt(total);
-      document.getElementById('m-inc').innerText = fmt(mInc);
-      document.getElementById('m-exp').innerText = fmt(mExp);
+            const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6 18 18" /></svg>`;
 
-      document.getElementById('list').innerHTML = filtered.length ? filtered.map(function(t){
-        return '<div class="glass-card p-4 rounded-[1.8rem] flex justify-between items-center border border-slate-100 text-sm"><div class="truncate flex-1 pr-4"><p class="font-extrabold text-slate-800 truncate">'+t.dsc+'</p><p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">'+t.usr+' â€¢ '+t.cat+' â€¢ '+new Date(t.date).toLocaleDateString('it-IT')+'</p></div><div class="flex items-center gap-3"><p class="font-black '+(t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500')+'">'+(t.type === 'inc' ? '+' : '-')+' '+fmt(t.amt)+'</p><button onclick="deleteEntry('+t.id+')" class="text-slate-300 font-bold px-1 text-lg">âœ•</button></div></div>';
-      }).join('') : '<div class="glass-card p-5 rounded-[1.8rem] text-center text-slate-400">Nessun movimento nel periodo selezionato.</div>';
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-gray-100 shadow-sm text-sm"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 uppercase tracking-wide">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600' : 'text-rose-600'}">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-300 hover:text-rose-500">${closeIcon}</button></div></div>`).join('');
+            
+            setTimeout(() => { updateCharts(filtered); }, 150);
+        }
 
-      setTimeout(function(){ updateCharts(filtered); }, 80);
-    }
+        function addQuickSetting() { 
+            const l = document.getElementById('new-q-label').value; 
+            const a = document.getElementById('new-q-amt').value; 
+            if(!l || !a) return; 
+            quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); 
+            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
+            renderSettingsPage(); 
+            document.getElementById('new-q-label').value = '';
+            document.getElementById('new-q-amt').value = '';
+        }
 
-    function addQuickSetting(){
-      var l = document.getElementById('new-q-label').value.trim();
-      var a = parseFloat(document.getElementById('new-q-amt').value);
-      if(!l || !a) return toast('Dati mancanti');
-      quickSettings.push({ label:l, amt:a, type:document.getElementById('new-q-type').value });
-      safeSet('fin_v24_quick', quickSettings);
-      document.getElementById('new-q-label').value = '';
-      document.getElementById('new-q-amt').value = '';
-      renderSettingsPage();
-      render();
-    }
+        function removeQuickSetting(i) { 
+            if(confirm("Vuoi eliminare questo tasto rapido?")) {
+                quickSettings.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
+                renderSettingsPage(); 
+            }
+        }
 
-    function removeQuickSetting(i){
-      quickSettings.splice(i, 1);
-      safeSet('fin_v24_quick', quickSettings);
-      renderSettingsPage();
-      render();
-    }
+        function addCategory() { 
+            const v = document.getElementById('new-cat-name').value.trim(); 
+            if(!v) return; 
+            categories.push(v); 
+            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+            document.getElementById('new-cat-name').value = ''; 
+            renderSettingsPage(); 
+        }
 
-    function addCategory(){
-      var v = document.getElementById('new-cat-name').value.trim();
-      if(!v) return;
-      if(categories.indexOf(v) !== -1) return toast('Categoria giÃ  presente');
-      categories.push(v);
-      safeSet('fin_v24_cats', categories);
-      document.getElementById('new-cat-name').value = '';
-      renderSettingsPage();
-      render();
-    }
+        function removeCategory(i) { 
+            if(confirm("Vuoi eliminare questa categoria?")) {
+                categories.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+                renderSettingsPage(); 
+            }
+        }
 
-    function removeCategory(i){
-      if(baseCats.indexOf(categories[i]) !== -1) return toast('Categoria base non rimovibile');
-      categories.splice(i, 1);
-      safeSet('fin_v24_cats', categories);
-      renderSettingsPage();
-      render();
-    }
+        function deleteEntry(id) {
+            if(confirm("Vuoi eliminare questa transazione?")) { 
+                transactions = transactions.filter(t => t.id !== id); 
+                try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){} 
+                render(); 
+            }
+        }
 
-    function deleteEntry(id){
-      transactions = transactions.filter(function(t){ return t.id !== id; });
-      safeSet('fin_v24_trans', transactions);
-      render();
-      toast('Movimento eliminato');
-    }
+        function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
 
-    function addQuick(l, a, t){
-      document.getElementById('amt').value = a;
-      document.getElementById('dsc').value = l;
-      predictCategory(l);
-      save(t);
-    }
+        function save(type) {
+            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
+            if(!a || !d) return alert("Dati mancanti!");
+            vibrate();
+            transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
+            try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){}
+            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
+            document.getElementById('ai-badge').classList.add('hidden');
+            const card = document.getElementById('input-card');
+            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
+            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
+            render();
+        }
 
-    function save(type){
-      var a = parseFloat(document.getElementById('amt').value);
-      var d = document.getElementById('dsc').value.trim();
-      if(!a || !d) return toast('Dati mancanti');
-      transactions.unshift({ id:Date.now(), amt:a, dsc:d, cat:document.getElementById('cat').value, usr:document.getElementById('usr').value, type:type, date:new Date().toISOString() });
-      safeSet('fin_v24_trans', transactions);
-      document.getElementById('amt').value = '';
-      document.getElementById('dsc').value = '';
-      var card = document.getElementById('input-card');
-      card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
-      setTimeout(function(){ card.classList.remove('flash-inc'); card.classList.remove('flash-exp'); }, 900);
-      render();
-      toast(type === 'inc' ? 'Entrata salvata' : 'Uscita salvata');
-    }
+        function updateCharts(data) {
+            if (typeof Chart === 'undefined') return;
 
-    function updateCharts(data){
-      if(typeof Chart === 'undefined') return;
+            const last6 = [];
+            for(let i = 5; i >= 0; i--) {
+                let d = new Date(currentYear, currentMonth - i, 1);
+                last6.push({ m: d.getMonth(), y: d.getFullYear() });
+            }
+            const lineData = last6.map(obj => transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
+            }).reduce((s, t) => s + t.amt, 0));
 
-      var last6 = [];
-      for(var i=5;i>=0;i--){
-        var d = new Date(currentYear, currentMonth - i, 1);
-        last6.push({ m:d.getMonth(), y:d.getFullYear() });
-      }
+            const exp = data.filter(t => t.type === 'exp');
+            const catsArr = [...new Set(exp.map(t => t.cat))];
+            const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
+            
+            const pEl = document.getElementById('chartPie');
+            if(pEl && catsArr.length > 0) {
+                if(charts.pie) charts.pie.destroy();
+                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 2, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, cutout: '80%', responsive: true } });
+            }
 
-      var lineData = last6.map(function(obj){
-        return transactions.filter(function(t){
-          var d = new Date(t.date);
-          return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
-        }).reduce(function(s,t){ return s + t.amt; }, 0);
-      });
+            const lEl = document.getElementById('chartLine');
+            if(lEl) {
+                if(charts.line) charts.line.destroy();
+                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 2, tension: 0.3, fill: true, backgroundColor: 'rgba(0, 117, 235, 0.03)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10, weight: '600' } } } }, responsive: true } });
+            }
+        }
 
-      var exp = data.filter(function(t){ return t.type === 'exp'; });
-      var catsArr = Array.from(new Set(exp.map(function(t){ return t.cat; })));
-      var pData = catsArr.map(function(c){
-        return exp.filter(function(t){ return t.cat === c; }).reduce(function(s,t){ return s + t.amt; }, 0);
-      });
-
-      var pEl = document.getElementById('chartPie');
-      if(charts.pie){ charts.pie.destroy(); charts.pie = null; }
-      if(catsArr.length === 0){
-        document.getElementById('pie-empty').classList.remove('hidden');
-        var ctx0 = pEl.getContext('2d');
-        ctx0.clearRect(0, 0, pEl.width, pEl.height);
-      } else {
-        document.getElementById('pie-empty').classList.add('hidden');
-        charts.pie = new Chart(pEl.getContext('2d'), {
-          type:'doughnut',
-          data:{ labels:catsArr, datasets:[{ data:pData, backgroundColor:catColors, borderWidth:4, borderColor:'#ffffff' }] },
-          options:{ plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, font:{ size:9, weight:'bold' } } } }, cutout:'70%', responsive:true }
-        });
-      }
-
-      var lEl = document.getElementById('chartLine');
-      if(charts.line){ charts.line.destroy(); charts.line = null; }
-      charts.line = new Chart(lEl.getContext('2d'), {
-        type:'line',
-        data:{ labels:last6.map(function(o){ return monthNames[o.m].substring(0,3); }), datasets:[{ label:'Uscite', data:lineData, borderColor:'#0f766e', tension:0.4, fill:true, backgroundColor:'rgba(15,118,110,0.08)', pointRadius:0 }] },
-        options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ display:false }, x:{ grid:{ display:false }, border:{ display:false } } }, responsive:true }
-      });
-    }
-
-    function exportCSV(){
-      var rows = [['id','data','tipo','importo','descrizione','categoria','utente']];
-      for(var i=0;i<transactions.length;i++){
-        var t = transactions[i];
-        rows.push([t.id, t.date, t.type, t.amt, t.dsc, t.cat, t.usr]);
-      }
-      var csv = rows.map(function(r){
-        return r.map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
-      }).join('\n');
-      var blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'wallet-transazioni.csv';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    function clearAllData(){
-      if(confirm('Cancellare tutti i dati dell\'app?')){
-        safeRemove('fin_v24_trans');
-        safeRemove('fin_v24_quick');
-        safeRemove('fin_v24_cats');
-        transactions = [];
-        quickSettings = [{ label:'Casa', amt:600, type:'exp' }, { label:'Fibra', amt:30, type:'exp' }, { label:'Stipendio', amt:1800, type:'inc' }];
-        categories = baseCats.slice();
-        renderSettingsPage();
-        render();
-        toast('Dati cancellati');
-      }
-    }
-
-    window.onload = function(){
-      document.getElementById('page-dashboard').classList.remove('hidden');
-      var mSel = document.getElementById('month-select');
-      monthNames.forEach(function(m, i){
-        mSel.innerHTML += '<option value="'+i+'" '+(i===currentMonth?'selected':'')+'>'+m.substring(0,3)+'</option>';
-      });
-
-      var ySel = document.getElementById('year-select');
-      for(var y=currentYear-2; y<=currentYear+2; y++){
-        ySel.innerHTML += '<option value="'+y+'" '+(y===currentYear?'selected':'')+'>'+y+'</option>';
-      }
-
-      document.getElementById('theme-toggle').onclick = applyTheme;
-      renderSettingsPage();
-      render();
-    };
-  </script>
+        window.onload = () => {
+            const mSel = document.getElementById('month-select');
+            if(mSel) {
+                monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
+            }
+            const ySel = document.getElementById('year-select');
+            if(ySel) {
+                for(let y = currentYear - 2; y <= currentYear + 2; y++) {
+                    ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
+                }
+            }
+            render();
+        };
+        
+        function clearAllData() { if(confirm("Cancellare tutto definitivamente?")) { localStorage.clear(); location.reload(); } }
+    </script>
 </body>
 </html>
