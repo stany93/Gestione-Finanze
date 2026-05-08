@@ -7,119 +7,120 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { -webkit-tap-highlight-color: transparent; padding-bottom: 100px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { -webkit-tap-highlight-color: transparent; padding-bottom: 120px; font-family: system-ui, -apple-system, sans-serif; }
         .hidden { display: none !important; }
         .nav-active { color: #6366f1; transform: translateY(-5px); font-weight: bold; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .success-flash { animation: flash 0.5s ease; }
-        @keyframes flash { 0% { background: #10b981; } 100% { background: white; } }
+        
+        /* Animazioni Flash Lente */
+        @keyframes flash-green { 0% { background: #d1fae5; border-color: #10b981; } 100% { background: white; border-color: white; } }
+        @keyframes flash-red { 0% { background: #fee2e2; border-color: #ef4444; } 100% { background: white; border-color: white; } }
+        
+        .flash-inc { animation: flash-green 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .flash-exp { animation: flash-red 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen transition-colors duration-500" id="body-bg">
+<body class="bg-slate-50 min-h-screen">
 
     <div id="page-dashboard" class="max-w-md mx-auto px-4 pt-6">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-6 px-1">
             <div>
-                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Finanze Famiglia</h1>
-                <p id="month-label" class="text-indigo-600 font-bold uppercase text-[10px] tracking-widest"></p>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight text-center sm:text-left">Finanze Famiglia</h1>
+                <p id="month-label" class="text-indigo-600 font-bold uppercase text-[10px] tracking-[0.2em]"></p>
             </div>
             <select id="month-select" onchange="updateMonth(this.value)" class="bg-white p-2 rounded-xl shadow-sm border border-slate-200 text-[10px] font-bold uppercase outline-none"></select>
         </div>
 
-        <div class="bg-indigo-600 rounded-[2.5rem] p-7 text-white shadow-2xl shadow-indigo-200 mb-8 relative overflow-hidden">
+        <div class="bg-indigo-600 rounded-[2.5rem] p-7 text-white shadow-2xl shadow-indigo-100 mb-8 relative overflow-hidden">
             <div class="relative z-10 text-center">
-                <p class="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-2">Patrimonio Totale</p>
-                <h2 id="total-balance" class="text-4xl font-black tracking-tighter">€ 0.00</h2>
+                <p class="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-2">Bilancio Totale</p>
+                <h2 id="total-balance" class="text-4xl font-black tracking-tighter italic">€ 0.00</h2>
             </div>
-            <div class="grid grid-cols-2 gap-4 border-t border-indigo-400/40 mt-6 pt-5 text-center relative z-10">
-                <div><p class="text-indigo-200 text-[9px] uppercase font-bold">Entrate</p><p id="m-inc" class="font-bold text-emerald-300 text-lg">€ 0</p></div>
-                <div><p class="text-indigo-200 text-[9px] uppercase font-bold">Uscite</p><p id="m-exp" class="font-bold text-rose-300 text-lg">€ 0</p></div>
+            <div class="grid grid-cols-2 gap-4 border-t border-indigo-400/40 mt-6 pt-5 text-center">
+                <div><p class="text-indigo-200 text-[9px] uppercase font-bold">Entrate</p><p id="m-inc" class="font-bold text-emerald-300 text-lg">+ €0</p></div>
+                <div><p class="text-indigo-200 text-[9px] uppercase font-bold">Uscite</p><p id="m-exp" class="font-bold text-rose-300 text-lg">- €0</p></div>
             </div>
-            <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full"></div>
         </div>
 
         <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar">
-            <div id="quick-actions-container" class="flex gap-3"></div>
+            <div id="quick-actions-container" class="flex gap-3 px-1"></div>
         </div>
 
-        <div id="input-card" class="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 mb-8 space-y-4 border border-white transition-all">
+        <div id="input-card" class="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/40 mb-8 space-y-4 border-2 border-transparent transition-all">
             <div class="flex gap-2">
-                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold text-lg outline-none focus:ring-2 focus:ring-indigo-500 border-none">
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold text-lg outline-none border-none">
                 <select id="usr" class="w-1/2 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-indigo-600 outline-none border-none">
                     <option value="Stany">Stany</option>
                     <option value="Giulia">Giulia</option>
                 </select>
             </div>
-            <input type="text" id="dsc" placeholder="Per cosa sono?" class="w-full bg-slate-50 rounded-2xl p-4 outline-none border-none">
+            <input type="text" id="dsc" placeholder="Descrizione..." class="w-full bg-slate-50 rounded-2xl p-4 outline-none border-none">
             <select id="cat" class="w-full bg-slate-50 rounded-2xl p-4 outline-none text-slate-600 font-medium border-none"></select>
             <div class="flex gap-3 pt-2">
-                <button onclick="save('inc')" class="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-black shadow-lg shadow-emerald-100 active:scale-95 transition-all text-sm tracking-widest uppercase">+ Entrata</button>
-                <button onclick="save('exp')" class="flex-1 bg-rose-500 text-white py-4 rounded-2xl font-black shadow-lg shadow-rose-100 active:scale-95 transition-all text-sm tracking-widest uppercase">- Uscita</button>
+                <button onclick="save('inc')" class="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-black shadow-lg shadow-emerald-100 active:scale-95 transition-all uppercase tracking-tighter">+ Entrata</button>
+                <button onclick="save('exp')" class="flex-1 bg-rose-500 text-white py-4 rounded-2xl font-black shadow-lg shadow-rose-100 active:scale-95 transition-all uppercase tracking-tighter">- Uscita</button>
             </div>
         </div>
 
         <div class="bg-white rounded-[2rem] p-6 shadow-md mb-8 space-y-8 border border-slate-100">
-            <div>
-                <p class="text-slate-400 font-bold text-[10px] uppercase mb-6 text-center tracking-widest">Distribuzione Spese</p>
-                <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
-            </div>
-            <div class="pt-6 border-t border-slate-50">
-                <p class="text-slate-400 font-bold text-[10px] uppercase mb-6 text-center tracking-widest">Andamento 6 Mesi</p>
-                <canvas id="chartLine" class="max-h-40 mx-auto"></canvas>
-            </div>
+            <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
+            <canvas id="chartLine" class="max-h-40 mx-auto"></canvas>
         </div>
 
-        <h3 class="font-bold text-slate-800 mb-4 px-2">Cronologia Recente</h3>
-        <div id="list" class="space-y-3"></div>
+        <div id="list" class="space-y-3 pb-10"></div>
     </div>
 
     <div id="page-settings" class="max-w-md mx-auto px-4 pt-6 hidden">
-        <h1 class="text-3xl font-black text-slate-800 mb-8">Impostazioni</h1>
-        
+        <h1 class="text-3xl font-black text-slate-800 mb-8 px-2">Impostazioni</h1>
         <div class="space-y-6">
             <div class="bg-white rounded-[2rem] p-6 shadow-md border border-slate-100">
-                <p class="text-[10px] font-bold text-indigo-600 uppercase mb-4 tracking-widest text-center">Tasti Rapidi (Preferiti)</p>
-                <div id="settings-quick-list" class="space-y-4 mb-4 text-sm font-medium"></div>
-                <button onclick="saveSettings()" class="w-full bg-slate-800 text-white py-4 rounded-2xl text-xs font-bold uppercase tracking-widest">Salva Preferiti</button>
+                <p class="text-[10px] font-bold text-indigo-600 uppercase mb-4 tracking-widest text-center">Importi Tasti Rapidi</p>
+                <div id="settings-quick-list" class="space-y-4 mb-4"></div>
+                <button onclick="vibrate(); saveSettings()" class="w-full bg-slate-800 text-white py-4 rounded-2xl text-xs font-bold uppercase">Salva Importi</button>
             </div>
-
             <div class="bg-white rounded-[2rem] p-6 shadow-md border border-slate-100">
-                <p class="text-[10px] font-bold text-indigo-600 uppercase mb-4 tracking-widest text-center">Tutte le Categorie</p>
-                <div id="settings-cat-list" class="grid grid-cols-1 gap-2 mb-4"></div>
+                <p class="text-[10px] font-bold text-indigo-600 uppercase mb-4 tracking-widest text-center">Categorie di Spesa</p>
+                <div id="settings-cat-list" class="space-y-2 mb-4"></div>
                 <div class="flex gap-2 border-t pt-4">
-                    <input type="text" id="new-cat-name" placeholder="Esempio: 🍕 Svago" class="flex-1 bg-slate-50 rounded-xl p-3 text-sm outline-none border-none">
-                    <button onclick="addCategory()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold">+</button>
+                    <input type="text" id="new-cat-name" placeholder="Es: 🍕 Tortellini" class="flex-1 bg-slate-50 rounded-xl p-3 text-sm outline-none">
+                    <button onclick="vibrate(); addCategory()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold">+</button>
                 </div>
             </div>
-
-            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-bold uppercase py-10 tracking-[0.2em]">Svuota tutta l'app</button>
+            <button onclick="vibrate(); clearAllData()" class="w-full text-rose-300 text-[10px] font-bold uppercase py-10 tracking-widest text-center">Reset Totale App</button>
         </div>
     </div>
 
-    <nav class="fixed bottom-6 left-4 right-4 bg-white/90 backdrop-blur-xl border border-slate-200 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl shadow-indigo-100/50">
-        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all duration-300">
-            <span class="text-2xl">⚡</span><span class="text-[9px] uppercase tracking-tighter">Attività</span>
+    <nav class="fixed bottom-6 left-4 right-4 bg-white/90 backdrop-blur-xl border border-slate-200 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl">
+        <button onclick="vibrate(); switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all duration-300">
+            <span class="text-2xl">📊</span><span class="text-[9px] uppercase tracking-tighter">Attività</span>
         </button>
-        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-400 transition-all duration-300">
-            <span class="text-2xl">⚙️</span><span class="text-[9px] uppercase tracking-tighter">Gestisci</span>
+        <button onclick="vibrate(); switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-400 transition-all duration-300">
+            <span class="text-2xl">⚙️</span><span class="text-[9px] uppercase tracking-tighter">Opzioni</span>
         </button>
     </nav>
 
     <script>
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         
-        let transactions = JSON.parse(localStorage.getItem('fin_v9_trans')) || [];
-        let quickSettings = JSON.parse(localStorage.getItem('fin_v9_quick')) || [
+        let transactions = JSON.parse(localStorage.getItem('fin_v10_trans')) || [];
+        let quickSettings = JSON.parse(localStorage.getItem('fin_v10_quick')) || [
             { label: '🏠 Pagamento Casa', amt: 600, type: 'exp' },
             { label: '🌐 Fibra casa', amt: 30, type: 'exp' },
             { label: '💰 Stipendio Stany', amt: 1800, type: 'inc' }
         ];
-        let categories = JSON.parse(localStorage.getItem('fin_v9_cats')) || [
+        let categories = JSON.parse(localStorage.getItem('fin_v10_cats')) || [
             "🏠 Casa", "🛒 Spesa", "👶 Riccardo", "🍕 Tortellini", "🚗 Mezzi", "💰 Lavoro", "📱 Varie"
         ];
 
         let currentMonth = new Date().getMonth();
         let pieChart = null, lineChart = null;
+
+        // Funzione Vibrazione
+        function vibrate() {
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(40); // 40ms di vibrazione
+            }
+        }
 
         function switchTab(page) {
             document.getElementById('page-dashboard').classList.toggle('hidden', page !== 'dashboard');
@@ -132,27 +133,23 @@
 
         function renderSettingsPage() {
             document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `
-                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl">
                     <span class="text-[11px] font-black text-slate-500 flex-1 uppercase tracking-wider">${s.label}</span>
-                    <div class="flex items-center bg-white rounded-lg px-2 border border-slate-200">
-                        <span class="text-slate-400 text-xs italic">€</span>
-                        <input type="number" id="set-amt-${i}" value="${s.amt}" class="w-20 p-2 rounded-lg text-right font-black text-indigo-600 outline-none border-none">
-                    </div>
+                    <input type="number" id="set-amt-${i}" value="${s.amt}" class="w-20 p-2 rounded-lg text-right font-black text-indigo-600 outline-none bg-white">
                 </div>
             `).join('');
 
             document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `
-                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl">
                     <span class="text-sm font-bold text-slate-700">${c}</span>
-                    <button onclick="removeCategory(${i})" class="bg-rose-100 text-rose-500 rounded-lg w-8 h-8 flex items-center justify-center">✕</button>
+                    <button onclick="vibrate(); removeCategory(${i})" class="text-rose-400 font-bold px-3">✕</button>
                 </div>
             `).join('');
         }
 
         function saveSettings() {
             quickSettings.forEach((s, i) => s.amt = parseFloat(document.getElementById(`set-amt-${i}`).value) || 0);
-            localStorage.setItem('fin_v9_quick', JSON.stringify(quickSettings));
-            alert("Aggiornato!");
+            localStorage.setItem('fin_v10_quick', JSON.stringify(quickSettings));
             switchTab('dashboard');
         }
 
@@ -160,7 +157,7 @@
             const val = document.getElementById('new-cat-name').value.trim();
             if(!val) return;
             categories.push(val);
-            localStorage.setItem('fin_v9_cats', JSON.stringify(categories));
+            localStorage.setItem('fin_v10_cats', JSON.stringify(categories));
             document.getElementById('new-cat-name').value = '';
             renderSettingsPage();
         }
@@ -168,7 +165,7 @@
         function removeCategory(i) {
             if(confirm("Eliminare?")) {
                 categories.splice(i, 1);
-                localStorage.setItem('fin_v9_cats', JSON.stringify(categories));
+                localStorage.setItem('fin_v10_cats', JSON.stringify(categories));
                 renderSettingsPage();
             }
         }
@@ -176,9 +173,9 @@
         function render() {
             document.getElementById('cat').innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `
-                <button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white px-5 py-4 rounded-[1.5rem] shadow-sm text-[11px] font-black border border-slate-100 shrink-0 hover:bg-slate-50 transition-colors">
-                    <div class="text-indigo-600 mb-1 opacity-70">${s.label.split(' ')[0]}</div>
-                    <div class="text-slate-800">€${s.amt}</div>
+                <button onclick="vibrate(); addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white px-5 py-4 rounded-3xl shadow-sm text-[11px] font-black border border-slate-100 shrink-0">
+                    <div class="text-indigo-600 mb-1 opacity-60">${s.label.split(' ')[0]}</div>
+                    <div class="text-slate-800 italic">€${s.amt}</div>
                 </button>
             `).join('');
 
@@ -193,19 +190,17 @@
             document.getElementById('m-exp').innerText = `- €${mExp.toFixed(2)}`;
 
             document.getElementById('list').innerHTML = filtered.map(t => `
-                <div class="bg-white p-5 rounded-[1.8rem] shadow-sm flex justify-between items-center border border-slate-100 transition-all hover:shadow-md">
-                    <div class="flex items-center gap-4 overflow-hidden">
+                <div class="bg-white p-5 rounded-[2rem] shadow-sm flex justify-between items-center border border-slate-50">
+                    <div class="flex items-center gap-4 truncate">
                         <div class="text-2xl bg-slate-50 w-12 h-12 flex items-center justify-center rounded-2xl flex-shrink-0">${t.cat.split(' ')[0]}</div>
                         <div class="truncate">
                             <p class="font-bold text-slate-800 text-sm truncate">${t.dsc}</p>
-                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">${t.usr} • ${new Date(t.date).toLocaleDateString('it-IT')}</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">${t.usr}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} whitespace-nowrap">
-                            ${t.type === 'inc' ? '+' : '-'} €${t.amt.toFixed(2)}
-                        </p>
-                        <button onclick="deleteEntry(${t.id})" class="text-slate-200 hover:text-rose-400 font-bold px-1 transition-colors text-xl">✕</button>
+                        <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} whitespace-nowrap">€${t.amt.toFixed(2)}</p>
+                        <button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-300 font-bold px-2 text-xl">✕</button>
                     </div>
                 </div>
             `).join('');
@@ -214,9 +209,9 @@
         }
 
         function deleteEntry(id) {
-            if(confirm("Eliminare questa spesa?")) {
+            if(confirm("Eliminare?")) {
                 transactions = transactions.filter(t => t.id !== id);
-                localStorage.setItem('fin_v9_trans', JSON.stringify(transactions));
+                localStorage.setItem('fin_v10_trans', JSON.stringify(transactions));
                 render();
             }
         }
@@ -224,13 +219,15 @@
         function addQuick(label, amt, type) {
             document.getElementById('amt').value = amt;
             document.getElementById('dsc').value = label;
-            save(type === 'Entrata' ? 'inc' : 'exp'); // Gestione automatica tipo
+            save(type);
         }
 
         function save(type) {
             const a = document.getElementById('amt').value;
             const d = document.getElementById('dsc').value;
-            if(!a || !d) return alert("Compila tutto");
+            if(!a || !d) return alert("Compila tutto!");
+
+            vibrate();
 
             transactions.unshift({
                 id: Date.now(), amt: parseFloat(a), dsc: d,
@@ -239,14 +236,15 @@
                 type: type, date: new Date().toISOString()
             });
 
-            localStorage.setItem('fin_v9_trans', JSON.stringify(transactions));
+            localStorage.setItem('fin_v10_trans', JSON.stringify(transactions));
             document.getElementById('amt').value = '';
             document.getElementById('dsc').value = '';
             
-            // Effetto flash
+            // Flash Dinamico Lento
             const card = document.getElementById('input-card');
-            card.classList.add('success-flash');
-            setTimeout(() => card.classList.remove('success-flash'), 500);
+            const flashClass = type === 'inc' ? 'flash-inc' : 'flash-exp';
+            card.classList.add(flashClass);
+            setTimeout(() => card.classList.remove(flashClass), 1200);
             
             render();
         }
@@ -259,7 +257,7 @@
             if(pieChart) pieChart.destroy();
             pieChart = new Chart(document.getElementById('chartPie').getContext('2d'), {
                 type: 'doughnut',
-                data: { labels: cats, datasets: [{ data: pData, backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4'], borderWidth: 0 }] },
+                data: { labels: cats, datasets: [{ data: pData, backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444'], borderWidth: 0 }] },
                 options: { plugins: { legend: { display: false } }, cutout: '80%' }
             });
 
@@ -274,14 +272,14 @@
                     labels: last6.map(m => monthNames[m].substring(0,3)),
                     datasets: [{ borderColor: '#6366f1', data: lData, tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }]
                 },
-                options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } } }
+                options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
             });
         }
 
         const mSel = document.getElementById('month-select');
         monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
         function updateMonth(v) { currentMonth = parseInt(v); render(); }
-        function clearAllData() { if(confirm("Cancellare TUTTO?")) { localStorage.clear(); location.reload(); } }
+        function clearAllData() { if(confirm("Cancellare tutto?")) { localStorage.clear(); location.reload(); } }
 
         window.onload = () => render();
     </script>
