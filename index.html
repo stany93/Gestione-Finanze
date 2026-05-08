@@ -42,26 +42,28 @@
         .dark select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); }
         .select-brand { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230075EB'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important; }
 
-        /* EFFETTO GLASS IPHONE NAV */
+        /* EFFETTO GLASS IPHONE NAV MIGLIORATO */
         .glass-pill {
-            position: absolute; height: 48px; width: 85px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            z-index: -1;
-            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: absolute;
+            height: 64px;
+            background: rgba(0, 117, 235, 0.08);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1.5px solid rgba(0, 117, 235, 0.2);
+            border-radius: 24px;
+            z-index: 0;
+            transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            pointer-events: none;
         }
         .dark .glass-pill {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
-        .nav-active { color: #0075EB !important; transform: scale(1.05); }
-        .nav-btn { transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1); }
+        .nav-btn { position: relative; z-index: 10; flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: color 0.3s; }
+        .nav-active { color: #0075EB !important; font-weight: 800; }
+        .dark .nav-active { color: #ffffff !important; }
         
         @keyframes flash-inc { 0% { background: #10b981; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
         @keyframes flash-exp { 0% { background: #ef4444; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
@@ -84,6 +86,7 @@
     </div>
 
     <div id="main-view">
+        <!-- PAGE 1: DASHBOARD -->
         <div class="page-container px-5 pt-16">
             <div class="flex justify-between items-start mb-8">
                 <div class="space-y-4">
@@ -112,36 +115,36 @@
             <div id="category-recap-list" class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 mb-10 mx-1"></div>
         </div>
 
+        <!-- PAGE 2: SETTINGS -->
         <div class="page-container px-6 pt-16">
             <h1 class="text-3xl font-extrabold mb-10 tracking-tighter text-left">Opzioni</h1>
             <div class="space-y-8 pb-24 text-left text-sm text-slate-900 dark:text-slate-100">
                 <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">Esportazione Dati</p><button onclick="exportToCSV()" class="w-full bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase text-[11px] shadow-lg">Scarica CSV</button></div>
                 <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">Conti Personali</p><div id="settings-accounts-list" class="space-y-2 mb-6"></div><div class="flex gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl border border-slate-100 dark:border-slate-800"><input type="text" id="new-account-name" placeholder="Nuovo conto..." class="flex-1 bg-transparent p-2 font-bold outline-none dark:text-white text-sm"><button onclick="addAccount()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold">+</button></div></div>
-                <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest text-center">Tasti Rapidi</p><div id="settings-quick-list" class="space-y-2 mb-6"></div><div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl space-y-3"><input type="text" id="new-q-label" placeholder="Etichetta" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold outline-none text-sm"><input type="number" id="new-q-amt" placeholder="€" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold outline-none text-sm"><select id="new-q-type" class="w-full p-3 rounded-xl font-bold text-brand bg-white dark:bg-slate-700 outline-none text-sm"><option value="exp">Uscita</option><option value="inc">Entrata</option></select><button onclick="addQuickSetting()" class="w-full bg-brand text-white py-3.5 rounded-xl font-black text-[10px]">AGGIUNGI</button></div></div>
+                <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest text-center">Tasti Rapidi</p><div id="settings-quick-list" class="space-y-2 mb-6"></div><div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl space-y-3"><input type="text" id="new-q-label" placeholder="Etichetta" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold border-none outline-none text-sm"><input type="number" id="new-q-amt" placeholder="€" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold border-none outline-none text-sm"><select id="new-q-type" class="w-full p-3 rounded-xl font-bold text-brand bg-white dark:bg-slate-700 outline-none text-sm"><option value="exp">Uscita</option><option value="inc">Entrata</option></select><button onclick="addQuickSetting()" class="w-full bg-brand text-white py-3.5 rounded-xl font-black text-[10px]">AGGIUNGI</button></div></div>
                 <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm text-center"><p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Categorie</p><div id="settings-cat-list" class="space-y-2 mb-6 text-left"></div><div class="flex gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl border border-slate-100 dark:border-slate-800"><input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-transparent p-2 font-bold outline-none text-sm"><button onclick="addCategory()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold">+</button></div></div>
                 <button onclick="confirmAction('Reset impostazioni locali?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-500 text-[10px] font-black uppercase py-6 opacity-60 text-center tracking-widest">Reset Totale App</button>
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM NAV CON EFFETTO GLASS E ANIMAZIONE -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-6 pb-safe transition-colors z-50 flex justify-around items-center" style="height: 100px;">
-        <!-- Elemento Glass che scorre -->
+    <!-- BOTTOM NAV MIGLIORATA -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/95 backdrop-blur-2xl border-t border-slate-200 dark:border-slate-800 px-6 pb-safe transition-colors z-50 flex justify-around items-center" style="height: 100px;">
         <div id="nav-glass" class="glass-pill"></div>
 
-        <button onclick="switchTab('dashboard')" id="btn-dash" class="nav-btn flex flex-col items-center justify-center gap-1 nav-active w-full h-full text-slate-400 dark:text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7">
+        <button onclick="switchTab('dashboard')" id="btn-dash" class="nav-btn nav-active">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
-            <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
+            <span class="text-[10px] font-extrabold uppercase tracking-widest">Home</span>
         </button>
         
-        <button onclick="switchTab('settings')" id="btn-set" class="nav-btn flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400 dark:text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <circle cx="12" cy="12" r="3" />
+        <button onclick="switchTab('settings')" id="btn-set" class="nav-btn text-slate-400 dark:text-slate-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <circle cx="12" cy="12" r="3" stroke-width="2"/>
             </svg>
-            <span class="text-[9px] font-black uppercase tracking-widest">Opzioni</span>
+            <span class="text-[10px] font-extrabold uppercase tracking-widest">Opzioni</span>
         </button>
     </nav>
 
@@ -181,6 +184,37 @@
         window.categories = JSON.parse(localStorage.getItem('fin_v22_cats')) || ['Casa', 'Spesa', 'Riccardo', 'Svago', 'Lavoro', 'Gatti', 'Macchina', 'Cene', 'Vestiti', 'Vacanze', 'Regali', 'Salute'];
         window.quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Spesa', amt: 50, type: 'exp' }];
 
+        function updateGlassPill() {
+            const activeBtn = document.querySelector('.nav-btn.nav-active');
+            const glass = document.getElementById('nav-glass');
+            if (activeBtn && glass) {
+                const rect = activeBtn.getBoundingClientRect();
+                const navRect = document.getElementById('bottom-nav').getBoundingClientRect();
+                const padding = 12; 
+                glass.style.width = (rect.width - padding * 2) + 'px';
+                glass.style.left = (activeBtn.offsetLeft + padding) + 'px';
+            }
+        }
+
+        window.switchTab = (p) => {
+            const view = document.getElementById('main-view');
+            const btnDash = document.getElementById('btn-dash');
+            const btnSet = document.getElementById('btn-set');
+            
+            if (p === 'dashboard') {
+                view.style.transform = 'translateX(0)';
+                btnDash.classList.add('nav-active');
+                btnSet.classList.remove('nav-active');
+                window.render();
+            } else {
+                view.style.transform = 'translateX(-50%)';
+                btnSet.classList.add('nav-active');
+                btnDash.classList.remove('nav-active');
+                window.renderSettingsPage();
+            }
+            setTimeout(updateGlassPill, 50);
+        };
+
         function animateBalance(targetValue) {
             const el = document.getElementById('total-balance');
             const startValue = lastKnownBalance;
@@ -200,31 +234,6 @@
         window.closeModal = () => document.getElementById('custom-modal').classList.add('hidden');
         document.getElementById('modal-confirm-btn').onclick = () => { if(window.pendingAction) window.pendingAction(); closeModal(); };
 
-        window.switchTab = (p) => {
-            const view = document.getElementById('main-view');
-            const glass = document.getElementById('nav-glass');
-            const btnDash = document.getElementById('btn-dash');
-            const btnSet = document.getElementById('btn-set');
-            
-            // Calcolo posizione centro pulsante per l'effetto glass
-            const dashX = btnDash.offsetLeft + (btnDash.offsetWidth / 2) - 42.5;
-            const setX = btnSet.offsetLeft + (btnSet.offsetWidth / 2) - 42.5;
-
-            if (p === 'dashboard') {
-                view.style.transform = 'translateX(0)';
-                glass.style.transform = `translateX(${dashX}px)`;
-                btnDash.classList.add('nav-active');
-                btnSet.classList.remove('nav-active');
-                window.render();
-            } else {
-                view.style.transform = 'translateX(-50%)';
-                glass.style.transform = `translateX(${setX}px)`;
-                btnSet.classList.add('nav-active');
-                btnDash.classList.remove('nav-active');
-                window.renderSettingsPage();
-            }
-        };
-
         window.switchAccount = (id) => {
             window.currentAccount = id; localStorage.setItem('fin_v22_currentAccount', id);
             const acc = window.accounts.find(a => a.id === id);
@@ -234,7 +243,12 @@
         };
 
         window.render = () => {
-            const m = parseInt(document.getElementById('month-select').value), y = parseInt(document.getElementById('year-select').value);
+            const ms = document.getElementById('month-select'), ys = document.getElementById('year-select');
+            if(!ms.innerHTML) {
+                monthNames.forEach((m, i) => ms.innerHTML += `<option value="${i}" ${i === new Date().getMonth() ? 'selected' : ''}>${m}</option>`);
+                for(let y = 2024; y<=2027; y++) ys.innerHTML += `<option value="${y}" ${y === new Date().getFullYear() ? 'selected' : ''}>${y}</option>`;
+            }
+            const m = parseInt(ms.value), y = parseInt(ys.value);
             document.getElementById('cat').innerHTML = window.categories.map(c => `<option value="${c}">${c}</option>`).join('');
             const usrSel = document.getElementById('usr');
             usrSel.innerHTML = `<option value="Stany">Stany</option><option value="Giulia">Giulia</option>`;
@@ -259,10 +273,11 @@
             const lineData = last6.map(o => window.transactions.filter(t => { const d = new Date(t.date); return d.getMonth() === o.m && d.getFullYear() === o.y && t.type === 'exp'; }).reduce((s, t) => s + t.amt, 0));
             if(charts.line) charts.line.destroy(); charts.line = new Chart(document.getElementById('chartLine'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m]), datasets: [{ data: lineData, borderColor: '#0075EB', borderWidth: 3, tension: 0.4, fill: true, backgroundColor: 'rgba(0,117,235,0.05)', pointRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: (v) => v + ' €', color: labelColor, font: {size: 9} }, grid: { color: isDark ? '#1e293b' : '#f1f5f9' } }, x: { ticks: { color: labelColor, font: {size: 9} }, grid: { display: false } } } } });
             const historyData = last6.map(o => window.transactions.filter(t => new Date(t.date) <= new Date(o.y, o.m + 1, 0)).reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0));
-            if(charts.history) charts.history.destroy(); charts.history = new Chart(document.getElementById('chartBalanceHistory'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m]), datasets: [{ data: historyData, borderColor: '#0075EB', borderWidth: 2.5, tension: 0.4, fill: true, pointRadius: 3, pointBackgroundColor: '#0075EB', backgroundColor: (ctx) => { const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150); g.addColorStop(0, 'rgba(0, 117, 235, 0.15)'); g.addColorStop(1, 'rgba(0, 117, 235, 0)'); return g; } }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ` € ${ctx.raw.toLocaleString('it-IT')}` } } }, scales: { y: { display: true, position: 'right', ticks: { callback: (v) => v.toLocaleString('it-IT') + ' €', color: labelColor, font: {size: 8}, maxTicksLimit: 3 }, grid: { display: false } }, x: { display: true, ticks: { color: labelColor, font: {size: 8}, padding: 5 }, grid: { display: false } } } } });
+            if(charts.history) charts.history.destroy();
+            charts.history = new Chart(document.getElementById('chartBalanceHistory'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m]), datasets: [{ data: historyData, borderColor: '#0075EB', borderWidth: 2.5, tension: 0.4, fill: true, pointRadius: 3, pointBackgroundColor: '#0075EB', backgroundColor: (ctx) => { const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150); g.addColorStop(0, 'rgba(0, 117, 235, 0.15)'); g.addColorStop(1, 'rgba(0, 117, 235, 0)'); return g; } }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ` € ${ctx.raw.toLocaleString('it-IT')}` } } }, scales: { y: { display: true, position: 'right', ticks: { callback: (v) => v.toLocaleString('it-IT') + ' €', color: labelColor, font: {size: 8}, maxTicksLimit: 3 }, grid: { display: false } }, x: { display: true, ticks: { color: labelColor, font: {size: 8}, padding: 5 }, grid: { display: false } } } } });
         }
 
-        window.toggleTheme = () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('fin_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); window.render(); };
+        window.toggleTheme = () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('fin_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); window.render(); updateGlassPill(); };
         window.saveCurrentUser = (v) => localStorage.setItem('fin_v22_currentUser', v);
         window.addQuick = (l, a, t) => { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; window.save(t); };
         window.addAccount = () => { const n = document.getElementById('new-account-name').value.trim(); if(!n) return; const id = 'local_'+Date.now(); window.accounts.push({ id, name: n, type: 'local' }); localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts)); window.populateAccountsDropdown(); window.switchAccount(id); };
@@ -282,23 +297,18 @@
         window.populateAccountsDropdown = () => { const sel = document.getElementById('account-select'); sel.innerHTML = window.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join(''); sel.value = window.currentAccount; };
         window.renderSettingsPage = () => {
             const svgClose = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
-            document.getElementById('settings-accounts-list').innerHTML = window.accounts.filter(a => a.id !== 'shared').map((a, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2"><span>${a.name}</span><button onclick="removeAccount(${window.accounts.indexOf(a)})" class="text-rose-500">${svgClose}</button></div>`).join('');
-            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2 shadow-sm"><span>${s.label} (€${s.amt})</span><button onclick="removeQuickSetting(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
+            document.getElementById('settings-accounts-list').innerHTML = window.accounts.filter(a => a.id !== 'shared').map((a, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2 shadow-sm"><span class="font-bold">${a.name}</span><button onclick="removeAccount(${window.accounts.indexOf(a)})" class="text-rose-500">${svgClose}</button></div>`).join('');
+            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2 shadow-sm"><span class="font-bold">${s.label} (€${s.amt})</span><button onclick="removeQuickSetting(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
             document.getElementById('settings-cat-list').innerHTML = window.categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl mb-2 shadow-sm uppercase font-bold text-xs"><span>${c}</span><button onclick="removeCategory(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
         };
 
         window.onload = () => {
-            const ms = document.getElementById('month-select'), ys = document.getElementById('year-select'), now = new Date();
-            monthNames.forEach((m, i) => ms.innerHTML += `<option value="${i}" ${i === now.getMonth() ? 'selected' : ''}>${m}</option>`);
-            for(let y = now.getFullYear()-1; y<=now.getFullYear()+1; y++) ys.innerHTML += `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`;
-            const savedUsr = localStorage.getItem('fin_v22_currentUser'); if(savedUsr) document.getElementById('usr').value = savedUsr;
+            window.render();
             window.populateAccountsDropdown();
-            // Posizionamento iniziale del Glass Pill
-            const glass = document.getElementById('nav-glass');
-            const btnDash = document.getElementById('btn-dash');
-            glass.style.transform = `translateX(${btnDash.offsetLeft + (btnDash.offsetWidth / 2) - 42.5}px)`;
+            setTimeout(updateGlassPill, 100);
             window.switchAccount(window.currentAccount);
         };
+        window.onresize = updateGlassPill;
     </script>
 </body>
 </html>
