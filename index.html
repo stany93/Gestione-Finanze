@@ -12,11 +12,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 120px; background: #f8fafc; }
         .hidden { display: none !important; }
-        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8); }
-        .nav-active { color: #818cf8; transform: scale(1.1); font-weight: 800; filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.5)); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8); }
+        .nav-active { color: #6366f1; transform: scale(1.05); font-weight: 800; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        @keyframes flash-inc { 0% { background: #dcfce7; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.7); transform: scale(1); } }
-        @keyframes flash-exp { 0% { background: #fee2e2; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.7); transform: scale(1); } }
+        @keyframes flash-inc { 0% { background: #dcfce7; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.8); transform: scale(1); } }
+        @keyframes flash-exp { 0% { background: #fee2e2; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.8); transform: scale(1); } }
         .flash-inc { animation: flash-inc 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .flash-exp { animation: flash-exp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
@@ -118,7 +118,7 @@
         <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all text-left">
             <span class="text-[22px]">📊</span><span class="text-[8px] uppercase font-black tracking-widest text-indigo-200">Home</span>
         </button>
-        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all text-left hover:text-slate-300">
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all text-left">
             <span class="text-[22px]">⚙️</span><span class="text-[8px] uppercase font-black tracking-widest">Opzioni</span>
         </button>
     </nav>
@@ -126,36 +126,3 @@
     <script>
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#3b82f6', '#d946ef', '#14b8a6'];
-        
-        const brain = {
-            'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
-            'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
-            'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino'],
-            'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
-            'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
-            'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
-            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
-            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
-            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
-            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
-            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
-            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
-        };
-
-        let transactions = [];
-        try { transactions = JSON.parse(localStorage.getItem('fin_v22_trans')) || []; } catch(e) {}
-        if(!Array.isArray(transactions)) transactions = [];
-
-        let quickSettings = [];
-        try { quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }]; } catch(e) {}
-        if(!Array.isArray(quickSettings)) quickSettings = [];
-
-        const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
-        let categories = [];
-        try {
-            let saved = JSON.parse(localStorage.getItem('fin_v22_cats'));
-            if (Array.isArray(saved) && saved.length > 0) {
-                categories = saved;
-                baseCats.forEach(c => { if (!categories.includes(c)) categories.push(c); });
-            } else { categories = baseCats; }
-        } catch(e
