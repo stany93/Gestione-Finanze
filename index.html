@@ -19,7 +19,6 @@
         @keyframes flash-exp { 0% { background: #fef2f2; } 100% { background: white; } }
         .flash-inc { animation: flash-inc 0.8s ease-out; }
         .flash-exp { animation: flash-exp 0.8s ease-out; }
-        .ai-glow { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); border-color: #6366f1 !important; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -57,7 +56,7 @@
         <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar"><div id="quick-actions-container" class="flex gap-3"></div></div>
 
         <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-8 space-y-4 border border-white relative transition-all">
-            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter">AI Intelligente</div>
+            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter">AI</div>
             <div class="flex gap-2">
                 <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 font-extrabold text-xl outline-none">
                 <select id="usr" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 text-xs font-bold text-indigo-600 outline-none">
@@ -65,7 +64,7 @@
                     <option value="Giulia">Giulia</option>
                 </select>
             </div>
-            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai pagato?" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-medium">
+            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Dettagli spesa..." class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-medium">
             <select id="cat" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600 appearance-none"></select>
             <div class="flex gap-3 pt-2">
                 <button onclick="save('inc')" class="flex-1 bg-slate-900 text-emerald-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 transition-transform">+ Ricevuto</button>
@@ -89,19 +88,19 @@
                 <div id="settings-quick-list" class="space-y-3 mb-6"></div>
                 <div class="bg-slate-100/50 p-4 rounded-3xl space-y-3">
                     <input type="text" id="new-q-label" placeholder="Nome" class="w-full p-3 rounded-xl text-sm outline-none">
-                    <div class="flex gap-2">
-                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-xl outline-none font-bold">
-                        <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
+                    <div class="flex gap-2 text-sm">
+                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-xl font-bold outline-none">
+                        <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold outline-none"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
                     </div>
                     <button onclick="addQuickSetting()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-[10px]">+ Aggiungi</button>
                 </div>
             </div>
             <div class="glass-card rounded-[2.5rem] p-6 shadow-sm text-center">
                 <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Categorie</p>
-                <div id="settings-cat-list" class="space-y-2 mb-6 text-sm font-bold"></div>
-                <div class="flex gap-2"><input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-xl p-3 outline-none text-sm"><button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button></div>
+                <div id="settings-cat-list" class="space-y-2 mb-6 text-sm font-bold uppercase text-slate-600"></div>
+                <div class="flex gap-2"><input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-xl p-3 outline-none text-sm font-medium"><button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button></div>
             </div>
-            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase py-10 opacity-40 tracking-widest text-center">Resetta App</button>
+            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase py-10 opacity-40 italic tracking-widest text-center">Reset Dati Dispositivo</button>
         </div>
     </div>
 
@@ -114,8 +113,13 @@
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'];
         
+        // DIZIONARIO ESPANSO "MACELLAIO"
         const kwMap = {
-            'spesa': 'Spesa', 'esselunga': 'Spesa', 'conad': 'Spesa', 'macellaio': 'Spesa', 'bolletta': 'Casa', 'affitto': 'Casa', 'fibra': 'Casa', 'stipendio': 'Lavoro', 'pizza': 'Svago', 'nido': 'Riccardo', 'pannolini': 'Riccardo'
+            'spesa': 'Spesa', 'esselunga': 'Spesa', 'conad': 'Spesa', 'coop': 'Spesa', 'lidl': 'Spesa', 'supermercato': 'Spesa', 'macellaio': 'Spesa', 'fruttivendolo': 'Spesa', 'pane': 'Spesa',
+            'bolletta': 'Casa', 'affitto': 'Casa', 'fibra': 'Casa', 'luce': 'Casa', 'gas': 'Casa', 'condominio': 'Casa',
+            'pannolini': 'Riccardo', 'nido': 'Riccardo', 'asilo': 'Riccardo', 'riccardo': 'Riccardo', 'giochi': 'Riccardo',
+            'pizza': 'Svago', 'ristorante': 'Svago', 'cena': 'Svago', 'bar': 'Svago', 'aperitivo': 'Svago',
+            'stipendio': 'Lavoro', 'bonus': 'Lavoro', 'benzina': 'Mezzi', 'treno': 'Mezzi', 'auto': 'Mezzi'
         };
 
         let transactions = JSON.parse(localStorage.getItem('fin_v22_trans')) || [];
@@ -155,13 +159,13 @@
 
         function renderSettingsPage() {
             document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `
-                <div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100 text-xs font-bold uppercase">
+                <div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100 text-[10px] font-bold uppercase">
                     <div class="flex-1">${s.label} - €${s.amt}</div>
                     <button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-2 text-lg">✕</button>
                 </div>
             `).join('');
             document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `
-                <div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl text-xs font-bold uppercase text-slate-700">
+                <div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl mb-2 italic">
                     <span>${c}</span>
                     <button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-2 text-lg">✕</button>
                 </div>
@@ -187,7 +191,6 @@
                 </button>
             `).join('');
 
-            // Filtro per Mese E Anno
             const filtered = transactions.filter(t => {
                 const d = new Date(t.date);
                 return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
@@ -205,8 +208,8 @@
             document.getElementById('list').innerHTML = filtered.map(t => `
                 <div class="glass-card p-4 rounded-[2.2rem] flex justify-between items-center border border-white mb-3 text-sm">
                     <div class="truncate flex-1 pr-4">
-                        <p class="font-extrabold text-slate-800 truncate tracking-tight italic">${t.dsc}</p>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">${t.usr} • ${t.cat}</p>
+                        <p class="font-extrabold text-slate-800 truncate tracking-tight italic text-center sm:text-left">${t.dsc}</p>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic text-center sm:text-left">${t.usr} • ${t.cat}</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} italic">€${t.amt.toFixed(2)}</p>
@@ -243,7 +246,6 @@
             const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
             if(!a || !d) return alert("Dati mancanti!");
             vibrate();
-            // Salva con la data corrente dell'utente
             transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
             localStorage.setItem('fin_v22_trans', JSON.stringify(transactions));
             document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
@@ -290,7 +292,6 @@
         window.onload = () => {
             const mSel = document.getElementById('month-select');
             monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
-            
             const ySel = document.getElementById('year-select');
             for(let y = currentYear - 2; y <= currentYear + 2; y++) {
                 ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
