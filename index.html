@@ -3,203 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Finanze</title>
+    <title>Finanze Famiglia</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
-        /* Stili di emergenza se Tailwind non carica */
-        body { font-family: sans-serif; background-color: #f8fafc; margin: 0; padding-bottom: env(safe-area-inset-bottom, 100px); }
-        .main-container { max-width: 450px; margin: 0 auto; padding: 20px; }
-        .card { background: white; border-radius: 24px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 20px; border: 1px solid #f1f5f9; }
-        .dark-card { background: #0f172a; color: white; border-radius: 32px; padding: 30px; text-align: center; }
-        
-        /* Navbar fissa */
-        .navbar { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 70px; background: #0f172a; border-radius: 40px; display: flex; align-items: center; justify-content: space-around; z-index: 100; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3); }
-        .nav-btn { color: #64748b; font-size: 24px; border: none; background: none; cursor: pointer; transition: 0.3s; }
-        .nav-btn.active { color: #6366f1; transform: scale(1.2); }
-        
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 120px; background: #f8fafc; }
         .hidden { display: none !important; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .nav-active { color: #6366f1; transform: scale(1.05); font-weight: 800; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        input, select { background: #f1f5f9; border-radius: 12px; padding: 12px; border: none; font-size: 16px; width: 100%; outline: none; }
+        @keyframes flash-inc { 0% { background: #f0fdf4; } 100% { background: white; } }
+        @keyframes flash-exp { 0% { background: #fef2f2; } 100% { background: white; } }
+        .flash-inc { animation: flash-inc 0.8s ease-out; }
+        .flash-exp { animation: flash-exp 0.8s ease-out; }
+        .ai-glow { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); border-color: #6366f1 !important; }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-    <div class="main-container">
-        
-        <div id="page-home">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h1 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0;">Wallet</h1>
-                <div style="display: flex; gap: 5px;">
-                    <select id="m-sel" onchange="changeDate()" style="width: auto; padding: 5px 10px; font-size: 12px;"></select>
-                    <select id="y-sel" onchange="changeDate()" style="width: auto; padding: 5px 10px; font-size: 12px;"></select>
-                </div>
+    <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-12">
+        <div class="flex justify-between items-start mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight italic text-left">Wallet</h1>
+                <p id="date-label" class="text-indigo-500 font-bold text-[10px] uppercase mt-1 text-left tracking-widest"></p>
             </div>
-
-            <div class="dark-card">
-                <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin: 0 0 10px 0;">Patrimonio Totale</p>
-                <h2 id="total-bal" style="font-size: 36px; margin: 0 0 20px 0; letter-spacing: -1px;">€ 0,00</h2>
-                <div style="display: flex; justify-content: space-around; border-top: 1px solid #1e293b; pt: 15px;">
-                    <div><p style="font-size: 9px; color: #64748b; margin: 5px 0;">Entrate</p><p id="m-inc" style="color: #10b981; font-weight: bold; margin: 0;">€ 0</p></div>
-                    <div style="width: 1px; background: #1e293b; height: 30px; margin-top: 10px;"></div>
-                    <div><p style="font-size: 9px; color: #64748b; margin: 5px 0;">Uscite</p><p id="m-exp" style="color: #ef4444; font-weight: bold; margin: 0;">€ 0</p></div>
-                </div>
+            <div class="flex gap-2">
+                <select id="month-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-500"></select>
+                <select id="year-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-500"></select>
             </div>
-
-            <div id="quick-actions" class="no-scrollbar" style="display: flex; gap: 10px; overflow-x: auto; margin: 20px 0; padding-bottom: 5px;"></div>
-
-            <div class="card">
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <input type="number" id="amt" placeholder="0.00" style="flex: 1; font-weight: 800;">
-                    <select id="usr" style="flex: 1; color: #6366f1; font-weight: bold;">
-                        <option value="Stany">Stany</option>
-                        <option value="Giulia">Giulia</option>
-                    </select>
-                </div>
-                <input type="text" id="dsc" oninput="predict(this.value)" placeholder="Cosa hai pagato?" style="margin-bottom: 10px;">
-                <select id="cat" style="margin-bottom: 15px; font-weight: 600;"></select>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="save('inc')" style="flex: 1; background: #0f172a; color: #10b981; padding: 15px; border-radius: 16px; border: 1px solid #1e293b; font-weight: 800; font-size: 12px; cursor: pointer;">RICEVUTO</button>
-                    <button onclick="save('exp')" style="flex: 1; background: #0f172a; color: #ef4444; padding: 15px; border-radius: 16px; border: 1px solid #1e293b; font-weight: 800; font-size: 12px; cursor: pointer;">SPESO</button>
-                </div>
-            </div>
-
-            <div class="card"><canvas id="chartPie" style="max-height: 200px;"></canvas></div>
-            <div id="list" style="padding-bottom: 80px;"></div>
         </div>
 
-        <div id="page-set" class="hidden">
-            <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 20px;">Configurazione</h1>
-            <div class="card">
-                <p style="font-size: 10px; font-weight: 800; color: #6366f1; text-transform: uppercase;">Tasti Rapidi</p>
-                <div id="set-quick" style="margin: 15px 0;"></div>
-                <div style="background: #f8fafc; padding: 15px; border-radius: 16px;">
-                    <input type="text" id="new-q-l" placeholder="Nome Tasto" style="background: white; margin-bottom: 10px;">
-                    <input type="number" id="new-q-a" placeholder="Importo €" style="background: white; margin-bottom: 10px;">
-                    <button onclick="addQ()" style="width: 100%; background: #6366f1; color: white; padding: 12px; border-radius: 12px; border: none; font-weight: bold;">AGGIUNGI</button>
+        <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl mb-8 relative overflow-hidden text-center">
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-2 italic">Patrimonio</p>
+            <div class="flex justify-center items-end gap-3 mb-6">
+                <h2 id="total-balance" class="text-4xl font-extrabold tracking-tighter italic">€ 0,00</h2>
+                <div class="w-12 h-6"><canvas id="sparklineChart"></canvas></div>
+            </div>
+            <div class="flex justify-around items-center gap-4 bg-white/5 p-4 rounded-3xl">
+                <div class="text-center">
+                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
+                    <p id="m-inc" class="font-extrabold text-emerald-400 text-base">€ 0</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
+                    <p id="m-exp" class="font-extrabold text-rose-400 text-base">€ 0</p>
                 </div>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" style="width: 100%; color: #ef4444; font-weight: bold; border: none; background: none; padding: 40px 0;">RESET TOTALE DATI</button>
+        </div>
+
+        <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar"><div id="quick-actions-container" class="flex gap-3"></div></div>
+
+        <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-8 space-y-4 border border-white relative transition-all">
+            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter">AI Intelligente</div>
+            <div class="flex gap-2">
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 font-extrabold text-xl outline-none">
+                <select id="usr" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 text-xs font-bold text-indigo-600 outline-none">
+                    <option value="Stany">Stany</option>
+                    <option value="Giulia">Giulia</option>
+                </select>
+            </div>
+            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai pagato?" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-medium">
+            <select id="cat" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600 appearance-none"></select>
+            <div class="flex gap-3 pt-2">
+                <button onclick="save('inc')" class="flex-1 bg-slate-900 text-emerald-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 transition-transform">+ Ricevuto</button>
+                <button onclick="save('exp')" class="flex-1 bg-slate-900 text-rose-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 transition-transform">- Speso</button>
+            </div>
+        </div>
+
+        <div id="charts-container" class="glass-card rounded-[2.5rem] p-7 mb-10 space-y-10 shadow-sm border border-white">
+            <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
+            <div class="pt-8 border-t border-slate-100"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
+        </div>
+        
+        <div id="list" class="space-y-4 pb-20 text-left"></div>
+    </div>
+
+    <div id="page-settings" class="max-w-md mx-auto px-6 pt-12 hidden text-center">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-10 tracking-tight italic">Opzioni</h1>
+        <div class="space-y-8 pb-10 text-left">
+            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm">
+                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
+                <div id="settings-quick-list" class="space-y-3 mb-6"></div>
+                <div class="bg-slate-100/50 p-4 rounded-3xl space-y-3">
+                    <input type="text" id="new-q-label" placeholder="Nome" class="w-full p-3 rounded-xl text-sm outline-none">
+                    <div class="flex gap-2">
+                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-xl outline-none font-bold">
+                        <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
+                    </div>
+                    <button onclick="addQuickSetting()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-[10px]">+ Aggiungi</button>
+                </div>
+            </div>
+            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm text-center">
+                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Categorie</p>
+                <div id="settings-cat-list" class="space-y-2 mb-6 text-sm font-bold"></div>
+                <div class="flex gap-2"><input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-xl p-3 outline-none text-sm"><button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button></div>
+            </div>
+            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase py-10 opacity-40 tracking-widest text-center">Resetta App</button>
         </div>
     </div>
 
-    <nav class="navbar">
-        <button onclick="tab('home')" id="btn-home" class="nav-btn active">📊</button>
-        <button onclick="tab('set')" id="btn-set" class="nav-btn">⚙️</button>
+    <nav class="fixed bottom-6 left-6 right-6 bg-slate-900 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl border border-white/10">
+        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all"><span class="text-xl">📊</span><span class="text-[8px] uppercase font-black tracking-widest">Home</span></button>
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all"><span class="text-xl">⚙️</span><span class="text-[8px] uppercase font-black tracking-widest">Set</span></button>
     </nav>
 
     <script>
-        const months = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
-        const kw = { 'spesa':'Spesa','esselunga':'Spesa','conad':'Spesa','macellaio':'Spesa','bolletta':'Casa','affitto':'Casa','fibra':'Casa','nido':'Riccardo' };
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'];
         
-        let db = {
-            t: JSON.parse(localStorage.getItem('f_v26_t')) || [],
-            q: JSON.parse(localStorage.getItem('f_v26_q')) || [{l:'Casa', a:600}, {l:'Fibra', a:30}],
-            c: JSON.parse(localStorage.getItem('f_v26_c')) || ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro"]
+        const kwMap = {
+            'spesa': 'Spesa', 'esselunga': 'Spesa', 'conad': 'Spesa', 'macellaio': 'Spesa', 'bolletta': 'Casa', 'affitto': 'Casa', 'fibra': 'Casa', 'stipendio': 'Lavoro', 'pizza': 'Svago', 'nido': 'Riccardo', 'pannolini': 'Riccardo'
         };
-        let curM = new Date().getMonth(), curY = new Date().getFullYear();
-        let myChart = null;
 
-        function tab(p) {
-            document.getElementById('page-home').classList.toggle('hidden', p !== 'home');
-            document.getElementById('page-set').classList.toggle('hidden', p !== 'set');
-            document.getElementById('btn-home').classList.toggle('active', p === 'home');
-            document.getElementById('btn-set').classList.toggle('active', p === 'set');
-            if(p === 'home') render(); else renderSet();
+        let transactions = JSON.parse(localStorage.getItem('fin_v22_trans')) || [];
+        let quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [
+            { label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }
+        ];
+        let categories = JSON.parse(localStorage.getItem('fin_v22_cats')) || ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Mezzi"];
+        
+        const now = new Date();
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+        let charts = { pie: null, line: null, spark: null };
+
+        function vibrate() { if (window.navigator?.vibrate) window.navigator.vibrate(30); }
+
+        function predictCategory(text) {
+            const val = text.toLowerCase();
+            const badge = document.getElementById('ai-badge');
+            const select = document.getElementById('cat');
+            let found = false;
+            for (let key in kwMap) {
+                if (val.includes(key) && categories.includes(kwMap[key])) {
+                    select.value = kwMap[key]; found = true; break;
+                }
+            }
+            badge.classList.toggle('hidden', !found);
         }
 
-        function predict(v) {
-            const val = v.toLowerCase();
-            const sel = document.getElementById('cat');
-            for(let k in kw) { if(val.includes(k)) { sel.value = kw[k]; break; } }
+        function switchTab(p) {
+            vibrate();
+            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
+            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
+            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
+            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
+            if(p === 'dashboard') render(); else renderSettingsPage();
         }
 
-        function save(type) {
-            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
-            if(!a || !d) return alert("Inserisci importo e descrizione");
-            db.t.unshift({ id: Date.now(), a: parseFloat(a), d: d, c: document.getElementById('cat').value, u: document.getElementById('usr').value, t: type, dt: new Date().toISOString() });
-            localStorage.setItem('f_v26_t', JSON.stringify(db.t));
-            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
-            render();
-        }
-
-        function renderSet() {
-            document.getElementById('set-quick').innerHTML = db.q.map((s,i) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: bold;">
-                    <span>${s.l} - €${s.a}</span>
-                    <button onclick="db.q.splice(${i},1); localStorage.setItem('f_v26_q', JSON.stringify(db.q)); renderSet()" style="color: #ef4444; border: none; background: none; font-size: 18px;">✕</button>
+        function renderSettingsPage() {
+            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `
+                <div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100 text-xs font-bold uppercase">
+                    <div class="flex-1">${s.label} - €${s.amt}</div>
+                    <button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-2 text-lg">✕</button>
+                </div>
+            `).join('');
+            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `
+                <div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl text-xs font-bold uppercase text-slate-700">
+                    <span>${c}</span>
+                    <button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-2 text-lg">✕</button>
                 </div>
             `).join('');
         }
 
-        function addQ() {
-            const l = document.getElementById('new-q-l').value, a = document.getElementById('new-q-a').value;
-            if(!l || !a) return;
-            db.q.push({l, a: parseFloat(a)});
-            localStorage.setItem('f_v26_q', JSON.stringify(db.q));
-            document.getElementById('new-q-l').value = ''; document.getElementById('new-q-a').value = '';
-            renderSet();
+        function updateDateFilter() {
+            currentMonth = parseInt(document.getElementById('month-select').value);
+            currentYear = parseInt(document.getElementById('year-select').value);
+            render();
         }
 
         function render() {
-            document.getElementById('cat').innerHTML = db.c.map(c => `<option value="${c}">${c}</option>`).join('');
-            document.getElementById('quick-actions').innerHTML = db.q.map(s => `
-                <div onclick="document.getElementById('amt').value=${s.a}; document.getElementById('dsc').value='${s.l}'; predict('${s.l}'); save('exp')" style="background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); flex-shrink: 0; text-align: center; border: 1px solid #f1f5f9;">
-                    <p style="font-size: 8px; color: #6366f1; text-transform: uppercase; font-weight: 800; margin: 0;">${s.l}</p>
-                    <p style="font-size: 16px; font-weight: 800; margin: 0;">€${s.a}</p>
-                </div>
+            const catSelect = document.getElementById('cat');
+            const catVal = catSelect.value;
+            catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (categories.includes(catVal)) catSelect.value = catVal;
+
+            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `
+                <button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[2rem] shadow-sm shrink-0 active:scale-95 transition-all text-center">
+                    <p class="text-[9px] font-black uppercase text-indigo-500 mb-1 italic tracking-tighter">${s.label}</p>
+                    <p class="text-sm font-black text-slate-800 tracking-tighter">€${s.amt}</p>
+                </button>
             `).join('');
 
-            const filtered = db.t.filter(x => {
-                const d = new Date(x.dt);
-                return d.getMonth() === curM && d.getFullYear() === curY;
+            // Filtro per Mese E Anno
+            const filtered = transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
             });
 
-            const tot = db.t.reduce((s,x) => x.t === 'inc' ? s + x.a : s - x.a, 0);
-            const inc = filtered.filter(x => x.t === 'inc').reduce((s,x) => s + x.a, 0);
-            const exp = filtered.filter(x => x.t === 'exp').reduce((s,x) => s + x.a, 0);
+            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
+            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
+            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
 
-            document.getElementById('total-bal').innerText = `€ ${tot.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
-            document.getElementById('m-inc').innerText = `+ €${inc}`;
-            document.getElementById('m-exp').innerText = `- €${exp}`;
+            document.getElementById('date-label').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
+            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
-            document.getElementById('list').innerHTML = filtered.map(x => `
-                <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 10px;">
-                    <div><p style="font-weight: 800; margin: 0; font-size: 14px;">${x.d}</p><p style="font-size: 9px; color: #94a3b8; text-transform: uppercase; margin: 0;">${x.u} • ${x.c}</p></div>
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-weight: 800; color: ${x.t==='inc'?'#10b981':'#ef4444'}">€${x.a.toFixed(2)}</span>
-                        <button onclick="db.t = db.t.filter(i => i.id !== ${x.id}); localStorage.setItem('f_v26_t', JSON.stringify(db.t)); render()" style="color: #cbd5e1; border: none; background: none; font-size: 20px;">✕</button>
+            document.getElementById('list').innerHTML = filtered.map(t => `
+                <div class="glass-card p-4 rounded-[2.2rem] flex justify-between items-center border border-white mb-3 text-sm">
+                    <div class="truncate flex-1 pr-4">
+                        <p class="font-extrabold text-slate-800 truncate tracking-tight italic">${t.dsc}</p>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">${t.usr} • ${t.cat}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} italic">€${t.amt.toFixed(2)}</p>
+                        <button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-200 font-bold px-1 text-lg">✕</button>
                     </div>
                 </div>
             `).join('');
-
-            try {
-                const cats = [...new Set(filtered.filter(x => x.t === 'exp').map(x => x.c))];
-                const vals = cats.map(c => filtered.filter(x => x.c === c && x.t === 'exp').reduce((s,x) => s + x.a, 0));
-                const ctx = document.getElementById('chartPie').getContext('2d');
-                if(myChart) myChart.destroy();
-                if(cats.length > 0) {
-                    myChart = new Chart(ctx, { type: 'doughnut', data: { labels: cats, datasets: [{ data: vals, backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899'] }] }, options: { plugins: { legend: { position: 'bottom' } } } });
-                }
-            } catch(e) {}
+            
+            setTimeout(() => { try { updateCharts(filtered); } catch(e) {} }, 150);
         }
 
-        function changeDate() {
-            curM = parseInt(document.getElementById('m-sel').value);
-            curY = parseInt(document.getElementById('y-sel').value);
+        function addQuickSetting() {
+            const l = document.getElementById('new-q-label').value;
+            const a = document.getElementById('new-q-amt').value;
+            if(!l || !a) return;
+            quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value });
+            localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); renderSettingsPage();
+        }
+        function removeQuickSetting(i) { quickSettings.splice(i, 1); localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); renderSettingsPage(); }
+        function addCategory() { 
+            const v = document.getElementById('new-cat-name').value.trim();
+            if(!v) return; categories.push(v); localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); 
+            document.getElementById('new-cat-name').value = ''; renderSettingsPage();
+        }
+        function removeCategory(i) { categories.splice(i, 1); localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); renderSettingsPage(); }
+
+        function deleteEntry(id) {
+            if(confirm("Eliminare?")) { transactions = transactions.filter(t => t.id !== id); localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); render(); }
+        }
+
+        function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
+
+        function save(type) {
+            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
+            if(!a || !d) return alert("Dati mancanti!");
+            vibrate();
+            // Salva con la data corrente dell'utente
+            transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
+            localStorage.setItem('fin_v22_trans', JSON.stringify(transactions));
+            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
+            document.getElementById('ai-badge').classList.add('hidden');
+            const card = document.getElementById('input-card');
+            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
+            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
             render();
+        }
+
+        function updateCharts(data) {
+            const last6 = [];
+            for(let i = 5; i >= 0; i--) {
+                let d = new Date(currentYear, currentMonth - i, 1);
+                last6.push({ m: d.getMonth(), y: d.getFullYear() });
+            }
+            const lineData = last6.map(obj => transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
+            }).reduce((s, t) => s + t.amt, 0));
+
+            const sEl = document.getElementById('sparklineChart');
+            if(sEl) {
+                if(charts.spark) charts.spark.destroy();
+                charts.spark = new Chart(sEl.getContext('2d'), { type: 'line', data: { labels: last6, datasets: [{ data: lineData, borderColor: '#10b981', borderWidth: 2, pointRadius: 0, tension: 0.4 }] }, options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, responsive: true, maintainAspectRatio: false } });
+            }
+
+            const exp = data.filter(t => t.type === 'exp');
+            const catsArr = [...new Set(exp.map(t => t.cat))];
+            const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
+            const pEl = document.getElementById('chartPie');
+            if(pEl && catsArr.length > 0) {
+                if(charts.pie) charts.pie.destroy();
+                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 4, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9, weight: 'bold' } } } }, cutout: '70%', responsive: true } });
+            }
+
+            const lEl = document.getElementById('chartLine');
+            if(lEl) {
+                if(charts.line) charts.line.destroy();
+                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ borderColor: '#6366f1', data: lineData, tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } }, responsive: true } });
+            }
         }
 
         window.onload = () => {
-            const mS = document.getElementById('m-sel'), yS = document.getElementById('y-sel');
-            months.forEach((m, i) => mS.innerHTML += `<option value="${i}" ${i === curM ? 'selected' : ''}>${m}</option>`);
-            for(let y = curY - 1; y <= curY + 1; y++) yS.innerHTML += `<option value="${y}" ${y === curY ? 'selected' : ''}>${y}</option>`;
+            const mSel = document.getElementById('month-select');
+            monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
+            
+            const ySel = document.getElementById('year-select');
+            for(let y = currentYear - 2; y <= currentYear + 2; y++) {
+                ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
+            }
             render();
         };
+        function clearAllData() { if(confirm("Cancellare tutto?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
