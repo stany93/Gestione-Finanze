@@ -12,11 +12,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 120px; background: #f8fafc; }
         .hidden { display: none !important; }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8); }
-        .nav-active { color: #6366f1; transform: scale(1.05); font-weight: 800; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .nav-active { color: #6366f1; transform: scale(1.05); font-weight: 800; filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.3)); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        @keyframes flash-inc { 0% { background: #dcfce7; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.8); transform: scale(1); } }
-        @keyframes flash-exp { 0% { background: #fee2e2; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.8); transform: scale(1); } }
+        @keyframes flash-inc { 0% { background: #dcfce7; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.85); transform: scale(1); } }
+        @keyframes flash-exp { 0% { background: #fee2e2; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.85); transform: scale(1); } }
         .flash-inc { animation: flash-inc 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .flash-exp { animation: flash-exp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
@@ -116,13 +116,117 @@
 
     <nav class="fixed bottom-5 left-5 right-5 bg-slate-900/90 backdrop-blur-xl h-20 rounded-[2.5rem] flex items-center justify-around z-50 shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-slate-700/50">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all text-left">
-            <span class="text-[22px]">📊</span><span class="text-[8px] uppercase font-black tracking-widest text-indigo-200">Home</span>
+            <span class="text-[22px]">📊</span><span class="text-[8px] uppercase font-black tracking-widest">Home</span>
         </button>
-        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all text-left hover:text-slate-300">
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all text-left">
             <span class="text-[22px]">⚙️</span><span class="text-[8px] uppercase font-black tracking-widest">Opzioni</span>
         </button>
     </nav>
 
     <script>
-        // 1. Costanti e Configurazioni fisse
-        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#3b82f6', '#d946ef', '#14b8a6'];
+        
+        const brain = {
+            'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
+            'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
+            'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino'],
+            'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
+            'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
+            'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
+            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
+            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
+            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
+            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
+            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
+            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
+        };
+
+        // Identico alla v22.1 - il "motore"
+        let transactions = JSON.parse(localStorage.getItem('fin_v22_trans')) || [];
+        let quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
+        
+        // Uso una chiave nuova così si auto-popola la prima volta con le 12 categorie senza codice complesso
+        let categories = JSON.parse(localStorage.getItem('fin_v1_cats')) || ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
+        
+        const now = new Date();
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+        let charts = { pie: null, line: null, spark: null };
+
+        function vibrate() { if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(30); }
+
+        function predictCategory(text) {
+            const val = text.toLowerCase();
+            const badge = document.getElementById('ai-badge');
+            const select = document.getElementById('cat');
+            let found = false;
+            for (let catName in brain) {
+                if (brain[catName].some(k => val.includes(k)) && categories.includes(catName)) {
+                    select.value = catName; found = true; break;
+                }
+            }
+            if (badge) {
+                if (found) badge.classList.remove('hidden');
+                else badge.classList.add('hidden');
+            }
+        }
+
+        function switchTab(p) {
+            vibrate();
+            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
+            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
+            
+            const btnDash = document.getElementById('btn-dash');
+            const btnSet = document.getElementById('btn-set');
+            
+            if(p === 'dashboard') {
+                btnDash.classList.add('nav-active'); btnDash.classList.remove('text-slate-500');
+                btnSet.classList.remove('nav-active'); btnSet.classList.add('text-slate-500');
+                render();
+            } else {
+                btnSet.classList.add('nav-active'); btnSet.classList.remove('text-slate-500');
+                btnDash.classList.remove('nav-active'); btnDash.classList.add('text-slate-500');
+                renderSettingsPage();
+            }
+        }
+
+        function renderSettingsPage() {
+            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 text-[10px] font-bold uppercase shadow-sm"><div class="flex-1 text-slate-700">${s.label} <span class="text-indigo-500 ml-1">€${s.amt}</span></div><button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-3 py-1 bg-rose-50 rounded-lg">✕</button></div>`).join('');
+            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-white p-3 rounded-2xl mb-2 italic px-4 shadow-sm border border-slate-100"><span class="font-semibold text-slate-700">${c}</span><button onclick="removeCategory(${i})" class="text-rose-400 font-bold px-2 py-1">✕</button></div>`).join('');
+        }
+
+        function updateDateFilter() {
+            currentMonth = parseInt(document.getElementById('month-select').value);
+            currentYear = parseInt(document.getElementById('year-select').value);
+            render();
+        }
+
+        function render() {
+            const catSelect = document.getElementById('cat');
+            const catVal = catSelect.value;
+            catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (categories.includes(catVal)) catSelect.value = catVal;
+
+            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[1.5rem] shadow-sm hover:shadow-md shrink-0 active:scale-95 transition-all text-center border-white/80 bg-gradient-to-br from-white to-slate-50/80"><p class="text-[9px] font-black uppercase text-indigo-500 mb-1 tracking-tighter">${s.label}</p><p class="text-[15px] font-extrabold text-slate-800 tracking-tighter italic">€${s.amt}</p></button>`).join('');
+
+            const filtered = transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+
+            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
+            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
+            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
+
+            document.getElementById('date-label').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
+            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
+
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="glass-card p-4 rounded-[1.5rem] flex justify-between items-center border border-white shadow-sm hover:shadow-md transition-all mb-3 text-sm pr-5 bg-gradient-to-br from-white to-slate-50/50"><div class="truncate flex-1 pr-4 text-left"><p class="font-extrabold text-slate-800 truncate tracking-tight italic">${t.dsc}</p><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic mt-0.5">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3 text-right"><p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} text-base italic">€${t.amt.toFixed(2)}</p><button onclick="deleteEntry(${t.id})" class="text-slate-300 hover:text-rose-400 transition-colors font-bold pl-2 pr-1 py-1 text-lg">✕</button></div></div>`).join('');
+            
+            setTimeout(() => { try { updateCharts(filtered); } catch(e) {} }, 150);
+        }
+
+        function addQuickSetting() {
