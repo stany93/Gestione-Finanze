@@ -1,340 +1,188 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Finanze Famiglia</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 120px; background: #f8fafc; }
-        .hidden { display: none !important; }
-        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); }
-        .nav-active { color: #6366f1; transform: scale(1.05); font-weight: 800; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        @keyframes flash-inc { 0% { background: #f0fdf4; } 100% { background: white; } }
-        @keyframes flash-exp { 0% { background: #fef2f2; } 100% { background: white; } }
-        .flash-inc { animation: flash-inc 0.8s ease-out; }
-        .flash-exp { animation: flash-exp 0.8s ease-out; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Wallet</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;
+      --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;
+      --transition:180ms cubic-bezier(.16,1,.3,1);
+      --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
+      --text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+      --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
+      --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+      --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+      --font-body:'Satoshi','Inter',sans-serif;
+      --color-bg:#f7f6f2;
+      --color-surface:#f9f8f5;
+      --color-surface-2:#fbfbf9;
+      --color-surface-offset:#f3f0ec;
+      --color-divider:#dcd9d5;
+      --color-border:#d4d1ca;
+      --color-text:#28251d;
+      --color-text-muted:#7a7974;
+      --color-text-faint:#bab9b4;
+      --color-text-inverse:#f9f8f4;
+      --color-primary:#01696f;
+      --color-primary-hover:#0c4e54;
+      --color-primary-active:#0f3638;
+      --color-success:#437a22;
+      --color-error:#a12c7b;
+      --shadow-sm:0 1px 2px oklch(0.2 .01 80 / .06);
+      --shadow-md:0 4px 12px oklch(0.2 .01 80 / .08);
+      --shadow-lg:0 12px 32px oklch(0.2 .01 80 / .12)
+    }
+
+    [data-theme="dark"]{
+      --color-bg:#171614;
+      --color-surface:#1c1b19;
+      --color-surface-2:#201f1d;
+      --color-surface-offset:#1d1c1a;
+      --color-divider:#262523;
+      --color-border:#393836;
+      --color-text:#cdccca;
+      --color-text-muted:#797876;
+      --color-text-faint:#5a5957;
+      --color-text-inverse:#2b2a28;
+      --color-primary:#4f98a3;
+      --color-primary-hover:#227f8b;
+      --color-primary-active:#1a626b;
+      --color-success:#6daa45;
+      --color-error:#d163a7;
+      --shadow-sm:0 1px 2px oklch(0 0 0 / .2);
+      --shadow-md:0 4px 12px oklch(0 0 0 / .3);
+      --shadow-lg:0 12px 32px oklch(0 0 0 / .4)
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:none;text-size-adjust:none;scroll-behavior:smooth}
+    body{
+      min-height:100dvh;
+      font-family:var(--font-body);
+      font-size:var(--text-base);
+      line-height:1.6;
+      color:var(--color-text);
+      background:var(--color-bg);
+      -webkit-font-smoothing:antialiased
+    }
+
+    img,svg,canvas{display:block;max-width:100%;height:auto}
+    button,input,select{font:inherit;color:inherit}
+    button{cursor:pointer;border:0;background:none}
+    a{color:inherit}
+    :focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border-width:0
+    }
+
+    .card{
+      background:var(--color-surface);
+      border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);
+      box-shadow:var(--shadow-sm);
+      border-radius:1.5rem
+    }
+
+    .muted{color:var(--color-text-muted)}
+    .faint{color:var(--color-text-faint)}
+    .pill{border-radius:9999px}
+    .chip{
+      background:color-mix(in oklab,var(--color-primary) 10%,var(--color-surface));
+      color:var(--color-primary);
+      border:1px solid color-mix(in oklab,var(--color-primary) 20%,transparent)
+    }
+
+    .btn{
+      padding:.9rem 1rem;
+      border-radius:1rem;
+      font-weight:800;
+      transition:transform var(--transition),background var(--transition),color var(--transition),border-color var(--transition)
+    }
+
+    .btn:active{transform:scale(.98)}
+    .btn-primary{background:var(--color-primary);color:var(--color-text-inverse)}
+    .btn-primary:hover{background:var(--color-primary-hover)}
+    .btn-secondary{
+      background:var(--color-surface-2);
+      border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent)
+    }
+    .btn-ghost{
+      background:transparent;
+      border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent)
+    }
+
+    .scrollbar-hide::-webkit-scrollbar{display:none}
+    .flash-inc{animation:fi .8s ease-out}
+    .flash-exp{animation:fe .8s ease-out}
+
+    @keyframes fi{0%{background:#f0fdf4}100%{background:var(--color-surface)}}
+    @keyframes fe{0%{background:#fef2f2}100%{background:var(--color-surface)}}
+  </style>
 </head>
-<body class="min-h-screen">
+<body>
+  <a class="sr-only" href="#main">Salta al contenuto</a>
 
-    <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-12">
-        <div class="flex justify-between items-start mb-8 text-left">
-            <div>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight italic">Wallet</h1>
-                <p id="date-label" class="text-indigo-500 font-bold text-[10px] uppercase mt-1 tracking-widest"></p>
+  <div class="max-w-md mx-auto px-5 pt-8 pb-28" id="app">
+    <header class="flex items-start justify-between gap-3 mb-6">
+      <div>
+        <p class="text-[var(--text-xs)] uppercase tracking-[0.24em] font-extrabold text-[color:var(--color-primary)]">Wallet</p>
+        <h1 class="text-[var(--text-xl)] font-extrabold tracking-tight">Finanze Famiglia</h1>
+        <p id="date-label" class="text-[var(--text-xs)] uppercase tracking-[0.2em] muted mt-1"></p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="theme-toggle" class="btn btn-secondary w-11 h-11 p-0" aria-label="Cambia tema">☾</button>
+        <select id="month-select" onchange="updateDateFilter()" class="card px-3 py-2 rounded-2xl text-[var(--text-xs)] font-black uppercase"></select>
+        <select id="year-select" onchange="updateDateFilter()" class="card px-3 py-2 rounded-2xl text-[var(--text-xs)] font-black uppercase"></select>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="card p-6 mb-6">
+        <p class="text-[var(--text-xs)] uppercase tracking-[0.24em] faint font-black mb-2">Patrimonio</p>
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <div id="total-balance" class="text-[var(--text-xl)] font-extrabold tracking-tight">€ 0,00</div>
+            <p class="muted text-[var(--text-sm)] mt-1">Saldo complessivo</p>
+          </div>
+
+          <div class="flex gap-2">
+            <div class="card px-3 py-2 rounded-2xl text-center min-w-20">
+              <p class="text-[var(--text-xs)] uppercase faint font-black">Entrate</p>
+              <p id="m-inc" class="text-[var(--text-sm)] font-extrabold text-emerald-600">€ 0</p>
             </div>
-            <div class="flex gap-2">
-                <select id="month-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-500 cursor-pointer"></select>
-                <select id="year-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-500 cursor-pointer"></select>
+            <div class="card px-3 py-2 rounded-2xl text-center min-w-20">
+              <p class="text-[var(--text-xs)] uppercase faint font-black">Uscite</p>
+              <p id="m-exp" class="text-[var(--text-sm)] font-extrabold text-rose-600">€ 0</p>
             </div>
+          </div>
         </div>
+      </section>
 
-        <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl mb-8 relative overflow-hidden text-center">
-            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-2 italic">Patrimonio</p>
-            <div class="flex justify-center items-end gap-3 mb-6">
-                <h2 id="total-balance" class="text-4xl font-extrabold tracking-tighter italic">€ 0,00</h2>
-            </div>
-            <div class="flex justify-around items-center gap-4 bg-white/5 p-4 rounded-3xl backdrop-blur-md">
-                <div class="text-center">
-                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
-                    <p id="m-inc" class="font-extrabold text-emerald-400 text-base">€ 0</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
-                    <p id="m-exp" class="font-extrabold text-rose-400 text-base">€ 0</p>
-                </div>
-            </div>
-        </div>
+      <div class="mb-6 overflow-x-auto scrollbar-hide whitespace-nowrap">
+        <div id="quick-actions-container" class="flex gap-3"></div>
+      </div>
 
-        <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth"><div id="quick-actions-container" class="flex gap-3"></div></div>
-
-        <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-8 space-y-4 border border-white relative transition-all">
-            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter shadow-sm">AI</div>
-            <div class="flex gap-2">
-                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 font-extrabold text-xl outline-none border-none">
-                <select id="usr" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 text-xs font-bold text-indigo-600 outline-none border-none">
-                    <option value="Stany">Stany</option>
-                    <option value="Giulia">Giulia</option>
-                </select>
-            </div>
-            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-medium border-none">
-            <select id="cat" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600 appearance-none border-none"></select>
-            <div class="flex gap-3 pt-2">
-                <button onclick="save('inc')" class="flex-1 bg-slate-900 text-emerald-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 transition-transform">+ Ricevuto</button>
-                <button onclick="save('exp')" class="flex-1 bg-slate-900 text-rose-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 transition-transform">- Speso</button>
-            </div>
-        </div>
-
-        <div id="charts-container" class="glass-card rounded-[2.5rem] p-7 mb-10 shadow-sm border border-white space-y-8">
-            <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
-            <div class="pt-8 border-t border-slate-100"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
-        </div>
-        
-        <div id="list" class="space-y-4 pb-20 text-left"></div>
-    </div>
-
-    <div id="page-settings" class="max-w-md mx-auto px-6 pt-12 hidden text-center">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-10 tracking-tight italic">Opzioni</h1>
-        <div class="space-y-8 pb-10 text-left">
-            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white">
-                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
-                <div id="settings-quick-list" class="space-y-3 mb-6"></div>
-                <div class="bg-slate-100/50 p-4 rounded-3xl space-y-3">
-                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full p-3 rounded-xl text-sm outline-none border-none">
-                    <div class="flex gap-2">
-                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-xl outline-none font-bold border-none">
-                        <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold outline-none border-none"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
-                    </div>
-                    <button onclick="addQuickSetting()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-[10px] shadow-lg">+ Aggiungi</button>
-                </div>
-            </div>
-            
-            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white text-center">
-                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest">Categorie</p>
-                <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-bold uppercase text-slate-600"></div>
-                <div class="flex gap-2">
-                    <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-xl p-3 outline-none text-sm font-medium border-none text-left">
-                    <button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button>
-                </div>
-            </div>
-
-            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase py-10 opacity-40 italic tracking-widest text-center">Resetta App</button>
-        </div>
-    </div>
-
-    <nav class="fixed bottom-6 left-6 right-6 bg-slate-900 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl border border-white/10">
-        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all"><span class="text-xl">📊</span><span class="text-[8px] uppercase font-black tracking-widest">Home</span></button>
-        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all"><span class="text-xl">⚙️</span><span class="text-[8px] uppercase font-black tracking-widest">Set</span></button>
-    </nav>
-
-    <script>
-        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#3b82f6', '#d946ef', '#14b8a6'];
-        
-        // Motore Semantico con Categorie Aggiunte
-        const brain = {
-            'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
-            'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
-            'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino'],
-            'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
-            'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
-            'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
-            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
-            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
-            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
-            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
-            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
-            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
-        };
-
-        // GESTIONE SICURA MEMORIA (come in v22.1 ma con i default aggiornati)
-        let transactions = [];
-        try { transactions = JSON.parse(localStorage.getItem('fin_v22_trans')) || []; } catch(e) {}
-        if(!Array.isArray(transactions)) transactions = [];
-
-        let quickSettings = [];
-        try { quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }]; } catch(e) {}
-        if(!Array.isArray(quickSettings)) quickSettings = [];
-
-        // Unione Intelligente Categorie
-        const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
-        let categories = [];
-        try {
-            let saved = JSON.parse(localStorage.getItem('fin_v22_cats'));
-            if (Array.isArray(saved) && saved.length > 0) {
-                categories = saved;
-                // Aggiunge le nuove se mancano
-                baseCats.forEach(c => { if (!categories.includes(c)) categories.push(c); });
-            } else {
-                categories = baseCats;
-            }
-        } catch(e) { categories = baseCats; }
-        
-        const now = new Date();
-        let currentMonth = now.getMonth();
-        let currentYear = now.getFullYear();
-        let charts = { pie: null, line: null };
-
-        function vibrate() { try { if (window.navigator?.vibrate) window.navigator.vibrate(30); } catch(e){} }
-
-        function predictCategory(text) {
-            const val = text.toLowerCase();
-            const badge = document.getElementById('ai-badge');
-            const select = document.getElementById('cat');
-            let found = false;
-            for (let categoryName in brain) {
-                if (brain[categoryName].some(k => val.includes(k))) {
-                    if (categories.includes(categoryName)) {
-                        select.value = categoryName;
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if(badge) badge.classList.toggle('hidden', !found);
-        }
-
-        function switchTab(p) {
-            vibrate();
-            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
-            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
-            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
-            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
-            if(p === 'dashboard') render(); else renderSettingsPage();
-        }
-
-        function renderSettingsPage() {
-            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100 text-[10px] font-bold uppercase"><div class="flex-1">${s.label} - €${s.amt}</div><button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-2 text-lg">✕</button></div>`).join('');
-            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl mb-2 italic"><span>${c}</span><button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-2 text-lg">✕</button></div>`).join('');
-        }
-
-        function updateDateFilter() {
-            currentMonth = parseInt(document.getElementById('month-select').value);
-            currentYear = parseInt(document.getElementById('year-select').value);
-            render();
-        }
-
-        function render() {
-            const catSelect = document.getElementById('cat');
-            if(catSelect) {
-                const catVal = catSelect.value;
-                catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
-                if (categories.includes(catVal)) catSelect.value = catVal;
-            }
-
-            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[2rem] shadow-sm shrink-0 active:scale-95 transition-all text-center"><p class="text-[9px] font-black uppercase text-indigo-500 mb-1 italic tracking-tighter">${s.label}</p><p class="text-sm font-black text-slate-800 tracking-tighter">€${s.amt}</p></button>`).join('');
-
-            const filtered = transactions.filter(t => {
-                if(!t || !t.date) return false;
-                const d = new Date(t.date);
-                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-            });
-
-            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
-            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
-            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
-
-            document.getElementById('date-label').innerText = `${monthNames[currentMonth]} ${currentYear}`;
-            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
-            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
-            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
-
-            document.getElementById('list').innerHTML = filtered.map(t => `<div class="glass-card p-4 rounded-[2.2rem] flex justify-between items-center border border-white mb-3 text-sm pr-6"><div class="truncate flex-1 pr-4"><p class="font-extrabold text-slate-800 truncate tracking-tight italic text-left">${t.dsc}</p><p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic text-left">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} italic">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-200 font-bold px-1 text-lg">✕</button></div></div>`).join('');
-            
-            setTimeout(() => { updateCharts(filtered); }, 150);
-        }
-
-        function addQuickSetting() { 
-            const l = document.getElementById('new-q-label').value; 
-            const a = document.getElementById('new-q-amt').value; 
-            if(!l || !a) return; 
-            quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); 
-            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
-            renderSettingsPage(); 
-        }
-
-        // POPUP DI CONFERMA AGGIUNTI
-        function removeQuickSetting(i) { 
-            if(confirm("Vuoi eliminare questo tasto rapido?")) {
-                quickSettings.splice(i, 1); 
-                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
-                renderSettingsPage(); 
-            }
-        }
-
-        function addCategory() { 
-            const v = document.getElementById('new-cat-name').value.trim(); 
-            if(!v) return; 
-            categories.push(v); 
-            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
-            document.getElementById('new-cat-name').value = ''; 
-            renderSettingsPage(); 
-        }
-
-        function removeCategory(i) { 
-            if(confirm("Vuoi eliminare questa categoria?")) {
-                categories.splice(i, 1); 
-                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
-                renderSettingsPage(); 
-            }
-        }
-
-        function deleteEntry(id) {
-            if(confirm("Vuoi eliminare questa transazione?")) { 
-                transactions = transactions.filter(t => t.id !== id); 
-                try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){} 
-                render(); 
-            }
-        }
-
-        function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
-
-        function save(type) {
-            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
-            if(!a || !d) return alert("Dati mancanti!");
-            vibrate();
-            transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
-            try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){}
-            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
-            document.getElementById('ai-badge').classList.add('hidden');
-            const card = document.getElementById('input-card');
-            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
-            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
-            render();
-        }
-
-        function updateCharts(data) {
-            if (typeof Chart === 'undefined') return;
-
-            const last6 = [];
-            for(let i = 5; i >= 0; i--) {
-                let d = new Date(currentYear, currentMonth - i, 1);
-                last6.push({ m: d.getMonth(), y: d.getFullYear() });
-            }
-            const lineData = last6.map(obj => transactions.filter(t => {
-                const d = new Date(t.date);
-                return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
-            }).reduce((s, t) => s + t.amt, 0));
-
-            const exp = data.filter(t => t.type === 'exp');
-            const catsArr = [...new Set(exp.map(t => t.cat))];
-            const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
-            
-            const pEl = document.getElementById('chartPie');
-            if(pEl && catsArr.length > 0) {
-                if(charts.pie) charts.pie.destroy();
-                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 4, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9, weight: 'bold' } } } }, cutout: '70%', responsive: true } });
-            }
-
-            const lEl = document.getElementById('chartLine');
-            if(lEl) {
-                if(charts.line) charts.line.destroy();
-                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } }, responsive: true } });
-            }
-        }
-
-        window.onload = () => {
-            const mSel = document.getElementById('month-select');
-            if(mSel) {
-                monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
-            }
-            
-            const ySel = document.getElementById('year-select');
-            if(ySel) {
-                for(let y = currentYear - 2; y <= currentYear + 2; y++) {
-                    ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
-                }
-            }
-            render();
-        };
-        
-        function clearAllData() { if(confirm("Cancellare tutto?")) { localStorage.clear(); location.reload(); } }
-    </script>
-</body>
-</html>
+      <section id="input-card" class="card p-5 mb-6 space-y-4">
+        <div class="flex gap-2">
+          <input
+            type="number"
+            id="amt"
+            placeholder="0,00"
+            class="w-1/2 bg-[color:var(--color-surface-2)] rounded-2xl p-4 font-extrabold text-lg border border-transpa
