@@ -2,178 +2,68 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finanze Famiglia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanze Casa</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-slate-100 min-h-screen pb-20">
-    <div id="app-container" class="max-w-md mx-auto px-4 pt-6">
-        <!-- L'HTML verrà gestito internamente dal JS per sicurezza -->
-        <h1 class="text-center text-slate-400 mt-10">Caricamento in corso...</h1>
+<body class="bg-gray-100">
+
+    <div id="main-app" class="max-w-md mx-auto p-6">
+        <div class="bg-white rounded-3xl shadow-lg p-8 text-center">
+            <h1 class="text-2xl font-bold text-indigo-600 mb-4">Finanze Famiglia</h1>
+            <div class="text-4xl font-black text-gray-800 mb-6" id="balance">€ 0.00</div>
+            
+            <div class="space-y-4">
+                <input type="number" id="input-amt" placeholder="Importo" class="w-full border p-4 rounded-2xl outline-none bg-gray-50">
+                <input type="text" id="input-dsc" placeholder="Descrizione" class="w-full border p-4 rounded-2xl outline-none bg-gray-50">
+                <div class="flex gap-2">
+                    <button onclick="save(1)" class="flex-1 bg-green-500 text-white p-4 rounded-2xl font-bold">ENTRATA</button>
+                    <button onclick="save(0)" class="flex-1 bg-red-500 text-white p-4 rounded-2xl font-bold">USCITA</button>
+                </div>
+            </div>
+
+            <div id="history" class="mt-8 text-left space-y-2">
+                </div>
+        </div>
     </div>
 
     <script>
-        // Funzione di sicurezza per resettare se i dati sono vecchi/corrotti
-        let transactions = [];
-        try {
-            const saved = localStorage.getItem('family_finance_v2');
-            transactions = saved ? JSON.parse(saved) : [];
-            if (!Array.isArray(transactions)) transactions = [];
-        } catch (e) {
-            console.error("Errore dati:", e);
-            transactions = [];
-        }
+        let data = JSON.parse(localStorage.getItem('f_data')) || [];
 
-        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        const currentMonth = new Date().getMonth();
-        let selectedMonth = currentMonth;
-        let myChart = null;
+        function save(isInc) {
+            const a = document.getElementById('input-amt').value;
+            const d = document.getElementById('input-dsc').value;
+            if(!a || !d) return alert("Inserisci i dati!");
 
-        function initUI() {
-            const container = document.getElementById('app-container');
-            container.innerHTML = `
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 class="text-2xl font-black text-slate-800">Finanze Famiglia</h1>
-                        <p id="current-month-label" class="text-indigo-600 font-bold uppercase text-xs tracking-widest">${monthNames[selectedMonth]}</p>
-                    </div>
-                    <button onclick="exportToCSV()" class="bg-white p-2 rounded-xl shadow-sm text-slate-600 text-[10px] font-bold border border-slate-200 uppercase">Esporta</button>
-                </div>
-
-                <div class="bg-indigo-600 rounded-3xl shadow-xl p-6 text-white mb-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-indigo-100 text-[10px] font-medium uppercase tracking-wider">Bilancio Totale</p>
-                            <h2 id="total-balance" class="text-3xl font-bold">€ 0.00</h2>
-                        </div>
-                        <select id="month-select" onchange="changeMonth(this.value)" class="bg-indigo-500 text-white border-none rounded-lg text-xs p-1 outline-none">
-                            ${monthNames.map((m, i) => `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 border-t border-indigo-500 pt-4">
-                        <div><p class="text-indigo-200 text-[10px] uppercase">Entrate</p><p id="m-inc" class="font-bold text-emerald-300">€ 0</p></div>
-                        <div><p class="text-indigo-200 text-[10px] uppercase">Uscite</p><p id="m-exp" class="font-bold text-rose-300">€ 0</p></div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-sm p-5 mb-6 space-y-4">
-                    <div class="flex gap-2">
-                        <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-50 rounded-xl p-3 font-bold outline-none">
-                        <select id="usr" class="w-1/2 bg-slate-50 rounded-xl p-3 text-sm outline-none">
-                            <option value="Io">Io</option>
-                            <option value="Giulia">Giulia</option>
-                        </select>
-                    </div>
-                    <input type="text" id="dsc" placeholder="Descrizione..." class="w-full bg-slate-50 rounded-xl p-3 outline-none">
-                    <select id="cat" class="w-full bg-slate-50 rounded-xl p-3 outline-none">
-                        <option value="🏠 Casa">🏠 Casa</option>
-                        <option value="🛒 Spesa">🛒 Spesa</option>
-                        <option value="💰 Stipendio">💰 Stipendio</option>
-                        <option value="🍕 Svago">🍕 Svago</option>
-                        <option value="👶 Riccardo">👶 Riccardo</option>
-                        <option value="🚗 Auto">🚗 Auto</option>
-                    </select>
-                    <div class="flex gap-2">
-                        <button onclick="add(1)" class="flex-1 bg-emerald-500 text-white py-3 rounded-xl font-bold">ENTRATA</button>
-                        <button onclick="add(0)" class="flex-1 bg-rose-500 text-white py-3 rounded-xl font-bold">USCITA</button>
-                    </div>
-                </div>
-
-                <canvas id="fChart" class="max-h-40 mb-6 mx-auto"></canvas>
-                <div id="t-list" class="space-y-3"></div>
-                <button onclick="resetData()" class="w-full mt-10 text-slate-300 text-[10px] font-bold uppercase">Reset Dati</button>
-            `;
-            render();
-        }
-
-        function changeMonth(val) {
-            selectedMonth = parseInt(val);
-            document.getElementById('current-month-label').innerText = monthNames[selectedMonth];
-            render();
-        }
-
-        function add(isIncome) {
-            const a = document.getElementById('amt').value;
-            const d = document.getElementById('dsc').value;
-            if(!a || !d) return;
-            
-            transactions.unshift({
-                id: Date.now(),
-                amount: parseFloat(a),
-                description: d,
-                category: document.getElementById('cat').value,
-                user: document.getElementById('usr').value,
-                type: isIncome ? 'income' : 'expense',
-                date: new Date().toISOString()
-            });
-            
-            localStorage.setItem('family_finance_v2', JSON.stringify(transactions));
-            document.getElementById('amt').value = '';
-            document.getElementById('dsc').value = '';
-            render();
+            data.unshift({ amt: parseFloat(a), dsc: d, type: isInc });
+            localStorage.setItem('f_data', JSON.stringify(data));
+            location.reload(); // Ricarica per aggiornare
         }
 
         function render() {
-            const filtered = transactions.filter(t => new Date(t.date).getMonth() === selectedMonth);
+            const balEl = document.getElementById('balance');
+            const histEl = document.getElementById('history');
             
-            const total = transactions.reduce((acc, t) => t.type === 'income' ? acc + t.amount : acc - t.amount, 0);
-            const inc = filtered.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-            const exp = filtered.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-
-            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString()}`;
-            document.getElementById('m-inc').innerText = `+ €${inc.toFixed(2)}`;
-            document.getElementById('m-exp').innerText = `- €${exp.toFixed(2)}`;
-
-            const list = document.getElementById('t-list');
-            list.innerHTML = filtered.map(t => `
-                <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between">
-                    <div>
-                        <p class="font-bold text-sm">${t.description}</p>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase">${t.user} • ${t.category}</p>
+            let total = 0;
+            let html = "";
+            
+            data.forEach(item => {
+                total += item.type ? item.amt : -item.amt;
+                html += `
+                    <div class="flex justify-between p-2 border-b text-sm">
+                        <span>${item.dsc}</span>
+                        <span class="font-bold ${item.type ? 'text-green-500' : 'text-red-500'}">
+                            ${item.type ? '+' : '-'} €${item.amt.toFixed(2)}
+                        </span>
                     </div>
-                    <p class="font-bold ${t.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}">
-                        ${t.type === 'income' ? '+' : '-'} €${t.amount.toFixed(2)}
-                    </p>
-                </div>
-            `).join('');
-            
-            updateChart(filtered);
-        }
-
-        function updateChart(data) {
-            const expOnly = data.filter(t => t.type === 'expense');
-            const cats = [...new Set(expOnly.map(t => t.category))];
-            const totals = cats.map(c => expOnly.filter(t => t.category === c).reduce((s, t) => s + t.amount, 0));
-            
-            const ctx = document.getElementById('fChart').getContext('2d');
-            if(myChart) myChart.destroy();
-            if(cats.length === 0) return;
-            myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels: cats, datasets: [{ data: totals, backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444'] }] },
-                options: { plugins: { legend: { display: false } } }
+                `;
             });
+            
+            balEl.innerText = "€ " + total.toFixed(2);
+            histEl.innerHTML = html;
         }
 
-        function exportToCSV() {
-            let csv = "Data,Utente,Descrizione,Categoria,Tipo,Importo\n";
-            transactions.forEach(t => { csv += `${new Date(t.date).toLocaleDateString()},${t.user},${t.description},${t.category},${t.type},${t.amount}\n`; });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'finanze.csv';
-            a.click();
-        }
-
-        function resetData() {
-            if(confirm("Cancello tutto?")) {
-                localStorage.removeItem('family_finance_v2');
-                location.reload();
-            }
-        }
-
-        initUI();
+        render();
     </script>
 </body>
 </html>
