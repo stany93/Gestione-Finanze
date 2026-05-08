@@ -73,14 +73,15 @@
     </div>
 
     <div id="main-view">
+        <!-- PAGE 1: DASHBOARD -->
         <div class="page-container px-5 pt-16">
             <div class="flex justify-between items-start mb-8">
                 <div class="space-y-4">
-                    <div class="relative inline-flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full shadow-sm">
-                        <!-- FIX PALLINO: Padding destro aumentato nel select per fare spazio -->
-                        <select id="account-select" onchange="window.switchAccount(this.value)" class="select-brand bg-transparent pl-4 pr-12 py-2 text-[11px] font-extrabold uppercase tracking-widest text-brand outline-none"></select>
-                        <!-- FIX PALLINO: Spostato più a destra (right-10) per non toccare il testo -->
-                        <span id="sync-status" class="absolute right-10 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                    <!-- FIX: CONTENITORE FLEX PER PALLINO E TESTO -->
+                    <div class="relative inline-flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-full shadow-sm">
+                        <select id="account-select" onchange="window.switchAccount(this.value)" class="select-brand bg-transparent text-[11px] font-extrabold uppercase tracking-widest text-brand outline-none border-none p-0 m-0"></select>
+                        <!-- PALLINO ORA POSIZIONATO RELATIVAMENTE AL TESTO (NON PIU' ABSOLUTE) -->
+                        <span id="sync-status" class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shrink-0"></span>
                     </div>
                     <h1 class="text-4xl font-extrabold tracking-tighter">Wallet</h1>
                 </div>
@@ -97,7 +98,6 @@
             <div class="mb-10 h-32"><canvas id="chartBalanceHistory"></canvas></div>
             <div class="flex justify-around items-center gap-4 border border-slate-200 dark:border-slate-800 p-6 rounded-[2rem] mb-10 bg-white dark:bg-slate-900 shadow-sm"><div class="text-center flex-1"><p class="text-[10px] uppercase font-black text-slate-400 mb-1">Entrate</p><p id="m-inc" class="font-bold text-emerald-600 dark:text-emerald-400 text-lg">€ 0</p></div><div class="w-px h-10 bg-slate-100 dark:bg-slate-800"></div><div class="text-center flex-1"><p class="text-[10px] uppercase font-black text-slate-400 mb-1">Uscite</p><p id="m-exp" class="font-bold text-rose-600 dark:text-rose-400 text-lg">€ 0</p></div></div>
             
-            <!-- BARRA SCORRIMENTO: Padding aumentato (pb-6) per allontanare la scrollbar dai pulsanti -->
             <div class="mb-10 overflow-x-auto pb-6">
                 <div id="quick-actions-container" class="flex gap-2"></div>
             </div>
@@ -129,7 +129,7 @@
             <span class="text-[10px] font-extrabold uppercase tracking-widest">Home</span>
         </button>
         <button onclick="switchTab('settings')" id="btn-set" class="nav-btn text-slate-400 dark:text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
             <span class="text-[10px] font-extrabold uppercase tracking-widest">Opzioni</span>
         </button>
     </nav>
@@ -212,7 +212,7 @@
         window.switchAccount = (id) => {
             window.currentAccount = id; localStorage.setItem('fin_v22_currentAccount', id);
             const acc = window.accounts.find(a => a.id === id);
-            document.getElementById('sync-status').className = id === 'shared' ? 'absolute right-10 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse' : 'hidden';
+            document.getElementById('sync-status').style.display = id === 'shared' ? 'block' : 'none';
             window.transactions = id === 'shared' ? [...window.sharedTransactions] : JSON.parse(localStorage.getItem('fin_v22_trans_' + id)) || [];
             window.render();
         };
@@ -259,7 +259,7 @@
         window.addQuickSetting = () => { const l = document.getElementById('new-q-label').value, a = document.getElementById('new-q-amt').value; if(!l||!a) return; window.quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); window.renderSettingsPage(); };
         window.removeQuickSetting = (i) => { confirmAction(`Eliminare "${window.quickSettings[i].label}"?`, () => { window.quickSettings.splice(i,1); localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); window.renderSettingsPage(); }); };
         window.addCategory = () => { const v = document.getElementById('new-cat-name').value.trim(); if(!v) return; window.categories.push(v); localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); window.renderSettingsPage(); };
-        window.removeCategory = (i) => { confirmAction(`Eliminare categoria "${window.categories[i]}"?`, () => { window.categories.splice(i,1); localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); window.renderSettingsPage(); }); };
+        window.removeCategory = (i) => { confirmAction(`Eliminare "${window.categories[i]}"?`, () => { window.categories.splice(i,1); localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); window.renderSettingsPage(); }); };
         window.updateDateFilter = () => window.render();
         window.predictCategory = (t) => {
             const v = t.toLowerCase();
