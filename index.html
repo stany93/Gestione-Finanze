@@ -2,38 +2,174 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Finance Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Le Mie Finanze</title>
+    <!-- Ottimizzazione per App Mobile -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .card { transition: all 0.3s ease; }
+    </style>
 </head>
-<body class="bg-gray-100 p-4">
-    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-        <h1 class="text-2xl font-bold text-center mb-6 text-indigo-600">Gestione Finanze</h1>
+<body class="bg-slate-50 min-h-screen pb-10">
+    <div class="max-w-md mx-auto px-4 pt-8">
         
-        <div class="bg-indigo-50 p-4 rounded-lg mb-6 text-center">
-            <p class="text-sm text-indigo-500 uppercase font-semibold">Budget Attuale</p>
-            <h2 id="total-balance" class="text-3xl font-bold text-gray-800">€ 0.00</h2>
+        <!-- Header & Saldo -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Finanze Casa</h1>
+            <p class="text-slate-500 text-sm">Gestione entrate e uscite</p>
+        </header>
+
+        <div class="card bg-white rounded-3xl shadow-xl shadow-slate-200/60 p-6 mb-6">
+            <p class="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1">Saldo Totale Attuale</p>
+            <h2 id="total-balance" class="text-4xl font-black text-slate-800">€ 0.00</h2>
         </div>
 
-        <div class="space-y-4 mb-8">
-            <input type="number" id="amount" placeholder="Importo (€)" class="w-full border p-2 rounded">
-            <input type="text" id="description" placeholder="Descrizione" class="w-full border p-2 rounded">
-            <select id="category" class="w-full border p-2 rounded">
-                <option value="Affitto/Mutuo">Affitto/Mutuo</option>
-                <option value="Spesa">Spesa</option>
-                <option value="Stipendio">Stipendio</option>
-                <option value="Svago">Svago</option>
-            </select>
-            <div class="flex gap-2">
-                <button onclick="addTransaction('income')" class="flex-1 bg-green-500 text-white p-2 rounded font-bold">+ Entrata</button>
-                <button onclick="addTransaction('expense')" class="flex-1 bg-red-500 text-white p-2 rounded font-bold">- Uscita</button>
+        <!-- Form Inserimento -->
+        <div class="bg-white rounded-3xl shadow-lg p-6 mb-6">
+            <div class="grid grid-cols-1 gap-4">
+                <input type="number" id="amount" placeholder="Importo (€)" class="w-full bg-slate-50 border-none rounded-2xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="text" id="description" placeholder="Descrizione (es. Spesa)" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-indigo-500 outline-none">
+                
+                <select id="category" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-indigo-500 outline-none appearance-none">
+                    <option value="💰 Stipendio">Stipendio (Entrata)</option>
+                    <option value="🏠 Casa/Affitto">Casa / Affitto</option>
+                    <option value="🛒 Supermercato">Supermercato</option>
+                    <option value="🚗 Trasporti">Trasporti / Auto</option>
+                    <option value="🍕 Svago/Cibo">Svago / Ristorante</option>
+                    <option value="📱 Abbonamenti">Abbonamenti / Bollette</option>
+                    <option value="👶 Famiglia">Famiglia / Bimbo</option>
+                    <option value="Altro">Altro</option>
+                </select>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="addTransaction('income')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-2xl font-bold transition-colors shadow-lg shadow-emerald-200">+ Entrata</button>
+                    <button onclick="addTransaction('expense')" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-2xl font-bold transition-colors shadow-lg shadow-rose-200">- Uscita</button>
+                </div>
             </div>
         </div>
 
-        <canvas id="financeChart" width="400" height="400"></canvas>
+        <!-- Grafico -->
+        <div class="bg-white rounded-3xl shadow-lg p-6 mb-6">
+            <h3 class="text-slate-800 font-bold mb-4">Distribuzione Spese</h3>
+            <canvas id="financeChart" class="max-h-64"></canvas>
+        </div>
+
+        <!-- Lista Ultime Operazioni -->
+        <div class="bg-white rounded-3xl shadow-lg p-6">
+            <h3 class="text-slate-800 font-bold mb-4">Ultime attività</h3>
+            <div id="transaction-list" class="space-y-3">
+                <!-- Inserite via JS -->
+            </div>
+            <button onclick="clearAll()" class="w-full mt-6 text-slate-400 text-xs hover:text-rose-500 uppercase font-bold">Reset Dati</button>
+        </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        let transactions = JSON.parse(localStorage.getItem('finanze_data')) || [];
+        let myChart;
+
+        function addTransaction(type) {
+            const amountInput = document.getElementById('amount');
+            const descInput = document.getElementById('description');
+            const catInput = document.getElementById('category');
+
+            if (!amountInput.value || !descInput.value) {
+                alert("Per favore, inserisci importo e descrizione");
+                return;
+            }
+
+            const transaction = {
+                id: Date.now(),
+                amount: parseFloat(amountInput.value),
+                description: descInput.value,
+                category: catInput.value,
+                type: type,
+                date: new Date().toLocaleDateString('it-IT')
+            };
+
+            transactions.unshift(transaction); // Aggiunge in cima
+            saveAndRefresh();
+            
+            // Pulisce i campi
+            amountInput.value = '';
+            descInput.value = '';
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('finanze_data', JSON.stringify(transactions));
+            renderUI();
+        }
+
+        function renderUI() {
+            // Calcolo Saldo
+            const total = transactions.reduce((acc, t) => {
+                return t.type === 'income' ? acc + t.amount : acc - t.amount;
+            }, 0);
+            
+            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+
+            // Lista transazioni
+            const list = document.getElementById('transaction-list');
+            list.innerHTML = transactions.slice(0, 5).map(t => `
+                <div class="flex justify-between items-center p-2 border-b border-slate-50 text-sm">
+                    <div>
+                        <p class="font-bold text-slate-700">${t.description}</p>
+                        <p class="text-xs text-slate-400">${t.category} • ${t.date}</p>
+                    </div>
+                    <span class="${t.type === 'income' ? 'text-emerald-500' : 'text-rose-500'} font-bold">
+                        ${t.type === 'income' ? '+' : '-'} €${t.amount.toFixed(2)}
+                    </span>
+                </div>
+            `).join('');
+
+            updateChart();
+        }
+
+        function updateChart() {
+            const expenseData = transactions.filter(t => t.type === 'expense');
+            const categories = [...new Set(expenseData.map(t => t.category))];
+            const totals = categories.map(cat => {
+                return expenseData
+                    .filter(t => t.category === cat)
+                    .reduce((sum, t) => sum + t.amount, 0);
+            });
+
+            const ctx = document.getElementById('financeChart').getContext('2d');
+            if (myChart) myChart.destroy();
+            
+            if(categories.length === 0) return;
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: totals,
+                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: { 
+                    cutout: '70%',
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }
+                }
+            });
+        }
+
+        function clearAll() {
+            if(confirm("Vuoi davvero cancellare tutti i dati?")) {
+                transactions = [];
+                saveAndRefresh();
+            }
+        }
+
+        // Avvio iniziale
+        renderUI();
+    </script>
 </body>
 </html>
