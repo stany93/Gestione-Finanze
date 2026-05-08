@@ -55,7 +55,7 @@
         <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth"><div id="quick-actions-container" class="flex gap-3"></div></div>
 
         <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-8 space-y-4 border border-white relative transition-all">
-            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter shadow-sm">AI Suggerita</div>
+            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter shadow-sm">AI</div>
             <div class="flex gap-2">
                 <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 font-extrabold text-xl outline-none border-none">
                 <select id="usr" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 text-xs font-bold text-indigo-600 outline-none border-none">
@@ -96,7 +96,7 @@
             </div>
             
             <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white text-center">
-                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Categorie</p>
+                <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest">Categorie</p>
                 <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-bold uppercase text-slate-600"></div>
                 <div class="flex gap-2">
                     <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-xl p-3 outline-none text-sm font-medium border-none text-left">
@@ -117,7 +117,7 @@
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#3b82f6', '#d946ef', '#14b8a6'];
         
-        // Motore Semantico Avanzato (12 Categorie)
+        // Motore Semantico con Categorie Aggiunte
         const brain = {
             'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
             'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
@@ -125,4 +125,216 @@
             'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
             'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
             'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
-            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto',
+            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
+            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
+            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
+            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
+            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
+            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
+        };
+
+        // GESTIONE SICURA MEMORIA (come in v22.1 ma con i default aggiornati)
+        let transactions = [];
+        try { transactions = JSON.parse(localStorage.getItem('fin_v22_trans')) || []; } catch(e) {}
+        if(!Array.isArray(transactions)) transactions = [];
+
+        let quickSettings = [];
+        try { quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }]; } catch(e) {}
+        if(!Array.isArray(quickSettings)) quickSettings = [];
+
+        // Unione Intelligente Categorie
+        const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
+        let categories = [];
+        try {
+            let saved = JSON.parse(localStorage.getItem('fin_v22_cats'));
+            if (Array.isArray(saved) && saved.length > 0) {
+                categories = saved;
+                // Aggiunge le nuove se mancano
+                baseCats.forEach(c => { if (!categories.includes(c)) categories.push(c); });
+            } else {
+                categories = baseCats;
+            }
+        } catch(e) { categories = baseCats; }
+        
+        const now = new Date();
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+        let charts = { pie: null, line: null };
+
+        function vibrate() { try { if (window.navigator?.vibrate) window.navigator.vibrate(30); } catch(e){} }
+
+        function predictCategory(text) {
+            const val = text.toLowerCase();
+            const badge = document.getElementById('ai-badge');
+            const select = document.getElementById('cat');
+            let found = false;
+            for (let categoryName in brain) {
+                if (brain[categoryName].some(k => val.includes(k))) {
+                    if (categories.includes(categoryName)) {
+                        select.value = categoryName;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if(badge) badge.classList.toggle('hidden', !found);
+        }
+
+        function switchTab(p) {
+            vibrate();
+            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
+            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
+            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
+            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
+            if(p === 'dashboard') render(); else renderSettingsPage();
+        }
+
+        function renderSettingsPage() {
+            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100 text-[10px] font-bold uppercase"><div class="flex-1">${s.label} - €${s.amt}</div><button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-2 text-lg">✕</button></div>`).join('');
+            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl mb-2 italic"><span>${c}</span><button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-2 text-lg">✕</button></div>`).join('');
+        }
+
+        function updateDateFilter() {
+            currentMonth = parseInt(document.getElementById('month-select').value);
+            currentYear = parseInt(document.getElementById('year-select').value);
+            render();
+        }
+
+        function render() {
+            const catSelect = document.getElementById('cat');
+            if(catSelect) {
+                const catVal = catSelect.value;
+                catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                if (categories.includes(catVal)) catSelect.value = catVal;
+            }
+
+            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[2rem] shadow-sm shrink-0 active:scale-95 transition-all text-center"><p class="text-[9px] font-black uppercase text-indigo-500 mb-1 italic tracking-tighter">${s.label}</p><p class="text-sm font-black text-slate-800 tracking-tighter">€${s.amt}</p></button>`).join('');
+
+            const filtered = transactions.filter(t => {
+                if(!t || !t.date) return false;
+                const d = new Date(t.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+
+            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
+            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
+            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
+
+            document.getElementById('date-label').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
+            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
+
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="glass-card p-4 rounded-[2.2rem] flex justify-between items-center border border-white mb-3 text-sm pr-6"><div class="truncate flex-1 pr-4"><p class="font-extrabold text-slate-800 truncate tracking-tight italic text-left">${t.dsc}</p><p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic text-left">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} italic">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-200 font-bold px-1 text-lg">✕</button></div></div>`).join('');
+            
+            setTimeout(() => { updateCharts(filtered); }, 150);
+        }
+
+        function addQuickSetting() { 
+            const l = document.getElementById('new-q-label').value; 
+            const a = document.getElementById('new-q-amt').value; 
+            if(!l || !a) return; 
+            quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); 
+            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
+            renderSettingsPage(); 
+        }
+
+        // POPUP DI CONFERMA AGGIUNTI
+        function removeQuickSetting(i) { 
+            if(confirm("Vuoi eliminare questo tasto rapido?")) {
+                quickSettings.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
+                renderSettingsPage(); 
+            }
+        }
+
+        function addCategory() { 
+            const v = document.getElementById('new-cat-name').value.trim(); 
+            if(!v) return; 
+            categories.push(v); 
+            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+            document.getElementById('new-cat-name').value = ''; 
+            renderSettingsPage(); 
+        }
+
+        function removeCategory(i) { 
+            if(confirm("Vuoi eliminare questa categoria?")) {
+                categories.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+                renderSettingsPage(); 
+            }
+        }
+
+        function deleteEntry(id) {
+            if(confirm("Vuoi eliminare questa transazione?")) { 
+                transactions = transactions.filter(t => t.id !== id); 
+                try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){} 
+                render(); 
+            }
+        }
+
+        function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
+
+        function save(type) {
+            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
+            if(!a || !d) return alert("Dati mancanti!");
+            vibrate();
+            transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
+            try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){}
+            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
+            document.getElementById('ai-badge').classList.add('hidden');
+            const card = document.getElementById('input-card');
+            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
+            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
+            render();
+        }
+
+        function updateCharts(data) {
+            if (typeof Chart === 'undefined') return;
+
+            const last6 = [];
+            for(let i = 5; i >= 0; i--) {
+                let d = new Date(currentYear, currentMonth - i, 1);
+                last6.push({ m: d.getMonth(), y: d.getFullYear() });
+            }
+            const lineData = last6.map(obj => transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
+            }).reduce((s, t) => s + t.amt, 0));
+
+            const exp = data.filter(t => t.type === 'exp');
+            const catsArr = [...new Set(exp.map(t => t.cat))];
+            const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
+            
+            const pEl = document.getElementById('chartPie');
+            if(pEl && catsArr.length > 0) {
+                if(charts.pie) charts.pie.destroy();
+                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 4, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9, weight: 'bold' } } } }, cutout: '70%', responsive: true } });
+            }
+
+            const lEl = document.getElementById('chartLine');
+            if(lEl) {
+                if(charts.line) charts.line.destroy();
+                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } }, responsive: true } });
+            }
+        }
+
+        window.onload = () => {
+            const mSel = document.getElementById('month-select');
+            if(mSel) {
+                monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
+            }
+            
+            const ySel = document.getElementById('year-select');
+            if(ySel) {
+                for(let y = currentYear - 2; y <= currentYear + 2; y++) {
+                    ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
+                }
+            }
+            render();
+        };
+        
+        function clearAllData() { if(confirm("Cancellare tutto?")) { localStorage.clear(); location.reload(); } }
+    </script>
+</body>
+</html>
