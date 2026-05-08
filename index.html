@@ -2,65 +2,188 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanze Casa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Finanze Famiglia</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .custom-shadow { shadow-xl shadow-slate-200/50; }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-slate-50 min-h-screen pb-10">
 
-    <div id="main-app" class="max-w-md mx-auto p-6">
-        <div class="bg-white rounded-3xl shadow-lg p-8 text-center">
-            <h1 class="text-2xl font-bold text-indigo-600 mb-4">Finanze Famiglia</h1>
-            <div class="text-4xl font-black text-gray-800 mb-6" id="balance">€ 0.00</div>
-            
-            <div class="space-y-4">
-                <input type="number" id="input-amt" placeholder="Importo" class="w-full border p-4 rounded-2xl outline-none bg-gray-50">
-                <input type="text" id="input-dsc" placeholder="Descrizione" class="w-full border p-4 rounded-2xl outline-none bg-gray-50">
-                <div class="flex gap-2">
-                    <button onclick="save(1)" class="flex-1 bg-green-500 text-white p-4 rounded-2xl font-bold">ENTRATA</button>
-                    <button onclick="save(0)" class="flex-1 bg-red-500 text-white p-4 rounded-2xl font-bold">USCITA</button>
+    <div id="app" class="max-w-md mx-auto px-4 pt-6">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-black text-slate-800">Finanze Famiglia</h1>
+                <p id="month-label" class="text-indigo-600 font-bold uppercase text-[10px] tracking-widest"></p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="exportData()" class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 text-[10px] font-bold uppercase text-slate-500">CSV</button>
+                <select id="month-select" onchange="updateMonth(this.value)" class="bg-white p-2 rounded-lg shadow-sm border border-slate-200 text-[10px] font-bold uppercase outline-none"></select>
+            </div>
+        </div>
+
+        <div class="bg-indigo-600 rounded-[2rem] p-6 text-white shadow-xl mb-6">
+            <p class="text-indigo-200 text-[10px] font-bold uppercase tracking-wider mb-1 text-center">Bilancio Totale</p>
+            <h2 id="total-balance" class="text-4xl font-black text-center mb-6">€ 0.00</h2>
+            <div class="grid grid-cols-2 gap-4 border-t border-indigo-400/50 pt-4 text-center">
+                <div>
+                    <p class="text-indigo-200 text-[9px] uppercase">Entrate Mese</p>
+                    <p id="m-inc" class="font-bold text-emerald-300">€ 0.00</p>
+                </div>
+                <div>
+                    <p class="text-indigo-200 text-[9px] uppercase">Uscite Mese</p>
+                    <p id="m-exp" class="font-bold text-rose-300">€ 0.00</p>
                 </div>
             </div>
-
-            <div id="history" class="mt-8 text-left space-y-2">
-                </div>
         </div>
+
+        <div class="bg-white rounded-[2rem] p-6 shadow-md mb-6 space-y-4">
+            <div class="flex gap-2">
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold text-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <select id="usr" class="w-1/2 bg-slate-50 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600">
+                    <option value="Io">Io</option>
+                    <option value="Giulia">Giulia</option>
+                </select>
+            </div>
+            <input type="text" id="dsc" placeholder="Descrizione (es. Spesa Esselunga)" class="w-full bg-slate-50 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-indigo-500">
+            <select id="cat" class="w-full bg-slate-50 rounded-2xl p-4 outline-none text-slate-600">
+                <option value="🏠 Casa">🏠 Casa / Affitto</option>
+                <option value="🛒 Spesa">🛒 Spesa</option>
+                <option value="💰 Stipendio">💰 Stipendio</option>
+                <option value="🍕 Svago">🍕 Svago / Cena</option>
+                <option value="👶 Riccardo">👶 Riccardo / Bimbo</option>
+                <option value="🚗 Auto">🚗 Auto / Mezzi</option>
+                <option value="📱 Varie">📱 Bollette / Varie</option>
+            </select>
+            <div class="flex gap-3">
+                <button onclick="save(1)" class="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-transform">ENTRATA</button>
+                <button onclick="save(0)" class="flex-1 bg-rose-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-rose-200 active:scale-95 transition-transform">USCITA</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] p-6 shadow-md mb-6">
+            <h3 class="text-slate-800 font-bold text-sm mb-4 text-center">Spese per Categoria</h3>
+            <canvas id="chart" class="max-h-48 mx-auto"></canvas>
+        </div>
+
+        <input type="text" id="search" oninput="render()" placeholder="Cerca tra le attività..." class="w-full bg-white rounded-2xl p-4 shadow-sm mb-4 outline-none text-sm">
+
+        <div id="list" class="space-y-3 pb-10"></div>
+
+        <button onclick="reset()" class="w-full text-slate-300 text-[10px] font-bold uppercase tracking-widest py-4">Reset Dati</button>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('f_data')) || [];
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        let transactions = JSON.parse(localStorage.getItem('family_finance_v3')) || [];
+        let currentMonth = new Date().getMonth();
+        let myChart = null;
+
+        // Init Select Mesi
+        const select = document.getElementById('month-select');
+        monthNames.forEach((m, i) => {
+            select.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`;
+        });
+
+        function updateMonth(val) {
+            currentMonth = parseInt(val);
+            render();
+        }
 
         function save(isInc) {
-            const a = document.getElementById('input-amt').value;
-            const d = document.getElementById('input-dsc').value;
-            if(!a || !d) return alert("Inserisci i dati!");
+            const a = document.getElementById('amt').value;
+            const d = document.getElementById('dsc').value;
+            if(!a || !d) return;
 
-            data.unshift({ amt: parseFloat(a), dsc: d, type: isInc });
-            localStorage.setItem('f_data', JSON.stringify(data));
-            location.reload(); // Ricarica per aggiornare
+            transactions.unshift({
+                id: Date.now(),
+                amt: parseFloat(a),
+                dsc: d,
+                cat: document.getElementById('cat').value,
+                usr: document.getElementById('usr').value,
+                type: isInc ? 'inc' : 'exp',
+                date: new Date().toISOString()
+            });
+
+            localStorage.setItem('family_finance_v3', JSON.stringify(transactions));
+            document.getElementById('amt').value = '';
+            document.getElementById('dsc').value = '';
+            render();
         }
 
         function render() {
-            const balEl = document.getElementById('balance');
-            const histEl = document.getElementById('history');
-            
-            let total = 0;
-            let html = "";
-            
-            data.forEach(item => {
-                total += item.type ? item.amt : -item.amt;
-                html += `
-                    <div class="flex justify-between p-2 border-b text-sm">
-                        <span>${item.dsc}</span>
-                        <span class="font-bold ${item.type ? 'text-green-500' : 'text-red-500'}">
-                            ${item.type ? '+' : '-'} €${item.amt.toFixed(2)}
-                        </span>
-                    </div>
-                `;
+            const search = document.getElementById('search').value.toLowerCase();
+            const filtered = transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === currentMonth && (t.dsc.toLowerCase().includes(search) || t.cat.toLowerCase().includes(search));
             });
-            
-            balEl.innerText = "€ " + total.toFixed(2);
-            histEl.innerHTML = html;
+
+            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
+            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
+            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
+
+            document.getElementById('month-label').innerText = monthNames[currentMonth];
+            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(2)}`;
+            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(2)}`;
+
+            const listEl = document.getElementById('list');
+            listEl.innerHTML = filtered.map(t => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-slate-50 w-10 h-10 rounded-full flex items-center justify-center text-lg">${t.cat.split(' ')[0]}</div>
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">${t.dsc}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">${t.usr} • ${new Date(t.date).toLocaleDateString('it-IT')}</p>
+                        </div>
+                    </div>
+                    <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'}">
+                        ${t.type === 'inc' ? '+' : '-'} €${t.amt.toFixed(2)}
+                    </p>
+                </div>
+            `).join('');
+
+            updateChart(filtered);
+        }
+
+        function updateChart(data) {
+            const expenses = data.filter(t => t.type === 'exp');
+            const cats = [...new Set(expenses.map(t => t.cat))];
+            const totals = cats.map(c => expenses.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
+
+            const ctx = document.getElementById('chart').getContext('2d');
+            if(myChart) myChart.destroy();
+            if(cats.length === 0) return;
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: cats,
+                    datasets: [{ data: totals, backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4'], borderWidth: 0 }]
+                },
+                options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10 } } } }, cutout: '75%' }
+            });
+        }
+
+        function exportData() {
+            let csv = "Data,Utente,Descrizione,Categoria,Tipo,Importo\n";
+            transactions.forEach(t => csv += `${new Date(t.date).toLocaleDateString()},${t.usr},${t.dsc},${t.cat},${t.type},${t.amt}\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'finanze_famiglia.csv';
+            a.click();
+        }
+
+        function reset() {
+            if(confirm("Cancellare tutto lo storico?")) {
+                localStorage.removeItem('family_finance_v3');
+                location.reload();
+            }
         }
 
         render();
