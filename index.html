@@ -21,8 +21,13 @@
   </style>
 </head>
 <body class="min-h-screen">
+  <style>input,select,button{pointer-events:auto} input,select{position:relative;z-index:1}</style>
 
   <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-10">
+    <div class="mb-4 flex gap-2">
+      <button type="button" onclick="switchTab('dashboard')" class="glass-card flex-1 py-3 rounded-2xl text-sm font-bold">Home</button>
+      <button type="button" onclick="switchTab('settings')" class="glass-card flex-1 py-3 rounded-2xl text-sm font-bold">Set</button>
+    </div>
     <div class="flex justify-between items-start mb-8 text-left gap-3">
       <div>
         <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Wallet</h1>
@@ -37,16 +42,16 @@
 
     <div class="bg-slate-900 rounded-[2rem] p-7 text-white shadow-2xl mb-8 text-center">
       <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2">Patrimonio</p>
-      <h2 id="total-balance" class="text-4xl font-extrabold tracking-tighter">€ 0,00</h2>
+      <h2 id="total-balance" class="text-4xl font-extrabold tracking-tighter">â‚¬ 0,00</h2>
       <p class="text-slate-400 text-sm mt-1 mb-6">Saldo complessivo</p>
       <div class="flex justify-around items-center gap-4 bg-white/5 p-4 rounded-3xl">
         <div class="text-center">
           <p class="text-slate-400 text-[9px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
-          <p id="m-inc" class="font-extrabold text-emerald-400 text-base">€ 0</p>
+          <p id="m-inc" class="font-extrabold text-emerald-400 text-base">â‚¬ 0</p>
         </div>
         <div class="text-center">
           <p class="text-slate-400 text-[9px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
-          <p id="m-exp" class="font-extrabold text-rose-400 text-base">€ 0</p>
+          <p id="m-exp" class="font-extrabold text-rose-400 text-base">â‚¬ 0</p>
         </div>
       </div>
     </div>
@@ -99,4 +104,336 @@
         <div class="bg-slate-100 p-4 rounded-3xl space-y-3">
           <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full p-3 rounded-xl text-sm outline-none border-none">
           <div class="flex gap-2">
-            <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-xl outline-none font-bold bo
+            <input type="number" id="new-q-amt" placeholder="â‚¬" class="w-1/2 p-3 rounded-xl outline-none font-bold border-none">
+            <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold outline-none border-none"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
+          </div>
+          <button onclick="addQuickSetting()" class="w-full bg-teal-700 text-white py-3 rounded-xl font-bold uppercase text-[10px]">+ Aggiungi</button>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-[2rem] p-6 text-center">
+        <p class="text-[10px] font-bold text-teal-700 uppercase mb-6 tracking-widest">Categorie</p>
+        <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-bold uppercase text-slate-600"></div>
+        <div class="flex gap-2">
+          <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100 rounded-xl p-3 outline-none text-sm font-medium border-none text-left">
+          <button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button>
+        </div>
+      </div>
+
+      <button onclick="clearAllData()" class="w-full text-rose-400 text-[10px] font-bold uppercase py-6 opacity-80">Resetta App</button>
+    </div>
+  </div>
+
+  <nav class="fixed bottom-6 left-6 right-6 bg-slate-900 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl border border-white/10">
+    <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all"><span class="text-xl">ðŸ“Š</span><span class="text-[8px] uppercase font-bold tracking-widest">Home</span></button>
+    <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all"><span class="text-xl">âš™ï¸</span><span class="text-[8px] uppercase font-bold tracking-widest">Set</span></button>
+  </nav>
+
+  <div id="toast" class="hidden fixed bottom-28 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-xl z-50"></div>
+
+  <script>
+    var monthNames = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+    var catColors = ['#0f766e','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16','#3b82f6','#d946ef'];
+    var brain = {
+      'Casa':['affitto','bolletta','luce','gas','acqua','fibra','wifi','internet','condominio','tari','enel','ikea','leroy','casa','mutuo'],
+      'Spesa':['esselunga','conad','coop','lidl','macellaio','verdura','frutta','pane','forno','supermercato','carne','pesce','cibo','spesa','iper','eurospin'],
+      'Riccardo':['pannolini','nido','pappa','latte','giochi','asilo','biberon','scuola','riccardo','pediatra','vestiti bimbo','giocattoli','bambino'],
+      'Svago':['cinema','svago','pub','tabacco','aperitivo','bar','caffe','birra','concerto','discoteca','drink','serata','film'],
+      'Lavoro':['stipendio','bonus','rimborso','lavoro','fattura','cliente','busta paga'],
+      'Gatti':['gatto','gatti','croccantini','sabbietta','veterinario','cibo gatti','lettiera','cibo umido','scatolette','antiparassitario'],
+      'Macchina':['benzina','diesel','parcheggio','autostrada','meccanico','bollo','assicurazione','macchina','auto','telepass','carburante','lavaggio','gommista','casello'],
+      'Cene':['pizza','ristorante','cena','cene','sushi','mcdonald','burger','kebab','pranzo','osteria','trattoria','glovo','deliveroo','justeat','pizzeria'],
+      'Vestiti':['vestiti','scarpe','maglia','pantaloni','abbigliamento','zalando','zara','h&m','shopping','felpa','giubbotto','calze','intimo','vestito'],
+      'Vacanze':['vacanza','vacanze','hotel','volo','aereo','treno','bnb','booking','viaggio','ryanair','airbnb','traghetto','autobus','biglietto','frecciarossa'],
+      'Regali':['regalo','regali','compleanno','anniversario','natale','festa','pensiero','dono'],
+      'Salute':['farmacia','medico','dentista','visita','analisi','salute','farmaco','medicine','ticket','terapia','dottore','ospedale']
+    };
+
+    function fmt(value){
+      return value.toLocaleString('it-IT',{style:'currency',currency:'EUR'});
+    }
+
+    function safeGet(key, fallback){
+      try {
+        var v = localStorage.getItem(key);
+        if(v===null) return fallback;
+        return JSON.parse(v);
+      } catch(e){
+        return fallback;
+      }
+    }
+
+    function safeSet(key, value){
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch(e){}
+    }
+
+    function safeRemove(key){
+      try { localStorage.removeItem(key); } catch(e){}
+    }
+
+    function toast(msg){
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(function(){ t.classList.add('hidden'); }, 1800);
+    }
+
+    var baseCats = ['Casa','Spesa','Riccardo','Svago','Lavoro','Gatti','Macchina','Cene','Vestiti','Vacanze','Regali','Salute'];
+    var transactions = safeGet('fin_v24_trans', []);
+    if(!Array.isArray(transactions)) transactions = [];
+    var quickSettings = safeGet('fin_v24_quick', [{ label:'Casa', amt:600, type:'exp' }, { label:'Fibra', amt:30, type:'exp' }, { label:'Stipendio', amt:1800, type:'inc' }]);
+    if(!Array.isArray(quickSettings)) quickSettings = [];
+    var categories = safeGet('fin_v24_cats', baseCats.slice());
+    if(!Array.isArray(categories) || !categories.length) categories = baseCats.slice();
+    for(var i=0;i<baseCats.length;i++){ if(categories.indexOf(baseCats[i])===-1) categories.push(baseCats[i]); }
+
+    var now = new Date();
+    var currentMonth = now.getMonth();
+    var currentYear = now.getFullYear();
+    var charts = { pie:null, line:null };
+
+    function applyTheme(){
+      var theme = document.documentElement.getAttribute('data-theme');
+      if(theme === 'dark'){
+        document.documentElement.removeAttribute('data-theme');
+        document.body.classList.remove('bg-slate-900','text-white');
+      } else {
+        document.documentElement.setAttribute('data-theme','dark');
+        document.body.classList.add('bg-slate-900','text-white');
+      }
+    }
+
+    function predictCategory(text){
+      var val = String(text || '').toLowerCase();
+      var select = document.getElementById('cat');
+      for(var categoryName in brain){
+        var words = brain[categoryName];
+        for(var i=0;i<words.length;i++){
+          if(val.indexOf(words[i]) !== -1 && categories.indexOf(categoryName) !== -1){
+            select.value = categoryName;
+            return;
+          }
+        }
+      }
+    }
+
+    function switchTab(p){
+      document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
+      document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
+      document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
+      document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
+      if(p === 'dashboard') render(); else renderSettingsPage();
+    }
+
+    function renderSettingsPage(){
+      document.getElementById('settings-quick-list').innerHTML = quickSettings.map(function(s, i){
+        return '<div class="flex items-center gap-3 bg-slate-100 p-3 rounded-2xl border border-slate-200 text-[10px] font-bold uppercase"><div class="flex-1">'+s.label+' - '+fmt(s.amt)+'</div><button onclick="removeQuickSetting('+i+')" class="text-rose-500 font-bold px-2 text-lg">âœ•</button></div>';
+      }).join('');
+
+      document.getElementById('settings-cat-list').innerHTML = categories.map(function(c, i){
+        return '<div class="flex justify-between items-center bg-slate-100 p-3 rounded-2xl mb-2"><span>'+c+'</span><button onclick="removeCategory('+i+')" class="text-rose-400 font-bold px-2 text-lg">âœ•</button></div>';
+      }).join('');
+    }
+
+    function updateDateFilter(){
+      currentMonth = parseInt(document.getElementById('month-select').value, 10);
+      currentYear = parseInt(document.getElementById('year-select').value, 10);
+      render();
+    }
+
+    function render(){
+      var catSelect = document.getElementById('cat');
+      var catVal = catSelect.value;
+      catSelect.innerHTML = categories.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+      if(categories.indexOf(catVal) !== -1) catSelect.value = catVal;
+
+      document.getElementById('quick-actions-container').innerHTML = quickSettings.map(function(s){
+        return '<button onclick="addQuick('+JSON.stringify(s.label)+','+s.amt+',\''+s.type+'\')" class="glass-card px-5 py-4 rounded-[1.5rem] shrink-0 text-left min-w-32"><p class="text-[9px] font-bold uppercase text-teal-700 mb-1 tracking-widest">'+s.label+'</p><p class="text-sm font-extrabold text-slate-800">'+fmt(s.amt)+'</p></button>';
+      }).join('');
+
+      var filtered = transactions.filter(function(t){
+        if(!t || !t.date) return false;
+        var d = new Date(t.date);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      }).sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+
+      var total = transactions.reduce(function(s,t){ return t.type === 'inc' ? s + t.amt : s - t.amt; }, 0);
+      var mInc = filtered.filter(function(t){ return t.type === 'inc'; }).reduce(function(s,t){ return s + t.amt; }, 0);
+      var mExp = filtered.filter(function(t){ return t.type === 'exp'; }).reduce(function(s,t){ return s + t.amt; }, 0);
+
+      document.getElementById('date-label').innerText = monthNames[currentMonth] + ' ' + currentYear;
+      document.getElementById('total-balance').innerText = fmt(total);
+      document.getElementById('m-inc').innerText = fmt(mInc);
+      document.getElementById('m-exp').innerText = fmt(mExp);
+
+      document.getElementById('list').innerHTML = filtered.length ? filtered.map(function(t){
+        return '<div class="glass-card p-4 rounded-[1.8rem] flex justify-between items-center border border-slate-100 text-sm"><div class="truncate flex-1 pr-4"><p class="font-extrabold text-slate-800 truncate">'+t.dsc+'</p><p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">'+t.usr+' â€¢ '+t.cat+' â€¢ '+new Date(t.date).toLocaleDateString('it-IT')+'</p></div><div class="flex items-center gap-3"><p class="font-black '+(t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500')+'">'+(t.type === 'inc' ? '+' : '-')+' '+fmt(t.amt)+'</p><button onclick="deleteEntry('+t.id+')" class="text-slate-300 font-bold px-1 text-lg">âœ•</button></div></div>';
+      }).join('') : '<div class="glass-card p-5 rounded-[1.8rem] text-center text-slate-400">Nessun movimento nel periodo selezionato.</div>';
+
+      setTimeout(function(){ updateCharts(filtered); }, 80);
+    }
+
+    function addQuickSetting(){
+      var l = document.getElementById('new-q-label').value.trim();
+      var a = parseFloat(document.getElementById('new-q-amt').value);
+      if(!l || !a) return toast('Dati mancanti');
+      quickSettings.push({ label:l, amt:a, type:document.getElementById('new-q-type').value });
+      safeSet('fin_v24_quick', quickSettings);
+      document.getElementById('new-q-label').value = '';
+      document.getElementById('new-q-amt').value = '';
+      renderSettingsPage();
+      render();
+    }
+
+    function removeQuickSetting(i){
+      quickSettings.splice(i, 1);
+      safeSet('fin_v24_quick', quickSettings);
+      renderSettingsPage();
+      render();
+    }
+
+    function addCategory(){
+      var v = document.getElementById('new-cat-name').value.trim();
+      if(!v) return;
+      if(categories.indexOf(v) !== -1) return toast('Categoria giÃ  presente');
+      categories.push(v);
+      safeSet('fin_v24_cats', categories);
+      document.getElementById('new-cat-name').value = '';
+      renderSettingsPage();
+      render();
+    }
+
+    function removeCategory(i){
+      if(baseCats.indexOf(categories[i]) !== -1) return toast('Categoria base non rimovibile');
+      categories.splice(i, 1);
+      safeSet('fin_v24_cats', categories);
+      renderSettingsPage();
+      render();
+    }
+
+    function deleteEntry(id){
+      transactions = transactions.filter(function(t){ return t.id !== id; });
+      safeSet('fin_v24_trans', transactions);
+      render();
+      toast('Movimento eliminato');
+    }
+
+    function addQuick(l, a, t){
+      document.getElementById('amt').value = a;
+      document.getElementById('dsc').value = l;
+      predictCategory(l);
+      save(t);
+    }
+
+    function save(type){
+      var a = parseFloat(document.getElementById('amt').value);
+      var d = document.getElementById('dsc').value.trim();
+      if(!a || !d) return toast('Dati mancanti');
+      transactions.unshift({ id:Date.now(), amt:a, dsc:d, cat:document.getElementById('cat').value, usr:document.getElementById('usr').value, type:type, date:new Date().toISOString() });
+      safeSet('fin_v24_trans', transactions);
+      document.getElementById('amt').value = '';
+      document.getElementById('dsc').value = '';
+      var card = document.getElementById('input-card');
+      card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
+      setTimeout(function(){ card.classList.remove('flash-inc'); card.classList.remove('flash-exp'); }, 900);
+      render();
+      toast(type === 'inc' ? 'Entrata salvata' : 'Uscita salvata');
+    }
+
+    function updateCharts(data){
+      if(typeof Chart === 'undefined') return;
+
+      var last6 = [];
+      for(var i=5;i>=0;i--){
+        var d = new Date(currentYear, currentMonth - i, 1);
+        last6.push({ m:d.getMonth(), y:d.getFullYear() });
+      }
+
+      var lineData = last6.map(function(obj){
+        return transactions.filter(function(t){
+          var d = new Date(t.date);
+          return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
+        }).reduce(function(s,t){ return s + t.amt; }, 0);
+      });
+
+      var exp = data.filter(function(t){ return t.type === 'exp'; });
+      var catsArr = Array.from(new Set(exp.map(function(t){ return t.cat; })));
+      var pData = catsArr.map(function(c){
+        return exp.filter(function(t){ return t.cat === c; }).reduce(function(s,t){ return s + t.amt; }, 0);
+      });
+
+      var pEl = document.getElementById('chartPie');
+      if(charts.pie){ charts.pie.destroy(); charts.pie = null; }
+      if(catsArr.length === 0){
+        document.getElementById('pie-empty').classList.remove('hidden');
+        var ctx0 = pEl.getContext('2d');
+        ctx0.clearRect(0, 0, pEl.width, pEl.height);
+      } else {
+        document.getElementById('pie-empty').classList.add('hidden');
+        charts.pie = new Chart(pEl.getContext('2d'), {
+          type:'doughnut',
+          data:{ labels:catsArr, datasets:[{ data:pData, backgroundColor:catColors, borderWidth:4, borderColor:'#ffffff' }] },
+          options:{ plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, font:{ size:9, weight:'bold' } } } }, cutout:'70%', responsive:true }
+        });
+      }
+
+      var lEl = document.getElementById('chartLine');
+      if(charts.line){ charts.line.destroy(); charts.line = null; }
+      charts.line = new Chart(lEl.getContext('2d'), {
+        type:'line',
+        data:{ labels:last6.map(function(o){ return monthNames[o.m].substring(0,3); }), datasets:[{ label:'Uscite', data:lineData, borderColor:'#0f766e', tension:0.4, fill:true, backgroundColor:'rgba(15,118,110,0.08)', pointRadius:0 }] },
+        options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ display:false }, x:{ grid:{ display:false }, border:{ display:false } } }, responsive:true }
+      });
+    }
+
+    function exportCSV(){
+      var rows = [['id','data','tipo','importo','descrizione','categoria','utente']];
+      for(var i=0;i<transactions.length;i++){
+        var t = transactions[i];
+        rows.push([t.id, t.date, t.type, t.amt, t.dsc, t.cat, t.usr]);
+      }
+      var csv = rows.map(function(r){
+        return r.map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
+      }).join('\n');
+      var blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'wallet-transazioni.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function clearAllData(){
+      if(confirm('Cancellare tutti i dati dell\'app?')){
+        safeRemove('fin_v24_trans');
+        safeRemove('fin_v24_quick');
+        safeRemove('fin_v24_cats');
+        transactions = [];
+        quickSettings = [{ label:'Casa', amt:600, type:'exp' }, { label:'Fibra', amt:30, type:'exp' }, { label:'Stipendio', amt:1800, type:'inc' }];
+        categories = baseCats.slice();
+        renderSettingsPage();
+        render();
+        toast('Dati cancellati');
+      }
+    }
+
+    window.onload = function(){
+      document.getElementById('page-dashboard').classList.remove('hidden');
+      var mSel = document.getElementById('month-select');
+      monthNames.forEach(function(m, i){
+        mSel.innerHTML += '<option value="'+i+'" '+(i===currentMonth?'selected':'')+'>'+m.substring(0,3)+'</option>';
+      });
+
+      var ySel = document.getElementById('year-select');
+      for(var y=currentYear-2; y<=currentYear+2; y++){
+        ySel.innerHTML += '<option value="'+y+'" '+(y===currentYear?'selected':'')+'>'+y+'</option>';
+      }
+
+      document.getElementById('theme-toggle').onclick = applyTheme;
+      renderSettingsPage();
+      render();
+    };
+  </script>
+</body>
+</html>
