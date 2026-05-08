@@ -8,9 +8,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body { -webkit-tap-highlight-color: transparent; padding-bottom: 80px; }
+        body { -webkit-tap-highlight-color: transparent; padding-bottom: 90px; }
         .hidden { display: none; }
-        .nav-active { color: #6366f1; }
+        .nav-active { color: #6366f1; transform: scale(1.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
@@ -32,80 +33,80 @@
             </div>
         </div>
 
-        <div class="mb-6 overflow-x-auto whitespace-nowrap pb-2">
-            <div id="quick-actions-container" class="flex gap-2 justify-center">
-                </div>
+        <div class="mb-6 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar">
+            <div id="quick-actions-container" class="flex gap-2"></div>
         </div>
 
-        <div class="bg-white rounded-[2rem] p-6 shadow-md mb-6 space-y-4">
+        <div class="bg-white rounded-[2rem] p-6 shadow-md mb-6 space-y-4 border border-slate-100">
             <div class="flex gap-2">
-                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold text-lg outline-none">
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-50 rounded-2xl p-4 font-bold text-lg outline-none focus:ring-2 focus:ring-indigo-500">
                 <select id="usr" class="w-1/2 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-indigo-600 outline-none">
                     <option value="Stany">Stany</option>
                     <option value="Giulia">Giulia</option>
                 </select>
             </div>
-            <input type="text" id="dsc" placeholder="Descrizione..." class="w-full bg-slate-50 rounded-2xl p-4 outline-none">
-            <select id="cat" class="w-full bg-slate-50 rounded-2xl p-4 outline-none text-slate-600">
-                <option value="🏠 Casa">🏠 Casa / Affitto</option>
-                <option value="🛒 Spesa">🛒 Spesa Supermercato</option>
-                <option value="👶 Riccardo">👶 Riccardo / Bimbo</option>
-                <option value="🍕 Tortellini">🍕 Ristorante / Svago</option>
-                <option value="🚗 Mezzi">🚗 Auto / Bus</option>
-                <option value="💰 Lavoro">💰 Stipendio</option>
-                <option value="📱 Varie">📱 Varie</option>
-            </select>
+            <input type="text" id="dsc" placeholder="Cosa hai comprato?" class="w-full bg-slate-50 rounded-2xl p-4 outline-none">
+            <select id="cat" class="w-full bg-slate-50 rounded-2xl p-4 outline-none text-slate-600 font-medium"></select>
             <div class="flex gap-3">
-                <button onclick="save('inc')" class="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-bold">+ ENTRATA</button>
-                <button onclick="save('exp')" class="flex-1 bg-rose-500 text-white py-4 rounded-2xl font-bold">- USCITA</button>
+                <button onclick="save('inc')" class="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-bold active:scale-95 transition-all shadow-lg shadow-emerald-100">+ ENTRATA</button>
+                <button onclick="save('exp')" class="flex-1 bg-rose-500 text-white py-4 rounded-2xl font-bold active:scale-95 transition-all shadow-lg shadow-rose-100">- USCITA</button>
             </div>
         </div>
 
         <div class="bg-white rounded-[2rem] p-6 shadow-md mb-6 space-y-8">
             <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
-            <canvas id="chartLine" class="max-h-48 mx-auto"></canvas>
+            <canvas id="chartLine" class="max-h-40 mx-auto"></canvas>
         </div>
 
         <div id="list" class="space-y-3"></div>
     </div>
 
     <div id="page-settings" class="max-w-md mx-auto px-4 pt-6 hidden">
-        <h1 class="text-2xl font-black text-slate-800 mb-6 text-center">Impostazioni Rapide</h1>
+        <h1 class="text-2xl font-black text-slate-800 mb-6">Impostazioni</h1>
         
-        <div class="bg-white rounded-[2rem] p-6 shadow-md space-y-6">
-            <p class="text-xs font-bold text-slate-400 uppercase text-center tracking-widest">Modifica Tasti Ricorrenti</p>
-            
-            <div id="settings-list" class="space-y-4">
-                </div>
-
-            <button onclick="saveSettings()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-lg">SALVA CONFIGURAZIONE</button>
-            
-            <div class="pt-6 border-t border-slate-100">
-                <button onclick="resetData()" class="w-full text-rose-400 text-[10px] font-bold uppercase tracking-widest">Reset Totale Dati</button>
+        <div class="space-y-6">
+            <div class="bg-white rounded-[2rem] p-6 shadow-md">
+                <p class="text-[10px] font-bold text-indigo-600 uppercase mb-4 tracking-widest">Importi Ricorrenti</p>
+                <div id="settings-quick-list" class="space-y-4 mb-4"></div>
+                <button onclick="saveSettings()" class="w-full bg-slate-800 text-white py-3 rounded-xl text-sm font-bold uppercase">Aggiorna Importi</button>
             </div>
+
+            <div class="bg-white rounded-[2rem] p-6 shadow-md">
+                <p class="text-[10px] font-bold text-indigo-600 uppercase mb-4 tracking-widest">Gestione Categorie</p>
+                <div id="settings-cat-list" class="space-y-2 mb-4"></div>
+                <div class="flex gap-2 border-t pt-4">
+                    <input type="text" id="new-cat-name" placeholder="Es: 🍎 Cibo" class="flex-1 bg-slate-50 rounded-lg p-2 text-sm outline-none">
+                    <button onclick="addCategory()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">+</button>
+                </div>
+            </div>
+
+            <button onclick="resetData()" class="w-full text-rose-300 text-[10px] font-bold uppercase py-4">Reset Totale Dati</button>
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 h-16 flex items-center justify-around z-50">
-        <button onclick="showPage('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active">
-            <span class="text-xl">📊</span>
-            <span class="text-[10px] font-bold uppercase">Dashboard</span>
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200 h-20 flex items-center justify-around z-50">
+        <button onclick="showPage('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all">
+            <span class="text-2xl">📊</span>
+            <span class="text-[10px] font-bold uppercase">App</span>
         </button>
-        <button onclick="showPage('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">⚙️</span>
-            <span class="text-[10px] font-bold uppercase">Impostazioni</span>
+        <button onclick="showPage('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-400 transition-all">
+            <span class="text-2xl">⚙️</span>
+            <span class="text-[10px] font-bold uppercase">Set</span>
         </button>
     </nav>
 
     <script>
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        let transactions = JSON.parse(localStorage.getItem('family_v5')) || [];
+        let transactions = JSON.parse(localStorage.getItem('family_v6')) || [];
         
-        // Impostazioni tasti rapidi predefinite
-        let quickSettings = JSON.parse(localStorage.getItem('quick_settings_v5')) || [
-            { label: '🏠 Affitto', amt: 600, type: 'exp' },
-            { label: '⚡ Bollette', amt: 80, type: 'exp' },
-            { label: '💰 Stipendio', amt: 1800, type: 'inc' }
+        let quickSettings = JSON.parse(localStorage.getItem('quick_v6')) || [
+            { label: '🏠 Pagamento Casa', amt: 600, type: 'exp' },
+            { label: '🌐 Fibra casa', amt: 30, type: 'exp' },
+            { label: '💰 Stipendio Stany', amt: 1800, type: 'inc' }
+        ];
+
+        let categories = JSON.parse(localStorage.getItem('cats_v6')) || [
+            "🏠 Casa", "🛒 Spesa", "👶 Riccardo", "🍕 Tortellini", "🚗 Mezzi", "💰 Lavoro", "📱 Varie"
         ];
 
         let currentMonth = new Date().getMonth();
@@ -120,136 +121,11 @@
             if(page === 'settings') renderSettings();
         }
 
+        // --- GESTIONE CATEGORIE ---
         function renderSettings() {
-            const container = document.getElementById('settings-list');
-            container.innerHTML = quickSettings.map((s, i) => `
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">${s.label}</label>
-                    <input type="number" id="set-amt-${i}" value="${s.amt}" class="w-full bg-slate-50 rounded-xl p-3 font-bold outline-none">
-                </div>
-            `).join('');
-        }
-
-        function saveSettings() {
-            quickSettings.forEach((s, i) => {
-                const val = document.getElementById(`set-amt-${i}`).value;
-                s.amt = parseFloat(val);
-            });
-            localStorage.setItem('quick_settings_v5', JSON.stringify(quickSettings));
-            alert("Impostazioni salvate!");
-            showPage('dashboard');
-        }
-
-        function renderQuickActions() {
-            const container = document.getElementById('quick-actions-container');
-            container.innerHTML = quickSettings.map((s, i) => `
-                <button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white px-4 py-2 rounded-full shadow-sm text-xs font-bold border border-slate-100 italic">
-                    ${s.label}: €${s.amt}
-                </button>
-            `).join('');
-        }
-
-        // --- Logica Dashboard (stessa di prima ma adattata) ---
-        const select = document.getElementById('month-select');
-        monthNames.forEach((m, i) => {
-            select.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`;
-        });
-
-        function updateMonth(val) { currentMonth = parseInt(val); render(); }
-
-        function addQuick(cat, amt, type) {
-            document.getElementById('cat').value = cat;
-            document.getElementById('amt').value = amt;
-            document.getElementById('dsc').value = "Ricorrente: " + cat;
-            save(type);
-        }
-
-        function save(type) {
-            const a = document.getElementById('amt').value;
-            const d = document.getElementById('dsc').value;
-            if(!a || !d) return alert("Inserisci dati");
-
-            transactions.unshift({
-                id: Date.now(), amt: parseFloat(a), dsc: d,
-                cat: document.getElementById('cat').value,
-                usr: document.getElementById('usr').value,
-                type: type, date: new Date().toISOString()
-            });
-
-            localStorage.setItem('family_v5', JSON.stringify(transactions));
-            document.getElementById('amt').value = '';
-            document.getElementById('dsc').value = '';
-            render();
-        }
-
-        function render() {
-            renderQuickActions();
-            const filtered = transactions.filter(t => new Date(t.date).getMonth() === currentMonth);
-            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
-            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
-            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
-
-            document.getElementById('month-label').innerText = monthNames[currentMonth];
-            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT')}`;
-            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(2)}`;
-            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(2)}`;
-
-            const listEl = document.getElementById('list');
-            listEl.innerHTML = filtered.map(t => `
-                <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center border border-slate-100 mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="text-lg">${t.cat.split(' ')[0]}</div>
-                        <div>
-                            <p class="font-bold text-slate-800 text-sm">${t.dsc}</p>
-                            <p class="text-[9px] text-slate-400 font-bold uppercase">${t.usr}</p>
-                        </div>
-                    </div>
-                    <p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'}">
-                        ${t.type === 'inc' ? '+' : '-'} €${t.amt.toFixed(2)}
-                    </p>
-                </div>
-            `).join('');
-
-            updateCharts(filtered);
-        }
-
-        function updateCharts(data) {
-            const expenses = data.filter(t => t.type === 'exp');
-            const cats = [...new Set(expenses.map(t => t.cat))];
-            const pieTotals = cats.map(c => expenses.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
-
-            const ctxPie = document.getElementById('chartPie').getContext('2d');
-            if(pieChart) pieChart.destroy();
-            pieChart = new Chart(ctxPie, {
-                type: 'doughnut',
-                data: { labels: cats, datasets: [{ data: pieTotals, backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444'], borderWidth: 0 }] },
-                options: { plugins: { legend: { display: false } }, cutout: '75%' }
-            });
-
-            const last6Months = [];
-            for(let i = 5; i >= 0; i--) last6Months.push((new Date().getMonth() - i + 12) % 12);
-            const lineData = last6Months.map(m => transactions.filter(t => new Date(t.date).getMonth() === m && t.type === 'exp').reduce((s, t) => s + t.amt, 0));
-
-            const ctxLine = document.getElementById('chartLine').getContext('2d');
-            if(lineChart) lineChart.destroy();
-            lineChart = new Chart(ctxLine, {
-                type: 'line',
-                data: {
-                    labels: last6Months.map(m => monthNames[m].substring(0,3)),
-                    datasets: [{ borderColor: '#6366f1', data: lineData, tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)' }]
-                },
-                options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
-            });
-        }
-
-        function resetData() {
-            if(confirm("Cancelli tutto?")) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
-
-        render();
-    </script>
-</body>
-</html>
+            // Tasti Rapidi
+            const qList = document.getElementById('settings-quick-list');
+            qList.innerHTML = quickSettings.map((s, i) => `
+                <div class="flex justify-between items-center gap-4">
+                    <span class="text-xs font-bold text-slate-600 w-1/2">${s.label}</span>
+                    <input type="number" id="set-amt-${i}" value="${s.amt}" class="w-1/2 bg-slate-50 rounded-lg p-
