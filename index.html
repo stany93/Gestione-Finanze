@@ -12,108 +12,105 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 120px; background: #f8fafc; }
         .hidden { display: none !important; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .nav-active { color: #6366f1; transform: scale(1.05); font-weight: 800; filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.3)); }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .nav-active { color: #6366f1; transform: scale(1.05); font-weight: 800; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        @keyframes flash-inc { 0% { background: #dcfce7; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.85); transform: scale(1); } }
-        @keyframes flash-exp { 0% { background: #fee2e2; transform: scale(1.02); } 100% { background: rgba(255, 255, 255, 0.85); transform: scale(1); } }
-        .flash-inc { animation: flash-inc 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .flash-exp { animation: flash-exp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes flash-inc { 0% { background: #f0fdf4; } 100% { background: white; } }
+        @keyframes flash-exp { 0% { background: #fef2f2; } 100% { background: white; } }
+        .flash-inc { animation: flash-inc 0.8s ease-out; }
+        .flash-exp { animation: flash-exp 0.8s ease-out; }
     </style>
 </head>
-<body class="min-h-screen text-slate-800">
+<body class="min-h-screen">
 
     <div id="page-dashboard" class="max-w-md mx-auto px-5 pt-12">
-        
         <div class="flex justify-between items-start mb-8 text-left">
             <div>
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight italic">Wallet</h1>
                 <p id="date-label" class="text-indigo-500 font-bold text-[10px] uppercase mt-1 tracking-widest"></p>
             </div>
             <div class="flex gap-2">
-                <select id="month-select" onchange="updateDateFilter()" class="glass-card px-3 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-600 cursor-pointer shadow-sm"></select>
-                <select id="year-select" onchange="updateDateFilter()" class="glass-card px-3 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-600 cursor-pointer shadow-sm"></select>
+                <select id="month-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-500 cursor-pointer"></select>
+                <select id="year-select" onchange="updateDateFilter()" class="glass-card px-2 py-2 rounded-xl text-[10px] font-black uppercase outline-none text-slate-500 cursor-pointer"></select>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 rounded-[2.5rem] p-8 text-white shadow-[0_20px_40px_-15px_rgba(99,102,241,0.4)] mb-8 relative overflow-hidden text-center border border-slate-700/50">
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            
-            <p class="text-indigo-200/80 text-[10px] font-bold uppercase tracking-widest mb-2 italic relative z-10">Patrimonio</p>
-            <div class="flex justify-center items-end gap-3 mb-6 relative z-10">
-                <h2 id="total-balance" class="text-[2.75rem] leading-none font-extrabold tracking-tighter italic text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 drop-shadow-sm">€ 0,00</h2>
+        <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl mb-8 relative overflow-hidden text-center">
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-2 italic">Patrimonio</p>
+            <div class="flex justify-center items-end gap-3 mb-6">
+                <h2 id="total-balance" class="text-4xl font-extrabold tracking-tighter italic">€ 0,00</h2>
             </div>
-            <div class="flex justify-around items-center gap-4 bg-white/10 p-4 rounded-[1.5rem] backdrop-blur-md border border-white/10 shadow-inner relative z-10">
-                <div class="text-center w-1/2 border-r border-white/10">
-                    <p class="text-slate-400 text-[9px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
-                    <p id="m-inc" class="font-extrabold text-emerald-400 text-base drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">€ 0</p>
+            <div class="flex justify-around items-center gap-4 bg-white/5 p-4 rounded-3xl backdrop-blur-md">
+                <div class="text-center">
+                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
+                    <p id="m-inc" class="font-extrabold text-emerald-400 text-base">€ 0</p>
                 </div>
-                <div class="text-center w-1/2">
-                    <p class="text-slate-400 text-[9px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
-                    <p id="m-exp" class="font-extrabold text-rose-400 text-base drop-shadow-[0_0_8px_rgba(251,113,133,0.3)]">€ 0</p>
+                <div class="text-center">
+                    <p class="text-slate-500 text-[9px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
+                    <p id="m-exp" class="font-extrabold text-rose-400 text-base">€ 0</p>
                 </div>
             </div>
         </div>
 
-        <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth"><div id="quick-actions-container" class="flex gap-3 px-1"></div></div>
+        <div class="mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth"><div id="quick-actions-container" class="flex gap-3"></div></div>
 
-        <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 space-y-4 border border-white relative transition-all">
-            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-2 py-1 rounded-md uppercase tracking-tighter shadow-md">AI</div>
-            <div class="flex gap-3">
-                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-white/80 rounded-2xl p-4 font-extrabold text-2xl outline-none border border-slate-100 shadow-inner text-slate-800 placeholder-slate-300">
-                <select id="usr" class="w-1/2 bg-white/80 rounded-2xl p-4 text-xs font-bold text-indigo-600 outline-none border border-slate-100 shadow-inner appearance-none">
-                    <option value="Stany">🙋‍♂️ Stany</option>
-                    <option value="Giulia">🙋‍♀️ Giulia</option>
+        <div id="input-card" class="glass-card rounded-[2.5rem] p-6 shadow-xl mb-8 space-y-4 border border-white relative transition-all">
+            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[8px] font-black bg-indigo-600 text-white px-2 py-1 rounded-md uppercase tracking-tighter shadow-sm">AI</div>
+            <div class="flex gap-2">
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 font-extrabold text-xl outline-none border-none">
+                <select id="usr" class="w-1/2 bg-slate-100/50 rounded-2xl p-4 text-xs font-bold text-indigo-600 outline-none border-none">
+                    <option value="Stany">Stany</option>
+                    <option value="Giulia">Giulia</option>
                 </select>
             </div>
-            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-white/80 rounded-2xl p-4 text-sm outline-none font-semibold text-left border border-slate-100 shadow-inner text-slate-700 placeholder-slate-400">
-            <select id="cat" class="w-full bg-white/80 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600 appearance-none text-left border border-slate-100 shadow-inner"></select>
-            <div class="flex gap-3 pt-3">
-                <button onclick="save('inc')" class="flex-1 bg-gradient-to-tr from-emerald-500 to-emerald-400 text-white py-4 rounded-[1.25rem] font-extrabold text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-[0_8px_20px_-6px_rgba(16,185,129,0.5)]">+ Ricevuto</button>
-                <button onclick="save('exp')" class="flex-1 bg-gradient-to-tr from-rose-500 to-rose-400 text-white py-4 rounded-[1.25rem] font-extrabold text-[11px] uppercase tracking-widest active:scale-95 transition-all shadow-[0_8px_20px_-6px_rgba(244,63,94,0.5)]">- Speso</button>
+            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-medium border-none">
+            <select id="cat" class="w-full bg-slate-100/50 rounded-2xl p-4 text-sm outline-none font-bold text-slate-600 appearance-none border-none"></select>
+            <div class="flex gap-3 pt-2">
+                <button onclick="save('inc')" class="flex-1 bg-slate-900 text-emerald-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 transition-transform">+ Ricevuto</button>
+                <button onclick="save('exp')" class="flex-1 bg-slate-900 text-rose-400 py-4 rounded-2xl font-extrabold text-[10px] uppercase tracking-widest active:scale-95 transition-transform">- Speso</button>
             </div>
         </div>
 
-        <div id="charts-container" class="glass-card rounded-[2.5rem] p-7 mb-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white space-y-8">
+        <div id="charts-container" class="glass-card rounded-[2.5rem] p-7 mb-10 shadow-sm border border-white space-y-8">
             <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
             <div class="pt-8 border-t border-slate-100"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
         </div>
         
-        <div id="list" class="space-y-3 pb-24 text-left"></div>
+        <div id="list" class="space-y-4 pb-20 text-left"></div>
     </div>
 
     <div id="page-settings" class="max-w-md mx-auto px-6 pt-12 hidden text-center">
         <h1 class="text-3xl font-extrabold text-slate-900 mb-10 tracking-tight italic">Opzioni</h1>
-        <div class="space-y-8 pb-24 text-left">
-            <div class="glass-card rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
+        <div class="space-y-8 pb-10 text-left">
+            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white">
                 <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
                 <div id="settings-quick-list" class="space-y-3 mb-6"></div>
-                <div class="bg-white/60 p-4 rounded-3xl space-y-3 border border-slate-100 shadow-inner">
-                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full p-3 rounded-xl text-sm outline-none border-none bg-white shadow-sm">
+                <div class="bg-slate-100/50 p-4 rounded-3xl space-y-3">
+                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full p-3 rounded-xl text-sm outline-none border-none">
                     <div class="flex gap-2">
-                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-xl outline-none font-bold border-none bg-white shadow-sm">
-                        <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold outline-none border-none bg-white shadow-sm"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
+                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-xl outline-none font-bold border-none">
+                        <select id="new-q-type" class="w-1/2 p-3 rounded-xl font-bold outline-none border-none"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
                     </div>
-                    <button onclick="addQuickSetting()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold uppercase text-[10px] shadow-md">+ Aggiungi</button>
+                    <button onclick="addQuickSetting()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-[10px] shadow-lg">+ Aggiungi</button>
                 </div>
             </div>
             
-            <div class="glass-card rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white text-center">
+            <div class="glass-card rounded-[2.5rem] p-6 shadow-sm border border-white text-center">
                 <p class="text-[10px] font-black text-indigo-500 uppercase mb-6 tracking-widest">Categorie</p>
                 <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-bold uppercase text-slate-600"></div>
-                <div class="flex gap-2 p-2 bg-white/60 rounded-2xl shadow-inner border border-slate-100">
-                    <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-transparent px-3 outline-none text-sm font-medium border-none text-left">
-                    <button onclick="addCategory()" class="bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold shadow-md shadow-indigo-500/30">+</button>
+                <div class="flex gap-2">
+                    <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-slate-100/50 rounded-xl p-3 outline-none text-sm font-medium border-none text-left">
+                    <button onclick="addCategory()" class="bg-slate-800 text-white px-5 rounded-xl font-bold">+</button>
                 </div>
             </div>
 
-            <button onclick="clearAllData()" class="w-full text-rose-400 bg-rose-50/50 rounded-3xl text-[10px] font-black uppercase py-6 border border-rose-100 italic tracking-widest text-center active:scale-95 transition-transform">Resetta App</button>
+            <button onclick="clearAllData()" class="w-full text-rose-300 text-[10px] font-black uppercase py-10 opacity-40 italic tracking-widest text-center">Resetta App</button>
         </div>
     </div>
 
-    <nav class="fixed bottom-5 left-5 right-5 bg-slate-900/90 backdrop-blur-xl h-20 rounded-[2.5rem] flex items-center justify-around z-50 shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-slate-700/50">
-        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all"><span class="text-[22px]">📊</span><span class="text-[8px] uppercase font-black tracking-widest">Home</span></button>
-        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition-all"><span class="text-[22px]">⚙️</span><span class="text-[8px] uppercase font-black tracking-widest">Opzioni</span></button>
+    <nav class="fixed bottom-6 left-6 right-6 bg-slate-900 h-20 rounded-[2rem] flex items-center justify-around z-50 shadow-2xl border border-white/10">
+        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1 nav-active transition-all"><span class="text-xl">📊</span><span class="text-[8px] uppercase font-black tracking-widest">Home</span></button>
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1 text-slate-500 transition-all"><span class="text-xl">⚙️</span><span class="text-[8px] uppercase font-black tracking-widest">Set</span></button>
     </nav>
 
     <script>
@@ -187,25 +184,14 @@
             vibrate();
             document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
             document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
-            
-            // AGGIORNAMENTO CLASSI PER LA NUOVA NAVBAR
-            const btnDash = document.getElementById('btn-dash');
-            const btnSet = document.getElementById('btn-set');
-            if(p === 'dashboard') {
-                btnDash.classList.add('nav-active'); btnDash.classList.remove('text-slate-500');
-                btnSet.classList.remove('nav-active'); btnSet.classList.add('text-slate-500');
-                render(); 
-            } else {
-                btnSet.classList.add('nav-active'); btnSet.classList.remove('text-slate-500');
-                btnDash.classList.remove('nav-active'); btnDash.classList.add('text-slate-500');
-                renderSettingsPage();
-            }
+            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
+            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
+            if(p === 'dashboard') render(); else renderSettingsPage();
         }
 
         function renderSettingsPage() {
-            // AGGIORNAMENTO CLASSI HTML GENERATE DAL JS PER LA GRAFICA PREMIUM
-            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center gap-3 bg-white/60 p-3 rounded-2xl border border-slate-100 text-[10px] font-bold uppercase shadow-sm"><div class="flex-1 text-slate-700">${s.label} <span class="text-indigo-500 ml-1">€${s.amt}</span></div><button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-3 py-1 bg-white rounded-lg shadow-sm">✕</button></div>`).join('');
-            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-white/60 p-3 rounded-2xl mb-2 italic px-4 shadow-sm border border-slate-100"><span class="font-semibold text-slate-700">${c}</span><button onclick="removeCategory(${i})" class="text-rose-400 font-bold px-2 py-1">✕</button></div>`).join('');
+            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center gap-3 bg-slate-100/50 p-3 rounded-2xl border border-slate-100 text-[10px] font-bold uppercase"><div class="flex-1">${s.label} - €${s.amt}</div><button onclick="removeQuickSetting(${i})" class="text-rose-400 font-bold px-2 text-lg">✕</button></div>`).join('');
+            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-slate-100/50 p-3 rounded-2xl mb-2 italic"><span>${c}</span><button onclick="removeCategory(${i})" class="text-rose-300 font-bold px-2 text-lg">✕</button></div>`).join('');
         }
 
         function updateDateFilter() {
@@ -222,8 +208,7 @@
                 if (categories.includes(catVal)) catSelect.value = catVal;
             }
 
-            // AGGIORNAMENTO CLASSI TASTI RAPIDI
-            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[1.5rem] shadow-sm hover:shadow-md shrink-0 active:scale-95 transition-all text-center border-white/80 bg-gradient-to-br from-white to-slate-50/80"><p class="text-[9px] font-black uppercase text-indigo-500 mb-1 tracking-tighter">${s.label}</p><p class="text-[15px] font-extrabold text-slate-800 tracking-tighter italic">€${s.amt}</p></button>`).join('');
+            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="glass-card px-6 py-4 rounded-[2rem] shadow-sm shrink-0 active:scale-95 transition-all text-center"><p class="text-[9px] font-black uppercase text-indigo-500 mb-1 italic tracking-tighter">${s.label}</p><p class="text-sm font-black text-slate-800 tracking-tighter">€${s.amt}</p></button>`).join('');
 
             const filtered = transactions.filter(t => {
                 if(!t || !t.date) return false;
@@ -240,10 +225,9 @@
             document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
             document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
-            // AGGIORNAMENTO CLASSI LISTA TRANSAZIONI
-            document.getElementById('list').innerHTML = filtered.map(t => `<div class="glass-card p-4 rounded-[1.5rem] flex justify-between items-center border border-white shadow-sm hover:shadow-md transition-all mb-3 text-sm pr-5 bg-gradient-to-br from-white to-slate-50/50"><div class="truncate flex-1 pr-4 text-left"><p class="font-extrabold text-slate-800 truncate tracking-tight italic">${t.dsc}</p><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic mt-0.5">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3 text-right"><p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} text-base italic">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-300 hover:text-rose-400 font-bold pl-2 pr-1 py-1 text-lg transition-colors">✕</button></div></div>`).join('');
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="glass-card p-4 rounded-[2.2rem] flex justify-between items-center border border-white mb-3 text-sm pr-6"><div class="truncate flex-1 pr-4"><p class="font-extrabold text-slate-800 truncate tracking-tight italic text-left">${t.dsc}</p><p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic text-left">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-black ${t.type === 'inc' ? 'text-emerald-500' : 'text-rose-500'} italic">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-200 font-bold px-1 text-lg">✕</button></div></div>`).join('');
             
-            setTimeout(() => { try { updateCharts(filtered); } catch(e) {} }, 150);
+            setTimeout(() => { updateCharts(filtered); }, 150);
         }
 
         function addQuickSetting() { 
@@ -255,10 +239,13 @@
             renderSettingsPage(); 
         }
 
+        // POPUP DI CONFERMA AGGIUNTI
         function removeQuickSetting(i) { 
-            quickSettings.splice(i, 1); 
-            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
-            renderSettingsPage(); 
+            if(confirm("Vuoi eliminare questo tasto rapido?")) {
+                quickSettings.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
+                renderSettingsPage(); 
+            }
         }
 
         function addCategory() { 
@@ -271,9 +258,11 @@
         }
 
         function removeCategory(i) { 
-            categories.splice(i, 1); 
-            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
-            renderSettingsPage(); 
+            if(confirm("Vuoi eliminare questa categoria?")) {
+                categories.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+                renderSettingsPage(); 
+            }
         }
 
         function deleteEntry(id) {
@@ -320,13 +309,13 @@
             const pEl = document.getElementById('chartPie');
             if(pEl && catsArr.length > 0) {
                 if(charts.pie) charts.pie.destroy();
-                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 0, hoverOffset: 4 }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { family: "'Plus Jakarta Sans', sans-serif", size: 10, weight: 'bold' }, color: '#64748b', padding: 20 } } }, cutout: '75%', responsive: true, layout: { padding: 10 } } });
+                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 4, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 9, weight: 'bold' } } } }, cutout: '70%', responsive: true } });
             }
 
             const lEl = document.getElementById('chartLine');
             if(lEl) {
                 if(charts.line) charts.line.destroy();
-                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#6366f1', tension: 0.5, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.1)', pointBackgroundColor: '#fff', pointBorderColor: '#6366f1', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false }, ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 10, weight: '600' }, color: '#94a3b8' } } }, responsive: true, layout: { padding: { top: 10, bottom: 10 } } } });
+                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false } } }, responsive: true } });
             }
         }
 
