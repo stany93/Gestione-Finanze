@@ -16,7 +16,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { colors: { brand: '#0075EB' } } }
+            theme: { extend: { colors: { brand: '#0075EB', success: '#10b981' } } }
         }
         if (localStorage.getItem('fin_theme') === 'dark' || (!('fin_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -50,12 +50,14 @@
         input, select { transition: all 0.2s; border: 1px solid transparent; }
         input:focus, select:focus { border-color: #0075EB !important; outline: none; box-shadow: 0 0 0 1px #0075EB; }
         .rv-select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; padding-right: 2.5rem !important; }
+        .rv-select-blue { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230075EB'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; padding-right: 2.5rem !important; }
         .nav-active { color: #0075EB; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         @keyframes flash-inc { 0% { background: #10b981; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
         @keyframes flash-exp { 0% { background: #ef4444; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
         .flash-inc { animation: flash-inc 0.8s ease-out; }
         .flash-exp { animation: flash-exp 0.8s ease-out; }
+        nav button { min-height: 48px; min-width: 48px; }
     </style>
 </head>
 <body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 relative text-left">
@@ -68,7 +70,7 @@
             <p id="modal-message" class="text-sm font-medium text-slate-500 mb-8"></p>
             <div class="flex gap-3">
                 <button onclick="closeModal()" class="flex-1 py-4 rounded-2xl font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">Annulla</button>
-                <button id="modal-confirm-btn" class="flex-1 py-4 rounded-2xl font-bold bg-rose-500 text-white shadow-lg shadow-rose-500/30">Conferma</button>
+                <button id="modal-confirm-btn" class="flex-1 py-4 rounded-2xl font-bold bg-rose-500 text-white shadow-lg">Conferma</button>
             </div>
         </div>
     </div>
@@ -84,10 +86,15 @@
                 </div>
                 <h1 class="text-4xl font-extrabold tracking-tighter">Wallet</h1>
             </div>
+            
+            <!-- TEMA: ICONA SOLE MINIMAL -->
             <button onclick="toggleTheme()" class="p-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm active:scale-95 transition-transform">
-                <svg id="theme-icon" class="w-6 h-6 text-slate-600 dark:text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path class="block dark:hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                    <path class="hidden dark:block" fill="currentColor" d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.757 17.834a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                <svg id="sun-icon" class="hidden dark:block w-6 h-6 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                </svg>
+                <svg id="moon-icon" class="block dark:hidden w-6 h-6 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
             </button>
         </div>
@@ -98,6 +105,7 @@
         </div>
 
         <div class="mb-4 text-center">
+            <!-- SALDO CON ANIMAZIONE -->
             <p id="total-balance" class="text-5xl font-extrabold tracking-tighter text-slate-950 dark:text-white">€ 0,00</p>
             <p id="date-label" class="text-[10px] text-slate-500 font-bold mt-2 tracking-widest uppercase"></p>
         </div>
@@ -120,20 +128,19 @@
             <div id="quick-actions-container" class="flex gap-2"></div>
         </div>
 
+        <!-- FORM INPUT -->
         <div id="input-card" class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 border border-slate-200 dark:border-slate-800 shadow-xl mb-10 space-y-4 relative transition-all">
-            <div id="ai-badge" class="hidden absolute top-4 right-8 text-[9px] font-black bg-brand text-white px-2.5 py-1 rounded-md uppercase">AI</div>
+            <div id="ai-badge" class="hidden absolute top-4 right-8 text-[9px] font-black bg-brand text-white px-2.5 py-1 rounded-md uppercase tracking-tighter shadow-lg shadow-brand/20">AI</div>
             <div class="flex gap-2">
                 <input type="number" id="amt" placeholder="0.00 €" class="w-1/2 bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 font-bold text-2xl">
-                <select id="usr" onchange="window.saveCurrentUser(this.value)" class="w-1/2 rv-select-blue bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-xs font-black text-brand uppercase tracking-widest">
-                    <option value="Stany">Stany</option>
-                    <option value="Giulia">Giulia</option>
-                </select>
+                <select id="usr" onchange="window.saveCurrentUser(this.value)" class="w-1/2 rv-select-blue bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-xs font-black text-brand uppercase tracking-widest"></select>
             </div>
             <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-sm font-semibold">
             <select id="cat" class="w-full rv-select bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-sm font-bold text-slate-700 dark:text-slate-200"></select>
             <div class="flex gap-3 pt-2">
                 <button onclick="save('exp')" class="flex-1 bg-brand text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition-transform">- Speso</button>
-                <button onclick="save('inc')" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white py-4 rounded-2xl font-black text-xs uppercase active:scale-95 transition-transform">+ Ricevuto</button>
+                <!-- PULSANTE RICEVUTO VERDE ELEGANTE -->
+                <button onclick="save('inc')" class="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform">+ Ricevuto</button>
             </div>
         </div>
 
@@ -155,71 +162,54 @@
     <!-- PAGE: SETTINGS -->
     <div id="page-settings" class="max-w-xl mx-auto px-6 pt-16 hidden">
         <h1 class="text-3xl font-extrabold mb-10 tracking-tighter">Opzioni</h1>
-        <div class="space-y-8 pb-24 text-left text-sm text-slate-900 dark:text-slate-100">
-            
-            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">Esportazione Dati</p>
-                <button onclick="exportToCSV()" class="w-full bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase text-[11px] shadow-lg">Scarica CSV</button>
+        <div class="space-y-8 pb-24 text-left">
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm text-center">
+                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest">Esportazione</p>
+                <button onclick="exportToCSV()" class="w-full bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase text-[11px]">Scarica CSV</button>
             </div>
-
             <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">Conti Personali</p>
+                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase text-center">Conti</p>
                 <div id="settings-accounts-list" class="space-y-2 mb-6"></div>
                 <div class="flex gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl">
-                    <input type="text" id="new-account-name" placeholder="Nuovo conto..." class="flex-1 bg-transparent p-2 font-bold outline-none dark:text-white">
+                    <input type="text" id="new-account-name" placeholder="Nuovo conto..." class="flex-1 bg-transparent p-2 font-bold outline-none">
                     <button onclick="addAccount()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold">+</button>
                 </div>
             </div>
-
             <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest text-center">Tasti Rapidi</p>
+                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase text-center">Tasti Rapidi</p>
                 <div id="settings-quick-list" class="space-y-2 mb-6"></div>
-                <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl space-y-3">
-                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold border-none outline-none dark:text-white">
-                    <input type="number" id="new-q-amt" placeholder="€" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold border-none outline-none dark:text-white">
-                    <select id="new-q-type" class="w-full p-3 rounded-xl font-bold text-brand bg-white dark:bg-slate-700 outline-none">
-                        <option value="exp">Uscita</option><option value="inc">Entrata</option>
-                    </select>
+                <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl space-y-3 text-sm">
+                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold">
+                    <input type="number" id="new-q-amt" placeholder="€" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold">
+                    <select id="new-q-type" class="w-full p-3 rounded-xl font-bold text-brand"><option value="exp">Uscita</option><option value="inc">Entrata</option></select>
                     <button onclick="addQuickSetting()" class="w-full bg-brand text-white py-3.5 rounded-xl font-black text-[10px]">AGGIUNGI</button>
                 </div>
             </div>
-
-            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm text-center">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Categorie</p>
-                <div id="settings-cat-list" class="space-y-2 mb-6 text-left"></div>
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase text-center">Categorie</p>
+                <div id="settings-cat-list" class="space-y-2 mb-6"></div>
                 <div class="flex gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl">
-                    <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-transparent p-2 font-bold outline-none dark:text-white">
+                    <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-transparent p-2 font-bold outline-none">
                     <button onclick="addCategory()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold">+</button>
                 </div>
             </div>
-
-            <button onclick="confirmAction('Reset impostazioni?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-500 text-[10px] font-black uppercase py-6 opacity-60">Reset App</button>
+            <button onclick="confirmAction('Reset impostazioni?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-500 text-[10px] font-black uppercase py-6 opacity-60 text-center">Reset App</button>
         </div>
     </div>
 
-    <!-- NAV AGGIORNATA: FIX ICONE TAGLIATE -->
+    <!-- NAV (FIX ICONE TAGLIATE) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg flex items-center justify-around z-50 border-t border-slate-200 dark:border-slate-800 px-6 pb-safe transition-colors" style="height: 85px;">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center justify-center gap-1 nav-active w-20 h-full">
-            <div class="flex items-center justify-center h-7 w-7">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                </svg>
-            </div>
+            <div class="flex items-center justify-center h-7 w-7"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg></div>
             <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
         </button>
-        
         <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-600 w-20 h-full">
-            <div class="flex items-center justify-center h-7 w-7">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-            </div>
+            <div class="flex items-center justify-center h-7 w-7"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
             <span class="text-[9px] font-black uppercase tracking-widest">Opzioni</span>
         </button>
     </nav>
 
-    <!-- FIREBASE MODULE -->
+    <!-- FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -256,8 +246,6 @@
                 window.render();
             }
             document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
-            document.getElementById('input-card').classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
-            setTimeout(() => document.getElementById('input-card').classList.remove('flash-inc', 'flash-exp'), 1000);
         };
 
         window.deleteEntry = (id) => {
@@ -276,6 +264,7 @@
         const monthNames = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
         const catColors = ['#0075EB', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#3B82F6', '#D946EF', '#14B8A6'];
         let charts = { pie: null, line: null, history: null };
+        let lastKnownBalance = 0;
 
         const brain = {
             'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'casa', 'mutuo'],
@@ -298,16 +287,34 @@
         window.categories = JSON.parse(localStorage.getItem('fin_v22_cats')) || Object.keys(brain);
         window.quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Spesa', amt: 50, type: 'exp' }];
 
+        // ANIMAZIONE SALDO PROGRESSIVO
+        function animateBalance(targetValue) {
+            const el = document.getElementById('total-balance');
+            const startValue = lastKnownBalance;
+            const duration = 800; 
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = startValue + (targetValue - startValue) * progress;
+                el.innerText = `€ ${current.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    lastKnownBalance = targetValue;
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
         window.confirmAction = (msg, cb) => {
             document.getElementById('modal-message').innerText = msg;
             window.pendingAction = cb;
             document.getElementById('custom-modal').classList.remove('hidden');
         };
         window.closeModal = () => document.getElementById('custom-modal').classList.add('hidden');
-        document.getElementById('modal-confirm-btn').onclick = () => {
-            if(window.pendingAction) window.pendingAction();
-            closeModal();
-        };
+        document.getElementById('modal-confirm-btn').onclick = () => { if(window.pendingAction) window.pendingAction(); closeModal(); };
 
         window.switchAccount = (id) => {
             window.currentAccount = id; localStorage.setItem('fin_v22_currentAccount', id);
@@ -327,7 +334,9 @@
             const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
             const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
 
-            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            // Attiva animazione saldo
+            animateBalance(total);
+            
             document.getElementById('m-inc').innerText = `€ ${mInc.toLocaleString('it-IT')}`;
             document.getElementById('m-exp').innerText = `€ ${mExp.toLocaleString('it-IT')}`;
             document.getElementById('date-label').innerText = `${monthNames[m]} ${y}`;
@@ -394,38 +403,18 @@
                     tension: 0.4, 
                     fill: true, 
                     pointRadius: 3,
-                    pointBackgroundColor: '#0075EB',
-                    backgroundColor: (context) => {
-                        const ctx = context.chart.ctx;
-                        const gradient = ctx.createLinearGradient(0, 0, 0, 150);
-                        gradient.addColorStop(0, 'rgba(0, 117, 235, 0.15)');
-                        gradient.addColorStop(1, 'rgba(0, 117, 235, 0)');
-                        return gradient;
+                    backgroundColor: (ctx) => {
+                        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150);
+                        g.addColorStop(0, 'rgba(0, 117, 235, 0.15)'); g.addColorStop(1, 'rgba(0, 117, 235, 0)');
+                        return g;
                     }
                 }] },
                 options: { 
                     maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { display: false }, 
-                        tooltip: { callbacks: { label: (ctx) => ` € ${ctx.raw.toLocaleString('it-IT')}` } } 
-                    },
+                    plugins: { legend: { display: false } },
                     scales: { 
-                        y: { 
-                            display: true, 
-                            position: 'right',
-                            ticks: { 
-                                callback: (v) => v.toLocaleString('it-IT') + ' €',
-                                color: labelColor, 
-                                font: {size: 8},
-                                maxTicksLimit: 3
-                            }, 
-                            grid: { display: false } 
-                        }, 
-                        x: { 
-                            display: true, 
-                            ticks: { color: labelColor, font: {size: 8}, padding: 5 }, 
-                            grid: { display: false } 
-                        } 
+                        y: { display: true, position: 'right', ticks: { callback: (v) => v.toLocaleString('it-IT') + ' €', color: labelColor, font: {size: 8}, maxTicksLimit: 3 }, grid: { display: false } }, 
+                        x: { display: true, ticks: { color: labelColor, font: {size: 8}, padding: 5 }, grid: { display: false } } 
                     }
                 }
             });
@@ -448,7 +437,8 @@
             window.transactions.forEach(t => c += `${new Date(t.date).toLocaleString('it-IT')},${t.type === 'inc' ? 'Entrata' : 'Uscita'},${t.amt},${t.cat},${t.usr},"${t.dsc.replace(/"/g, '""')}"\n`);
             const b = new Blob([c], {type: 'text/csv;charset=utf-8;'});
             const u = URL.createObjectURL(b);
-            const l = document.createElement("a"); l.href = u; l.download = `Wallet_${acc.name.replace(/\s+/g, '_')}.csv`; l.click();
+            const l = document.createElement("a");
+            l.href = u; l.download = `Wallet_${acc.name.replace(/\s+/g, '_')}.csv`; l.click();
         };
 
         window.switchTab = (p) => {
@@ -462,7 +452,7 @@
         window.renderSettingsPage = () => {
             const svgClose = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
             document.getElementById('settings-accounts-list').innerHTML = window.accounts.filter(a => a.id !== 'shared').map((a, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2"><span>${a.name}</span><button onclick="removeAccount(${window.accounts.indexOf(a)})" class="text-rose-500">${svgClose}</button></div>`).join('');
-            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl mb-2 shadow-sm"><span>${s.label} (€${s.amt})</span><button onclick="removeQuickSetting(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
+            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2 shadow-sm"><span>${s.label} (€${s.amt})</span><button onclick="removeQuickSetting(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
             document.getElementById('settings-cat-list').innerHTML = window.categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-3 rounded-xl mb-2 shadow-sm uppercase font-bold text-xs"><span>${c}</span><button onclick="removeCategory(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
         };
 
@@ -470,13 +460,10 @@
             const ms = document.getElementById('month-select'), ys = document.getElementById('year-select'), now = new Date();
             monthNames.forEach((m, i) => ms.innerHTML += `<option value="${i}" ${i === now.getMonth() ? 'selected' : ''}>${m}</option>`);
             for(let y = now.getFullYear()-1; y<=now.getFullYear()+1; y++) ys.innerHTML += `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`;
-            
             const savedUsr = localStorage.getItem('fin_v22_currentUser');
             if(savedUsr) document.getElementById('usr').value = savedUsr;
-            
             const sel = document.getElementById('account-select');
             sel.innerHTML = window.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-            
             window.switchAccount(window.currentAccount);
         };
     </script>
