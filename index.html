@@ -22,7 +22,7 @@
             document.documentElement.classList.add('dark');
         }
 
-        // GENERAZIONE DINAMICA DEL MANIFEST PER INSTALLAZIONE STANDALONE (SENZA BARRA DI RICERCA)
+        // GENERAZIONE DINAMICA DEL MANIFEST PER INSTALLAZIONE STANDALONE
         const appManifest = {
             "name": "Wallet Famiglia",
             "short_name": "Wallet",
@@ -42,7 +42,6 @@
         manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(appManifest));
         document.head.appendChild(manifestLink);
 
-        // Icona specifica per dispositivi Apple
         const appleIcon = document.createElement('link');
         appleIcon.rel = 'apple-touch-icon';
         appleIcon.href = appManifest.icons[0].src;
@@ -98,7 +97,19 @@
         .flash-exp { animation: flash-exp 0.8s ease-out; }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 relative">
+
+    <div id="custom-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl p-6 transform scale-95 transition-all">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Conferma</h3>
+            <p id="modal-message" class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-8">Sei sicuro di voler procedere?</p>
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-3.5 rounded-xl font-bold text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-white active:scale-95 transition-transform">Annulla</button>
+                <button id="modal-confirm-btn" class="flex-1 py-3.5 rounded-xl font-bold text-sm bg-rose-500 text-white active:scale-95 transition-transform shadow-lg shadow-rose-500/30">Elimina</button>
+            </div>
+        </div>
+    </div>
 
     <div id="install-popup" class="fixed bottom-28 left-4 right-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl p-5 z-[60] transform translate-y-[200%] transition-transform duration-500 ease-out flex gap-4 items-center">
         <div class="bg-brand/10 dark:bg-brand/20 p-3 rounded-xl shrink-0">
@@ -222,7 +233,7 @@
                 </div>
             </div>
 
-            <button onclick="clearAllData()" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Applicazione</button>
+            <button onclick="confirmAction('Vuoi davvero cancellare tutti i dati definitivamente?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Applicazione</button>
         </div>
     </div>
 
@@ -250,6 +261,40 @@
             localStorage.setItem('fin_theme', isDark ? 'dark' : 'light');
             render(); 
         }
+
+        // SISTEMA MODAL CUSTOM
+        let pendingAction = null;
+
+        function confirmAction(message, actionCallback) {
+            vibrate();
+            document.getElementById('modal-message').innerText = message;
+            pendingAction = actionCallback;
+            const modal = document.getElementById('custom-modal');
+            modal.classList.remove('hidden');
+            // Ritardo per animazione CSS
+            setTimeout(() => {
+                modal.querySelector('.transform').classList.remove('scale-95');
+                modal.querySelector('.transform').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('custom-modal');
+            modal.querySelector('.transform').classList.remove('scale-100');
+            modal.querySelector('.transform').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                pendingAction = null;
+            }, 200);
+        }
+
+        document.getElementById('modal-confirm-btn').addEventListener('click', () => {
+            if (pendingAction) {
+                pendingAction();
+            }
+            closeModal();
+        });
+
 
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#0075EB', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#3B82F6', '#D946EF', '#14B8A6'];
@@ -370,7 +415,7 @@
             document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
             document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
-            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 dark:text-white truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-0.5">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'}">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 p-1">${closeIconSvg}</button></div></div>`).join('');
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 dark:text-white truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-0.5">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'}">€${t.amt.toFixed(2)}</p><button onclick="deleteEntry(${t.id})" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 p-1">${closeIconSvg}</button></div></div>`).join('');
             
             renderCategoryRecap(filtered, mExp);
             setTimeout(() => { updateCharts(filtered); }, 150);
@@ -428,11 +473,11 @@
         }
 
         function removeQuickSetting(i) { 
-            if(confirm("Vuoi eliminare questo tasto rapido?")) {
+            confirmAction("Vuoi eliminare questo tasto rapido?", () => {
                 quickSettings.splice(i, 1); 
                 try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
                 renderSettingsPage(); 
-            }
+            });
         }
 
         function addCategory() { 
@@ -445,26 +490,53 @@
         }
 
         function removeCategory(i) { 
-            if(confirm("Vuoi eliminare questa categoria?")) {
+            confirmAction("Vuoi eliminare questa categoria?", () => {
                 categories.splice(i, 1); 
                 try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
                 renderSettingsPage(); 
-            }
+            });
         }
 
         function deleteEntry(id) {
-            if(confirm("Vuoi eliminare questa transazione?")) { 
+            confirmAction("Vuoi eliminare questa transazione?", () => {
                 transactions = transactions.filter(t => t.id !== id); 
                 try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){} 
                 render(); 
-            }
+            });
         }
 
         function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
 
         function save(type) {
             const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
-            if(!a || !d) return alert("Dati mancanti!");
+            if(!a || !d) {
+                // Sostituiamo anche il vecchio alert nativo
+                document.getElementById('modal-message').innerText = "Inserisci l'importo e la descrizione prima di salvare.";
+                document.getElementById('modal-confirm-btn').classList.add('hidden'); // Nasconde tasto elimina
+                document.querySelector('#custom-modal button').innerText = "Ok, ho capito"; // Cambia "Annulla" in "Ok"
+                
+                const modal = document.getElementById('custom-modal');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.transform').classList.remove('scale-95');
+                    modal.querySelector('.transform').classList.add('scale-100');
+                }, 10);
+                
+                // Ripristino i bottoni quando chiudo
+                const resetModal = () => {
+                    document.getElementById('modal-confirm-btn').classList.remove('hidden');
+                    document.querySelector('#custom-modal button').innerText = "Annulla";
+                };
+                
+                // Override temporaneo della funzione close per resettare
+                const originalClose = closeModal;
+                closeModal = function() {
+                    originalClose();
+                    setTimeout(resetModal, 200);
+                };
+                
+                return;
+            }
             vibrate();
             transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
             try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){}
@@ -579,8 +651,6 @@
         } else {
             initApp();
         }
-        
-        function clearAllData() { if(confirm("Cancellare tutto definitivamente?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
