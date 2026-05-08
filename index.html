@@ -22,7 +22,6 @@
             document.documentElement.classList.add('dark');
         }
 
-        // GENERAZIONE DINAMICA DEL MANIFEST PER INSTALLAZIONE STANDALONE
         const appManifest = {
             "name": "Wallet Famiglia",
             "short_name": "Wallet",
@@ -41,7 +40,7 @@
         manifestLink.rel = 'manifest';
         manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(appManifest));
         document.head.appendChild(manifestLink);
-
+        
         const appleIcon = document.createElement('link');
         appleIcon.rel = 'apple-touch-icon';
         appleIcon.href = appManifest.icons[0].src;
@@ -51,46 +50,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-            padding-bottom: 110px; 
-            overscroll-behavior-y: none;
-        }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 110px; overscroll-behavior-y: none; }
         .hidden { display: none !important; }
-
         input, select { transition: all 0.2s; border: 1px solid transparent; }
-        input:focus, select:focus {
-            border-color: #0075EB !important;
-            outline: none;
-            box-shadow: 0 0 0 1px #0075EB;
-        }
-
-        .rv-select {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1rem;
-            padding-right: 2.5rem !important;
-        }
-
-        .rv-select-blue {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230075EB'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1rem;
-            padding-right: 2.5rem !important;
-        }
-
+        input:focus, select:focus { border-color: #0075EB !important; outline: none; box-shadow: 0 0 0 1px #0075EB; }
+        .rv-select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; padding-right: 2.5rem !important; }
+        .rv-select-blue { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230075EB'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; padding-right: 2.5rem !important; }
         .nav-active { color: #0075EB; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
         @keyframes flash-inc { 0% { background: #10b981; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
         @keyframes flash-exp { 0% { background: #ef4444; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
         .flash-inc { animation: flash-inc 0.8s ease-out; }
@@ -113,9 +80,7 @@
 
     <div id="install-popup" class="fixed bottom-28 left-4 right-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl p-5 z-[60] transform translate-y-[200%] transition-transform duration-500 ease-out flex gap-4 items-center">
         <div class="bg-brand/10 dark:bg-brand/20 p-3 rounded-xl shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7 text-brand">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7 text-brand"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
         </div>
         <div class="flex-1">
             <p class="text-sm font-bold text-slate-900 dark:text-white mb-1">Installa l'App</p>
@@ -130,16 +95,14 @@
         
         <div class="flex justify-between items-start mb-6 text-left">
             <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Conto Principale</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+                    Conto Principale <span id="cloud-status" class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                </p>
                 <h1 class="text-3xl font-bold tracking-tighter">Wallet</h1>
             </div>
             <button onclick="toggleTheme()" class="p-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm active:scale-95 transition-transform flex items-center justify-center">
-                <svg class="w-5 h-5 block dark:hidden text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                </svg>
-                <svg class="w-5 h-5 hidden dark:block text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.757 17.834a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
-                </svg>
+                <svg class="w-5 h-5 block dark:hidden text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
+                <svg class="w-5 h-5 hidden dark:block text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.757 17.834a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" /></svg>
             </button>
         </div>
 
@@ -205,7 +168,7 @@
         <div class="space-y-8 pb-24 text-left">
             
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
-                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
+                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest text-center">Tasti Rapidi (Locali)</p>
                 <div id="settings-quick-list" class="space-y-3 mb-6"></div>
                 <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
                     <input type="text" id="new-q-label" placeholder="Etichetta (es. Caffè)" class="w-full p-3 rounded-lg text-sm bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700">
@@ -221,84 +184,134 @@
             </div>
             
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-center">
-                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest">Categorie</p>
+                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest">Categorie (Locali)</p>
                 <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-semibold uppercase text-slate-700 dark:text-slate-300"></div>
                 <div class="flex gap-2">
                     <input type="text" id="new-cat-name" placeholder="Nuova Categoria..." class="flex-1 bg-slate-100 dark:bg-slate-800 dark:text-white border border-transparent dark:border-slate-700 rounded-xl p-3 text-sm font-medium">
                     <button onclick="addCategory()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                     </button>
                 </div>
             </div>
 
-            <button onclick="confirmAction('Vuoi davvero cancellare tutti i dati definitivamente?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Applicazione</button>
+            <button onclick="confirmAction('Cancellare le impostazioni locali (categorie e tasti rapidi)? Le transazioni sul Cloud NON verranno perse.', () => { localStorage.removeItem('fin_v22_quick'); localStorage.removeItem('fin_v22_cats'); location.reload(); })" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Impostazioni Locali</button>
         </div>
     </div>
 
     <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 h-24 flex items-start justify-around z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-none border-t border-slate-200 dark:border-slate-800 px-6 pt-4 transition-colors pb-safe">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1.5 nav-active transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
             <span class="text-[10px] font-bold tracking-wide">Home</span>
         </button>
         <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             <span class="text-[10px] font-bold tracking-wide">Opzioni</span>
         </button>
     </nav>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCX6bNXQMKS_a0fIKga_nY07Jy9oJ8XiiI",
+            authDomain: "wallet-famiglia.firebaseapp.com",
+            projectId: "wallet-famiglia",
+            storageBucket: "wallet-famiglia.firebasestorage.app",
+            messagingSenderId: "909534951887",
+            appId: "1:909534951887:web:3c3c4f5427ce3f2632baba"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Ascolto in tempo reale delle transazioni
+        const q = query(collection(db, "transactions"), orderBy("date", "desc"));
+        onSnapshot(q, (snapshot) => {
+            window.transactions = [];
+            snapshot.forEach((doc) => {
+                window.transactions.push({ id: doc.id, ...doc.data() });
+            });
+            window.render();
+        });
+
+        // Salvataggio nel Cloud
+        window.save = async function(type) {
+            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
+            if(!a || !d) {
+                document.getElementById('modal-message').innerText = "Inserisci l'importo e la descrizione prima di salvare.";
+                document.getElementById('modal-confirm-btn').classList.add('hidden');
+                document.querySelector('#custom-modal button').innerText = "Ok, ho capito";
+                const modal = document.getElementById('custom-modal');
+                modal.classList.remove('hidden');
+                setTimeout(() => { modal.querySelector('.transform').classList.remove('scale-95'); modal.querySelector('.transform').classList.add('scale-100'); }, 10);
+                const originalClose = window.closeModal;
+                window.closeModal = function() { originalClose(); setTimeout(() => { document.getElementById('modal-confirm-btn').classList.remove('hidden'); document.querySelector('#custom-modal button').innerText = "Annulla"; }, 200); };
+                return;
+            }
+            window.vibrate();
+            
+            const newTx = {
+                amt: parseFloat(a), dsc: d,
+                cat: document.getElementById('cat').value,
+                usr: document.getElementById('usr').value,
+                type: type, date: new Date().toISOString()
+            };
+
+            try {
+                await addDoc(collection(db, "transactions"), newTx);
+                document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
+                document.getElementById('ai-badge').classList.add('hidden');
+                const card = document.getElementById('input-card');
+                card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
+                setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
+            } catch(e) {
+                console.error("Errore salvataggio:", e);
+                alert("Errore di connessione al Cloud. Riprova.");
+            }
+        };
+
+        // Eliminazione dal Cloud
+        window.deleteEntry = function(id) {
+            window.confirmAction("Vuoi eliminare questa transazione dal Cloud per entrambi?", async () => {
+                try {
+                    await deleteDoc(doc(db, "transactions", id));
+                } catch (e) { console.error("Errore eliminazione:", e); }
+            });
+        };
+    </script>
+
     <script>
-        // Gestione Tema
-        function toggleTheme() {
+        window.transactions = []; // Inizializzato vuoto, verrà popolato da Firebase
+        
+        window.toggleTheme = function() {
             document.documentElement.classList.toggle('dark');
             const isDark = document.documentElement.classList.contains('dark');
             localStorage.setItem('fin_theme', isDark ? 'dark' : 'light');
-            render(); 
-        }
+            window.render(); 
+        };
 
-        // SISTEMA MODAL CUSTOM
         let pendingAction = null;
-
-        function confirmAction(message, actionCallback) {
-            vibrate();
+        window.confirmAction = function(message, actionCallback) {
+            window.vibrate();
             document.getElementById('modal-message').innerText = message;
             pendingAction = actionCallback;
             const modal = document.getElementById('custom-modal');
             modal.classList.remove('hidden');
-            // Ritardo per animazione CSS
-            setTimeout(() => {
-                modal.querySelector('.transform').classList.remove('scale-95');
-                modal.querySelector('.transform').classList.add('scale-100');
-            }, 10);
-        }
+            setTimeout(() => { modal.querySelector('.transform').classList.remove('scale-95'); modal.querySelector('.transform').classList.add('scale-100'); }, 10);
+        };
 
-        function closeModal() {
+        window.closeModal = function() {
             const modal = document.getElementById('custom-modal');
             modal.querySelector('.transform').classList.remove('scale-100');
             modal.querySelector('.transform').classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                pendingAction = null;
-            }, 200);
-        }
+            setTimeout(() => { modal.classList.add('hidden'); pendingAction = null; }, 200);
+        };
 
-        document.getElementById('modal-confirm-btn').addEventListener('click', () => {
-            if (pendingAction) {
-                pendingAction();
-            }
-            closeModal();
-        });
-
+        document.getElementById('modal-confirm-btn').addEventListener('click', () => { if (pendingAction) { pendingAction(); } window.closeModal(); });
 
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#0075EB', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#3B82F6', '#D946EF', '#14B8A6'];
-        
         const closeIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
 
         const brain = {
@@ -316,97 +329,81 @@
             'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
         };
 
-        let transactions = [];
-        try { 
-            const tSaved = localStorage.getItem('fin_v22_trans');
-            if(tSaved) transactions = JSON.parse(tSaved); 
-        } catch(e) {}
-        if(!Array.isArray(transactions)) transactions = [];
-
-        let quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
-        try { 
-            const qSaved = localStorage.getItem('fin_v22_quick');
-            if(qSaved) quickSettings = JSON.parse(qSaved); 
-        } catch(e) {}
-        if(!Array.isArray(quickSettings) || quickSettings.length === 0) quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
-
+        window.quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
+        try { const qSaved = localStorage.getItem('fin_v22_quick'); if(qSaved) window.quickSettings = JSON.parse(qSaved); } catch(e) {}
+        
         const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
-        let categories = [];
+        window.categories = [];
         try {
             const cSaved = localStorage.getItem('fin_v22_cats');
-            if (cSaved) categories = JSON.parse(cSaved);
-            if (!Array.isArray(categories) || categories.length === 0) categories = baseCats;
-            else baseCats.forEach(c => { if (!categories.includes(c)) categories.push(c); });
-        } catch(e) { categories = baseCats; }
+            if (cSaved) window.categories = JSON.parse(cSaved);
+            if (!Array.isArray(window.categories) || window.categories.length === 0) window.categories = baseCats;
+            else baseCats.forEach(c => { if (!window.categories.includes(c)) window.categories.push(c); });
+        } catch(e) { window.categories = baseCats; }
         
         const now = new Date();
         let currentMonth = now.getMonth();
         let currentYear = now.getFullYear();
         let charts = { pie: null, line: null };
 
-        function vibrate() { try { if (window.navigator?.vibrate) window.navigator.vibrate(20); } catch(e){} }
+        window.vibrate = function() { try { if (window.navigator?.vibrate) window.navigator.vibrate(20); } catch(e){} };
 
-        function predictCategory(text) {
+        window.predictCategory = function(text) {
             const val = text.toLowerCase();
             const badge = document.getElementById('ai-badge');
             const select = document.getElementById('cat');
             let found = false;
             for (let categoryName in brain) {
                 if (brain[categoryName].some(k => val.includes(k))) {
-                    if (categories.includes(categoryName)) {
-                        select.value = categoryName;
-                        found = true;
-                        break;
+                    if (window.categories.includes(categoryName)) {
+                        select.value = categoryName; found = true; break;
                     }
                 }
             }
             if(badge) badge.classList.toggle('hidden', !found);
-        }
+        };
 
-        function switchTab(p) {
-            vibrate();
+        window.switchTab = function(p) {
+            window.vibrate();
             document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
             document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
-            
             document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
             document.getElementById('btn-dash').classList.toggle('text-slate-400', p !== 'dashboard');
             document.getElementById('btn-dash').classList.toggle('dark:text-slate-500', p !== 'dashboard');
-            
             document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
             document.getElementById('btn-set').classList.toggle('text-slate-400', p !== 'settings');
             document.getElementById('btn-set').classList.toggle('dark:text-slate-500', p !== 'settings');
-            
-            if(p === 'dashboard') render(); else renderSettingsPage();
-        }
+            if(p === 'dashboard') window.render(); else window.renderSettingsPage();
+        };
 
-        function renderSettingsPage() {
-            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-xs font-semibold shadow-sm"><div class="truncate flex-1">${s.label} - <span class="font-bold text-brand">€${s.amt}</span></div><button onclick="removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
-            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl mb-2 shadow-sm"><span>${c}</span><button onclick="removeCategory(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
-        }
+        window.renderSettingsPage = function() {
+            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-xs font-semibold shadow-sm"><div class="truncate flex-1">${s.label} - <span class="font-bold text-brand">€${s.amt}</span></div><button onclick="window.removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
+            document.getElementById('settings-cat-list').innerHTML = window.categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl mb-2 shadow-sm"><span>${c}</span><button onclick="window.removeCategory(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
+        };
 
-        function updateDateFilter() {
+        window.updateDateFilter = function() {
             currentMonth = parseInt(document.getElementById('month-select').value);
             currentYear = parseInt(document.getElementById('year-select').value);
-            render();
-        }
+            window.render();
+        };
 
-        function render() {
+        window.render = function() {
             const catSelect = document.getElementById('cat');
             if(catSelect) {
                 const catVal = catSelect.value;
-                catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
-                if (categories.includes(catVal)) catSelect.value = catVal;
+                catSelect.innerHTML = window.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                if (window.categories.includes(catVal)) catSelect.value = catVal;
             }
 
-            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-5 py-3 rounded-full shrink-0 active:scale-95 transition-transform shadow-sm text-center"><p class="text-[11px] font-bold text-slate-900 dark:text-white">${s.label}</p></button>`).join('');
+            document.getElementById('quick-actions-container').innerHTML = window.quickSettings.map(s => `<button onclick="window.addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-5 py-3 rounded-full shrink-0 active:scale-95 transition-transform shadow-sm text-center"><p class="text-[11px] font-bold text-slate-900 dark:text-white">${s.label}</p></button>`).join('');
 
-            const filtered = transactions.filter(t => {
+            const filtered = window.transactions.filter(t => {
                 if(!t || !t.date) return false;
                 const d = new Date(t.date);
                 return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
             });
 
-            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
+            const total = window.transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
             const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
             const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
 
@@ -415,155 +412,69 @@
             document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
             document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
-            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 dark:text-white truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-0.5">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'}">€${t.amt.toFixed(2)}</p><button onclick="deleteEntry(${t.id})" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 p-1">${closeIconSvg}</button></div></div>`).join('');
+            // NOTA: il parametro di deleteEntry ora è una stringa (id di Firebase), quindi servono gli apici: '${t.id}'
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 dark:text-white truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-0.5">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'}">€${t.amt.toFixed(2)}</p><button onclick="window.vibrate(); window.deleteEntry('${t.id}')" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 p-1">${closeIconSvg}</button></div></div>`).join('');
             
             renderCategoryRecap(filtered, mExp);
             setTimeout(() => { updateCharts(filtered); }, 150);
-        }
+        };
 
         function renderCategoryRecap(filteredTransactions, totalMonthlyExpenses) {
             const recapContainer = document.getElementById('category-recap-list');
             if (!recapContainer) return;
-
             const expenses = filteredTransactions.filter(t => t.type === 'exp');
-            const categoryTotals = expenses.reduce((acc, t) => {
-                acc[t.cat] = (acc[t.cat] || 0) + t.amt;
-                return acc;
-            }, {});
-
-            const sortedCategories = Object.entries(categoryTotals)
-                .map(([name, total]) => ({ name, total }))
-                .sort((a, b) => b.total - a.total);
-
-            if (sortedCategories.length === 0) {
-                recapContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 text-center py-4">Nessuna spesa registrata per questo mese.</p>`;
-                return;
-            }
-
+            const categoryTotals = expenses.reduce((acc, t) => { acc[t.cat] = (acc[t.cat] || 0) + t.amt; return acc; }, {});
+            const sortedCategories = Object.entries(categoryTotals).map(([name, total]) => ({ name, total })).sort((a, b) => b.total - a.total);
+            if (sortedCategories.length === 0) { recapContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 text-center py-4">Nessuna spesa registrata per questo mese.</p>`; return; }
             recapContainer.innerHTML = sortedCategories.map((cat, index) => {
                 const percentage = totalMonthlyExpenses > 0 ? (cat.total / totalMonthlyExpenses * 100).toFixed(0) : 0;
                 const barColor = catColors[index % catColors.length];
-                
-                return `
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-baseline text-sm">
-                            <p class="font-semibold text-slate-900 dark:text-slate-100 truncate">${cat.name}</p>
-                            <div class="text-right pl-3 shrink-0">
-                                <p class="font-bold text-slate-900 dark:text-slate-100">€ ${cat.total.toFixed(2)}</p>
-                                <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">${percentage}%</p>
-                            </div>
-                        </div>
-                        <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
-                            <div class="h-full rounded-full transition-all duration-500" style="width: ${percentage}%; background-color: ${barColor}"></div>
-                        </div>
-                    </div>
-                `;
+                return `<div class="space-y-2"><div class="flex justify-between items-baseline text-sm"><p class="font-semibold text-slate-900 dark:text-slate-100 truncate">${cat.name}</p><div class="text-right pl-3 shrink-0"><p class="font-bold text-slate-900 dark:text-slate-100">€ ${cat.total.toFixed(2)}</p><p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">${percentage}%</p></div></div><div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-200/50 dark:border-slate-700/50"><div class="h-full rounded-full transition-all duration-500" style="width: ${percentage}%; background-color: ${barColor}"></div></div></div>`;
             }).join('');
         }
 
-        function addQuickSetting() { 
-            const l = document.getElementById('new-q-label').value; 
-            const a = document.getElementById('new-q-amt').value; 
+        window.addQuickSetting = function() { 
+            const l = document.getElementById('new-q-label').value; const a = document.getElementById('new-q-amt').value; 
             if(!l || !a) return; 
-            quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); 
-            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
-            renderSettingsPage(); 
-            document.getElementById('new-q-label').value = '';
-            document.getElementById('new-q-amt').value = '';
-        }
+            window.quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); 
+            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); }catch(e){} 
+            window.renderSettingsPage(); 
+            document.getElementById('new-q-label').value = ''; document.getElementById('new-q-amt').value = '';
+        };
 
-        function removeQuickSetting(i) { 
-            confirmAction("Vuoi eliminare questo tasto rapido?", () => {
-                quickSettings.splice(i, 1); 
-                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
-                renderSettingsPage(); 
+        window.removeQuickSetting = function(i) { 
+            window.confirmAction("Vuoi eliminare questo tasto rapido?", () => {
+                window.quickSettings.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); }catch(e){} 
+                window.renderSettingsPage(); 
             });
-        }
+        };
 
-        function addCategory() { 
-            const v = document.getElementById('new-cat-name').value.trim(); 
-            if(!v) return; 
-            categories.push(v); 
-            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+        window.addCategory = function() { 
+            const v = document.getElementById('new-cat-name').value.trim(); if(!v) return; 
+            window.categories.push(v); 
+            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); }catch(e){} 
             document.getElementById('new-cat-name').value = ''; 
-            renderSettingsPage(); 
-        }
+            window.renderSettingsPage(); 
+        };
 
-        function removeCategory(i) { 
-            confirmAction("Vuoi eliminare questa categoria?", () => {
-                categories.splice(i, 1); 
-                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
-                renderSettingsPage(); 
+        window.removeCategory = function(i) { 
+            window.confirmAction("Vuoi eliminare questa categoria?", () => {
+                window.categories.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); }catch(e){} 
+                window.renderSettingsPage(); 
             });
-        }
+        };
 
-        function deleteEntry(id) {
-            confirmAction("Vuoi eliminare questa transazione?", () => {
-                transactions = transactions.filter(t => t.id !== id); 
-                try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){} 
-                render(); 
-            });
-        }
-
-        function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
-
-        function save(type) {
-            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
-            if(!a || !d) {
-                // Sostituiamo anche il vecchio alert nativo
-                document.getElementById('modal-message').innerText = "Inserisci l'importo e la descrizione prima di salvare.";
-                document.getElementById('modal-confirm-btn').classList.add('hidden'); // Nasconde tasto elimina
-                document.querySelector('#custom-modal button').innerText = "Ok, ho capito"; // Cambia "Annulla" in "Ok"
-                
-                const modal = document.getElementById('custom-modal');
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.querySelector('.transform').classList.remove('scale-95');
-                    modal.querySelector('.transform').classList.add('scale-100');
-                }, 10);
-                
-                // Ripristino i bottoni quando chiudo
-                const resetModal = () => {
-                    document.getElementById('modal-confirm-btn').classList.remove('hidden');
-                    document.querySelector('#custom-modal button').innerText = "Annulla";
-                };
-                
-                // Override temporaneo della funzione close per resettare
-                const originalClose = closeModal;
-                closeModal = function() {
-                    originalClose();
-                    setTimeout(resetModal, 200);
-                };
-                
-                return;
-            }
-            vibrate();
-            transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
-            try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){}
-            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
-            document.getElementById('ai-badge').classList.add('hidden');
-            const card = document.getElementById('input-card');
-            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
-            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
-            render();
-        }
+        window.addQuick = function(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; window.predictCategory(l); window.save(t); };
 
         function updateCharts(data) {
             if (typeof Chart === 'undefined') return;
-
             const isDark = document.documentElement.classList.contains('dark');
             const chartBorderColor = isDark ? '#0f172a' : '#ffffff'; 
-
             const last6 = [];
-            for(let i = 5; i >= 0; i--) {
-                let d = new Date(currentYear, currentMonth - i, 1);
-                last6.push({ m: d.getMonth(), y: d.getFullYear() });
-            }
-            const lineData = last6.map(obj => transactions.filter(t => {
-                const d = new Date(t.date);
-                return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
-            }).reduce((s, t) => s + t.amt, 0));
-
+            for(let i = 5; i >= 0; i--) { let d = new Date(currentYear, currentMonth - i, 1); last6.push({ m: d.getMonth(), y: d.getFullYear() }); }
+            const lineData = last6.map(obj => window.transactions.filter(t => { const d = new Date(t.date); return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp'; }).reduce((s, t) => s + t.amt, 0));
             const exp = data.filter(t => t.type === 'exp');
             const catsArr = [...new Set(exp.map(t => t.cat))];
             const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
@@ -571,86 +482,42 @@
             const pEl = document.getElementById('chartPie');
             if(pEl && catsArr.length > 0) {
                 if(charts.pie) charts.pie.destroy();
-                charts.pie = new Chart(pEl.getContext('2d'), { 
-                    type: 'doughnut', 
-                    data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 3, borderColor: chartBorderColor }] }, 
-                    options: { 
-                        plugins: { legend: { position: 'bottom', labels: { color: isDark ? '#f1f5f9' : '#0f172a', usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, 
-                        cutout: '80%', responsive: true 
-                    } 
-                });
+                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 3, borderColor: chartBorderColor }] }, options: { plugins: { legend: { position: 'bottom', labels: { color: isDark ? '#f1f5f9' : '#0f172a', usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, cutout: '80%', responsive: true } });
             }
-
             const lEl = document.getElementById('chartLine');
             if(lEl) {
                 if(charts.line) charts.line.destroy();
-                charts.line = new Chart(lEl.getContext('2d'), { 
-                    type: 'line', 
-                    data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 3, tension: 0.3, fill: true, backgroundColor: isDark ? 'rgba(0, 117, 235, 0.1)' : 'rgba(0, 117, 235, 0.05)', pointRadius: 0 }] }, 
-                    options: { 
-                        plugins: { legend: { display: false } }, 
-                        scales: { 
-                            y: { display: false }, 
-                            x: { grid: { display: false }, border: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { size: 10, weight: '600' } } } 
-                        }, responsive: true 
-                    } 
-                });
+                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 3, tension: 0.3, fill: true, backgroundColor: isDark ? 'rgba(0, 117, 235, 0.1)' : 'rgba(0, 117, 235, 0.05)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { size: 10, weight: '600' } } } }, responsive: true } });
             }
         }
 
-        function checkInstallPrompt() {
-            if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) return;
-            if (localStorage.getItem('hide_install_prompt')) return;
-
-            const ua = window.navigator.userAgent;
-            const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-            const isAndroid = /Android/.test(ua);
-
-            if (isIOS || isAndroid) {
-                const popup = document.getElementById('install-popup');
-                const text = document.getElementById('install-instructions');
-                
-                if (isIOS) {
-                    text.innerHTML = `Tocca l'icona <b class="text-brand font-bold">Condividi</b> in basso al browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi alla schermata Home"</b>.`;
-                } else {
-                    text.innerHTML = `Tocca il <b class="text-brand font-bold">Menu (⋮)</b> del browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi a schermata Home"</b>.`;
-                }
-                
-                setTimeout(() => {
-                    popup.classList.remove('translate-y-[200%]');
-                }, 2000);
-            }
-        }
-
-        function dismissInstallPrompt() {
-            document.getElementById('install-popup').classList.add('translate-y-[200%]');
-            localStorage.setItem('hide_install_prompt', 'true');
-        }
+        window.dismissInstallPrompt = function() { document.getElementById('install-popup').classList.add('translate-y-[200%]'); localStorage.setItem('hide_install_prompt', 'true'); };
 
         function initApp() {
             try {
                 const mSel = document.getElementById('month-select');
-                if(mSel) {
-                    mSel.innerHTML = '';
-                    monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
-                }
+                if(mSel) { mSel.innerHTML = ''; monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; }); }
                 const ySel = document.getElementById('year-select');
-                if(ySel) {
-                    ySel.innerHTML = '';
-                    for(let y = currentYear - 2; y <= currentYear + 2; y++) {
-                        ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
-                    }
+                if(ySel) { ySel.innerHTML = ''; for(let y = currentYear - 2; y <= currentYear + 2; y++) { ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`; } }
+                window.render();
+                
+                // PWA Prompt
+                if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) return;
+                if (localStorage.getItem('hide_install_prompt')) return;
+                const ua = window.navigator.userAgent;
+                const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+                const isAndroid = /Android/.test(ua);
+                if (isIOS || isAndroid) {
+                    const popup = document.getElementById('install-popup');
+                    const text = document.getElementById('install-instructions');
+                    if (isIOS) { text.innerHTML = `Tocca l'icona <b class="text-brand font-bold">Condividi</b> in basso al browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi alla schermata Home"</b>.`; } 
+                    else { text.innerHTML = `Tocca il <b class="text-brand font-bold">Menu (⋮)</b> del browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi a schermata Home"</b>.`; }
+                    setTimeout(() => { popup.classList.remove('translate-y-[200%]'); }, 2000);
                 }
-                render();
-                checkInstallPrompt();
             } catch(e) {}
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
-        }
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initApp); } else { initApp(); }
     </script>
 </body>
 </html>
