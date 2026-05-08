@@ -64,125 +64,19 @@
 
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{-webkit-text-size-adjust:none;text-size-adjust:none;scroll-behavior:smooth}
-    body{
-      min-height:100dvh;
-      font-family:var(--font-body);
-      font-size:var(--text-base);
-      line-height:1.6;
-      color:var(--color-text);
-      background:var(--color-bg);
-      -webkit-font-smoothing:antialiased
-    }
-
+    body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);line-height:1.6;color:var(--color-text);background:var(--color-bg);-webkit-font-smoothing:antialiased}
     img,svg,canvas{display:block;max-width:100%;height:auto}
     button,input,select{font:inherit;color:inherit}
     button{cursor:pointer;border:0;background:none}
     a{color:inherit}
     :focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
-
-    .sr-only{
-      position:absolute;
-      width:1px;
-      height:1px;
-      padding:0;
-      margin:-1px;
-      overflow:hidden;
-      clip:rect(0,0,0,0);
-      white-space:nowrap;
-      border-width:0
-    }
-
-    .card{
-      background:var(--color-surface);
-      border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);
-      box-shadow:var(--shadow-sm);
-      border-radius:1.5rem
-    }
-
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+    .card{background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);box-shadow:var(--shadow-sm);border-radius:1.5rem}
     .muted{color:var(--color-text-muted)}
     .faint{color:var(--color-text-faint)}
     .pill{border-radius:9999px}
-    .chip{
-      background:color-mix(in oklab,var(--color-primary) 10%,var(--color-surface));
-      color:var(--color-primary);
-      border:1px solid color-mix(in oklab,var(--color-primary) 20%,transparent)
-    }
-
-    .btn{
-      padding:.9rem 1rem;
-      border-radius:1rem;
-      font-weight:800;
-      transition:transform var(--transition),background var(--transition),color var(--transition),border-color var(--transition)
-    }
-
+    .chip{background:color-mix(in oklab,var(--color-primary) 10%,var(--color-surface));color:var(--color-primary);border:1px solid color-mix(in oklab,var(--color-primary) 20%,transparent)}
+    .btn{padding:.9rem 1rem;border-radius:1rem;font-weight:800;transition:transform var(--transition),background var(--transition),color var(--transition),border-color var(--transition)}
     .btn:active{transform:scale(.98)}
     .btn-primary{background:var(--color-primary);color:var(--color-text-inverse)}
-    .btn-primary:hover{background:var(--color-primary-hover)}
-    .btn-secondary{
-      background:var(--color-surface-2);
-      border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent)
-    }
-    .btn-ghost{
-      background:transparent;
-      border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent)
-    }
-
-    .scrollbar-hide::-webkit-scrollbar{display:none}
-    .flash-inc{animation:fi .8s ease-out}
-    .flash-exp{animation:fe .8s ease-out}
-
-    @keyframes fi{0%{background:#f0fdf4}100%{background:var(--color-surface)}}
-    @keyframes fe{0%{background:#fef2f2}100%{background:var(--color-surface)}}
-  </style>
-</head>
-<body>
-  <a class="sr-only" href="#main">Salta al contenuto</a>
-
-  <div class="max-w-md mx-auto px-5 pt-8 pb-28" id="app">
-    <header class="flex items-start justify-between gap-3 mb-6">
-      <div>
-        <p class="text-[var(--text-xs)] uppercase tracking-[0.24em] font-extrabold text-[color:var(--color-primary)]">Wallet</p>
-        <h1 class="text-[var(--text-xl)] font-extrabold tracking-tight">Finanze Famiglia</h1>
-        <p id="date-label" class="text-[var(--text-xs)] uppercase tracking-[0.2em] muted mt-1"></p>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button id="theme-toggle" class="btn btn-secondary w-11 h-11 p-0" aria-label="Cambia tema">☾</button>
-        <select id="month-select" onchange="updateDateFilter()" class="card px-3 py-2 rounded-2xl text-[var(--text-xs)] font-black uppercase"></select>
-        <select id="year-select" onchange="updateDateFilter()" class="card px-3 py-2 rounded-2xl text-[var(--text-xs)] font-black uppercase"></select>
-      </div>
-    </header>
-
-    <main id="main">
-      <section class="card p-6 mb-6">
-        <p class="text-[var(--text-xs)] uppercase tracking-[0.24em] faint font-black mb-2">Patrimonio</p>
-        <div class="flex items-end justify-between gap-4">
-          <div>
-            <div id="total-balance" class="text-[var(--text-xl)] font-extrabold tracking-tight">€ 0,00</div>
-            <p class="muted text-[var(--text-sm)] mt-1">Saldo complessivo</p>
-          </div>
-
-          <div class="flex gap-2">
-            <div class="card px-3 py-2 rounded-2xl text-center min-w-20">
-              <p class="text-[var(--text-xs)] uppercase faint font-black">Entrate</p>
-              <p id="m-inc" class="text-[var(--text-sm)] font-extrabold text-emerald-600">€ 0</p>
-            </div>
-            <div class="card px-3 py-2 rounded-2xl text-center min-w-20">
-              <p class="text-[var(--text-xs)] uppercase faint font-black">Uscite</p>
-              <p id="m-exp" class="text-[var(--text-sm)] font-extrabold text-rose-600">€ 0</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="mb-6 overflow-x-auto scrollbar-hide whitespace-nowrap">
-        <div id="quick-actions-container" class="flex gap-3"></div>
-      </div>
-
-      <section id="input-card" class="card p-5 mb-6 space-y-4">
-        <div class="flex gap-2">
-          <input
-            type="number"
-            id="amt"
-            placeholder="0,00"
-            class="w-1/2 bg-[color:var(--color-surface-2)] rounded-2xl p-4 font-extrabold text-lg border border-transpa
+    
