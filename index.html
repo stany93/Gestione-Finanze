@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Wallet Famiglia</title>
     
+    <!-- Meta Tag PWA per iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Wallet">
@@ -66,6 +67,7 @@
 </head>
 <body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 relative">
 
+    <!-- CUSTOM CONFIRM MODAL -->
     <div id="custom-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
         <div class="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl p-6 transform scale-95 transition-all">
@@ -78,6 +80,7 @@
         </div>
     </div>
 
+    <!-- INSTALL POPUP -->
     <div id="install-popup" class="fixed bottom-28 left-4 right-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl p-5 z-[60] transform translate-y-[200%] transition-transform duration-500 ease-out flex gap-4 items-center">
         <div class="bg-brand/10 dark:bg-brand/20 p-3 rounded-xl shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7 text-brand"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
@@ -91,13 +94,20 @@
         </button>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="page-dashboard" class="max-w-xl mx-auto px-5 pt-8">
         
+        <!-- HEADER & TEMA -->
         <div class="flex justify-between items-start mb-6 text-left">
             <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-                    Conto Principale <span id="cloud-status" class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                </p>
+                <!-- SELETTORE CONTO MULTIPLO -->
+                <div class="flex items-center gap-1.5 mb-1">
+                    <select id="account-select" onchange="window.switchAccount(this.value)" class="bg-transparent text-xs text-slate-500 dark:text-slate-400 font-bold outline-none cursor-pointer uppercase tracking-widest pr-4" style="appearance: none; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%2364748b\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right center; background-size: 0.8rem;">
+                        <!-- Generato da JS -->
+                    </select>
+                    <!-- Pallino di sincronizzazione (Verde = Cloud, Grigio = Locale) -->
+                    <span id="sync-status" class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" title="Stato Sincronizzazione"></span>
+                </div>
                 <h1 class="text-3xl font-bold tracking-tighter">Wallet</h1>
             </div>
             <button onclick="toggleTheme()" class="p-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm active:scale-95 transition-transform flex items-center justify-center">
@@ -106,11 +116,13 @@
             </button>
         </div>
 
+        <!-- FILTRI DATA -->
         <div class="flex gap-2 justify-center mb-8">
             <select id="month-select" onchange="updateDateFilter()" class="rv-select bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 py-2 pl-4 rounded-full text-xs font-bold text-slate-700 shadow-sm"></select>
             <select id="year-select" onchange="updateDateFilter()" class="rv-select bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 py-2 pl-4 rounded-full text-xs font-bold text-slate-700 shadow-sm"></select>
         </div>
 
+        <!-- BILANCIO -->
         <div class="mb-10 text-center">
             <p id="total-balance" class="text-5xl font-extrabold tracking-tighter text-slate-950 dark:text-white">€ 0,00</p>
             <p id="date-label" class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-2 tracking-wide"></p>
@@ -128,10 +140,12 @@
             </div>
         </div>
 
+        <!-- TASTI RAPIDI -->
         <div class="mb-10 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth">
             <div id="quick-actions-container" class="flex gap-2"></div>
         </div>
 
+        <!-- INPUT FORM -->
         <div id="input-card" class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg mb-10 space-y-4 relative transition-colors">
             <div id="ai-badge" class="hidden absolute top-4 right-6 text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-brand px-2 py-1 rounded-md uppercase tracking-tighter">AI AUTOMATION</div>
             <div class="flex gap-2">
@@ -149,27 +163,43 @@
             </div>
         </div>
 
+        <!-- CHARTS -->
         <div id="charts-container" class="bg-white dark:bg-slate-900 rounded-3xl p-6 mb-10 border border-slate-200 dark:border-slate-800 shadow-sm space-y-8 transition-colors">
             <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
             <div class="pt-8 border-t border-slate-200 dark:border-slate-800"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
         </div>
         
+        <!-- TRANSACTION LIST -->
         <div class="mb-5"><h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Transazioni Recenti</h3></div>
         <div id="list" class="space-y-3 mb-12 text-left"></div>
 
+        <!-- RECAP CATEGORIE SPESA -->
         <div class="mb-5"><h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Analisi Spese per Categoria</h3></div>
         <div id="category-recap-list" class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 transition-colors pb-24 text-left mb-10">
         </div>
 
     </div>
 
+    <!-- SETTINGS -->
     <div id="page-settings" class="max-w-xl mx-auto px-6 pt-8 hidden text-center">
         <h1 class="text-3xl font-bold text-slate-950 dark:text-white mb-10 tracking-tighter text-left">Opzioni</h1>
         <div class="space-y-8 pb-24 text-left">
 
+            <!-- SEZIONE CONTI PERSONALI (NOVITÀ) -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-center">
+                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-4 tracking-widest">I Tuoi Conti (Locali)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Crea conti privati aggiuntivi. I dati resteranno solo su questo telefono e non saranno condivisi sul Cloud.</p>
+                <div id="settings-accounts-list" class="space-y-2 mb-6 text-left"></div>
+                <div class="flex gap-2">
+                    <input type="text" id="new-account-name" placeholder="Nome (es. Conto Segreto)" class="flex-1 bg-slate-100 dark:bg-slate-800 dark:text-white border border-transparent dark:border-slate-700 rounded-xl p-3 text-sm font-medium">
+                    <button onclick="addAccount()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold active:scale-95">+</button>
+                </div>
+            </div>
+
+            <!-- SEZIONE ESPORTA DATI -->
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-center">
                 <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-4 tracking-widest">Esportazione Dati</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Scarica tutte le tue transazioni in formato CSV per analizzarle su Excel o Google Sheets.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Scarica tutte le transazioni del <b class="text-slate-900 dark:text-white">conto attualmente selezionato</b> in formato CSV.</p>
                 <button onclick="exportToCSV()" class="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-[11px] tracking-wide active:scale-95 transition-transform shadow-md shadow-emerald-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                     Scarica CSV
@@ -203,10 +233,11 @@
                 </div>
             </div>
 
-            <button onclick="confirmAction('Cancellare le impostazioni locali (categorie e tasti rapidi)? Le transazioni sul Cloud NON verranno perse.', () => { localStorage.removeItem('fin_v22_quick'); localStorage.removeItem('fin_v22_cats'); localStorage.removeItem('fin_v22_currentUser'); location.reload(); })" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Impostazioni Locali</button>
+            <button onclick="confirmAction('Cancellare TUTTO (Account Locali, Categorie e Tasti Rapidi)? Le transazioni sul Cloud Famiglia NON verranno perse.', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Impostazioni Locali</button>
         </div>
     </div>
 
+    <!-- BOTTOM NAV -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 h-24 flex items-start justify-around z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-none border-t border-slate-200 dark:border-slate-800 px-6 pt-4 transition-colors pb-safe">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1.5 nav-active transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
@@ -218,6 +249,7 @@
         </button>
     </nav>
 
+    <!-- FIREBASE MODULE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -234,15 +266,21 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Ascolta il Cloud ma salva le transazioni in una variabile separata
         const q = query(collection(db, "transactions"), orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
-            window.transactions = [];
+            window.sharedTransactions = [];
             snapshot.forEach((doc) => {
-                window.transactions.push({ id: doc.id, ...doc.data() });
+                window.sharedTransactions.push({ id: doc.id, ...doc.data() });
             });
-            window.render();
+            // Se sto guardando il conto condiviso, aggiorno la UI in tempo reale
+            if (window.currentAccount === 'shared') {
+                window.transactions = [...window.sharedTransactions];
+                window.render();
+            }
         });
 
+        // Funzione di Salvataggio Rielaborata (Cloud vs Locale)
         window.save = async function(type) {
             const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
             if(!a || !d) {
@@ -265,31 +303,111 @@
                 type: type, date: new Date().toISOString()
             };
 
-            try {
-                await addDoc(collection(db, "transactions"), newTx);
+            const finalizeSave = () => {
                 document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
                 document.getElementById('ai-badge').classList.add('hidden');
                 const card = document.getElementById('input-card');
                 card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
                 setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
-            } catch(e) {
-                console.error("Errore salvataggio:", e);
-                alert("Errore di connessione al Cloud. Riprova.");
+            };
+
+            if (window.currentAccount === 'shared') {
+                try {
+                    await addDoc(collection(db, "transactions"), newTx);
+                    finalizeSave();
+                } catch(e) {
+                    console.error("Errore salvataggio Cloud:", e);
+                    alert("Errore di connessione al Cloud. Riprova.");
+                }
+            } else {
+                // Salvataggio 100% LOCALE
+                newTx.id = Date.now().toString();
+                window.transactions.unshift(newTx);
+                localStorage.setItem('fin_v22_trans_' + window.currentAccount, JSON.stringify(window.transactions));
+                finalizeSave();
+                window.render();
             }
         };
 
+        // Funzione Cancellazione Rielaborata
         window.deleteEntry = function(id) {
-            window.confirmAction("Vuoi eliminare questa transazione dal Cloud per entrambi?", async () => {
-                try {
-                    await deleteDoc(doc(db, "transactions", id));
-                } catch (e) { console.error("Errore eliminazione:", e); }
-            });
+            if (window.currentAccount === 'shared') {
+                window.confirmAction("Vuoi eliminare questa transazione dal Cloud per entrambi?", async () => {
+                    try { await deleteDoc(doc(db, "transactions", id)); } catch (e) {}
+                });
+            } else {
+                window.confirmAction("Vuoi eliminare questa transazione dal tuo conto personale?", () => {
+                    window.transactions = window.transactions.filter(t => t.id !== id);
+                    localStorage.setItem('fin_v22_trans_' + window.currentAccount, JSON.stringify(window.transactions));
+                    window.render();
+                });
+            }
         };
     </script>
 
+    <!-- UI E LOGICA LOCALE -->
     <script>
+        // GESTIONE ACCOUNT
+        window.sharedTransactions = [];
         window.transactions = []; 
+        window.currentAccount = localStorage.getItem('fin_v22_currentAccount') || 'shared';
+        window.accounts = JSON.parse(localStorage.getItem('fin_v22_accounts')) || [{ id: 'shared', name: 'Conto Famiglia (Condiviso)', type: 'cloud' }];
         
+        window.switchAccount = function(id) {
+            window.currentAccount = id;
+            localStorage.setItem('fin_v22_currentAccount', id);
+            
+            const syncStatus = document.getElementById('sync-status');
+            
+            if (id === 'shared') {
+                window.transactions = [...window.sharedTransactions];
+                syncStatus.className = 'w-2 h-2 bg-emerald-400 rounded-full animate-pulse';
+                syncStatus.title = "Sincronizzato sul Cloud";
+            } else {
+                window.transactions = JSON.parse(localStorage.getItem('fin_v22_trans_' + id)) || [];
+                syncStatus.className = 'w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full';
+                syncStatus.title = "Conto Solo Locale";
+            }
+            window.render();
+        };
+
+        window.addAccount = function() {
+            const name = document.getElementById('new-account-name').value.trim();
+            if(!name) return;
+            const id = 'local_' + Date.now();
+            window.accounts.push({ id, name, type: 'local' });
+            localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts));
+            document.getElementById('new-account-name').value = '';
+            
+            window.populateAccountsDropdown();
+            window.switchAccount(id);
+            window.switchTab('dashboard');
+        };
+
+        window.removeAccount = function(indexInArray) {
+            const acc = window.accounts[indexInArray];
+            if(acc.id === 'shared') return;
+            window.confirmAction(`Eliminare definitivamente il conto "${acc.name}" e tutte le sue transazioni?`, () => {
+                localStorage.removeItem('fin_v22_trans_' + acc.id);
+                window.accounts.splice(indexInArray, 1);
+                localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts));
+                
+                if (window.currentAccount === acc.id) {
+                    window.switchAccount('shared');
+                }
+                window.populateAccountsDropdown();
+                window.renderSettingsPage();
+            });
+        };
+
+        window.populateAccountsDropdown = function() {
+            const sel = document.getElementById('account-select');
+            if(!sel) return;
+            sel.innerHTML = window.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+            sel.value = window.currentAccount;
+        };
+
+
         window.toggleTheme = function() {
             document.documentElement.classList.toggle('dark');
             const isDark = document.documentElement.classList.contains('dark');
@@ -387,6 +505,12 @@
         };
 
         window.renderSettingsPage = function() {
+            // Render Lista Conti Personali
+            document.getElementById('settings-accounts-list').innerHTML = window.accounts.filter(a => a.id !== 'shared').map((a) => {
+                const realIndex = window.accounts.findIndex(acc => acc.id === a.id);
+                return `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl mb-2 shadow-sm"><span class="text-sm font-semibold text-slate-900 dark:text-white">${a.name}</span><button onclick="window.removeAccount(${realIndex})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`;
+            }).join('');
+
             document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-xs font-semibold shadow-sm"><div class="truncate flex-1">${s.label} - <span class="font-bold text-brand">€${s.amt}</span></div><button onclick="window.removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
             document.getElementById('settings-cat-list').innerHTML = window.categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl mb-2 shadow-sm"><span>${c}</span><button onclick="window.removeCategory(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
         };
@@ -460,47 +584,26 @@
             }).join('');
         }
 
-        // NUOVA FUNZIONE: Esportazione in CSV
         window.exportToCSV = function() {
-            if (!window.transactions || window.transactions.length === 0) {
-                alert("Nessun dato da esportare.");
-                return;
-            }
-
-            // 1. Definiamo le intestazioni delle colonne
+            if (!window.transactions || window.transactions.length === 0) { alert("Nessun dato da esportare nel conto selezionato."); return; }
             const headers = ["ID Transazione", "Data e Ora", "Tipo", "Importo", "Categoria", "Descrizione", "Utente"];
             const csvRows = [headers.join(",")];
-
-            // 2. Formattiamo le singole righe
             window.transactions.forEach(t => {
                 const dateStr = new Date(t.date).toLocaleString('it-IT');
                 const typeStr = t.type === 'inc' ? 'Entrata' : 'Uscita';
-                
-                // La descrizione potrebbe contenere virgole, quindi la racchiudiamo tra virgolette
                 const dscEscaped = `"${t.dsc.replace(/"/g, '""')}"`;
-                
-                const row = [
-                    t.id, 
-                    `"${dateStr}"`, 
-                    typeStr, 
-                    t.amt, 
-                    `"${t.cat}"`, 
-                    dscEscaped, 
-                    `"${t.usr}"`
-                ];
+                const row = [t.id, `"${dateStr}"`, typeStr, t.amt, `"${t.cat}"`, dscEscaped, `"${t.usr}"`];
                 csvRows.push(row.join(","));
             });
-
-            // 3. Creiamo il file e forziamo il download
             const csvContent = csvRows.join("\n");
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
-            
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            // Il nome del file conterrà la data di esportazione
+            
+            const currentAccName = window.accounts.find(a => a.id === window.currentAccount)?.name || 'Wallet';
             const today = new Date().toISOString().split('T')[0];
-            link.setAttribute("download", `Wallet_Export_${today}.csv`);
+            link.setAttribute("download", `Export_${currentAccName}_${today}.csv`.replace(/\s+/g, '_'));
             
             document.body.appendChild(link);
             link.click();
@@ -580,7 +683,9 @@
                     if(usrSel) usrSel.value = savedUser;
                 }
 
-                window.render();
+                // Inizializza i conti
+                window.populateAccountsDropdown();
+                window.switchAccount(window.currentAccount);
                 
                 if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) return;
                 if (localStorage.getItem('hide_install_prompt')) return;
