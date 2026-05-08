@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Wallet Famiglia</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -21,11 +21,8 @@
 
         .hidden { display: none !important; }
 
-        /* Revolut inputs: grigio chiaro che diventa bianco con bordo blu al focus */
-        input, select {
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
+        /* Revolut inputs: focus styling */
+        input, select { transition: all 0.2s; border: 1px solid transparent; }
         input:focus, select:focus {
             background-color: #FFFFFF !important;
             border-color: #0075EB !important;
@@ -33,8 +30,28 @@
             box-shadow: 0 0 0 1px #0075EB;
         }
 
+        /* Tendine cross-platform ottimizzate per iOS/Android */
+        .rv-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem !important;
+        }
+
+        .rv-select-blue {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230075EB'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem !important;
+        }
+
         .nav-active { color: #0075EB; }
-        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
         @keyframes flash-inc { 0% { background: #ECFDF5; } 100% { background: white; } }
@@ -52,8 +69,8 @@
                 <h1 class="text-2xl font-bold text-slate-950 tracking-tighter">Wallet</h1>
             </div>
             <div class="flex gap-2">
-                <select id="month-select" onchange="updateDateFilter()" class="bg-slate-100 px-3 py-2 rounded-full text-xs font-semibold text-slate-700 cursor-pointer"></select>
-                <select id="year-select" onchange="updateDateFilter()" class="bg-slate-100 px-3 py-2 rounded-full text-xs font-semibold text-slate-700 cursor-pointer"></select>
+                <select id="month-select" onchange="updateDateFilter()" class="rv-select bg-slate-100 py-2 pl-4 rounded-full text-xs font-semibold text-slate-700 cursor-pointer"></select>
+                <select id="year-select" onchange="updateDateFilter()" class="rv-select bg-slate-100 py-2 pl-4 rounded-full text-xs font-semibold text-slate-700 cursor-pointer"></select>
             </div>
         </div>
 
@@ -82,13 +99,13 @@
             <div id="ai-badge" class="hidden absolute top-4 right-6 text-[9px] font-bold bg-slate-100 text-[#0075EB] px-2 py-1 rounded-md uppercase tracking-tighter">AI AUTOMATION</div>
             <div class="flex gap-2">
                 <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100 rounded-xl p-4 font-bold text-2xl">
-                <select id="usr" class="w-1/2 bg-slate-100 rounded-xl p-4 text-xs font-bold text-[#0075EB] appearance-none">
+                <select id="usr" class="w-1/2 rv-select-blue bg-slate-100 rounded-xl p-4 text-xs font-bold text-[#0075EB]">
                     <option value="Stany">Stany</option>
                     <option value="Giulia">Giulia</option>
                 </select>
             </div>
             <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-100 rounded-xl p-4 text-sm font-medium">
-            <select id="cat" class="w-full bg-slate-100 rounded-xl p-4 text-sm font-semibold text-slate-700 appearance-none"></select>
+            <select id="cat" class="w-full rv-select bg-slate-100 rounded-xl p-4 text-sm font-semibold text-slate-700"></select>
             <div class="flex gap-3 pt-2">
                 <button onclick="save('exp')" class="flex-1 bg-[#0075EB] text-white py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform">- Speso</button>
                 <button onclick="save('inc')" class="flex-1 bg-slate-100 text-slate-900 py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform">+ Ricevuto</button>
@@ -114,7 +131,7 @@
                     <input type="text" id="new-q-label" placeholder="Etichetta (es. Caffè)" class="w-full p-3 rounded-lg text-sm bg-slate-100">
                     <div class="flex gap-2">
                         <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-lg bg-slate-100 font-semibold">
-                        <select id="new-q-type" class="w-1/2 p-3 rounded-lg bg-slate-100 font-semibold">
+                        <select id="new-q-type" class="w-1/2 rv-select p-3 rounded-lg bg-slate-100 font-semibold">
                             <option value="exp">Uscita</option>
                             <option value="inc">Entrata</option>
                         </select>
@@ -143,4 +160,259 @@
     <nav class="fixed bottom-0 left-0 right-0 bg-white h-24 flex items-start justify-around z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.04)] border-t border-slate-100 px-6 pt-4">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1.5 nav-active transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.59
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <span class="text-[10px] font-semibold tracking-wide">Home</span>
+        </button>
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-[10px] font-semibold tracking-wide">Opzioni</span>
+        </button>
+    </nav>
+
+    <script>
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        const catColors = ['#0075EB', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#3B82F6', '#D946EF', '#14B8A6'];
+        
+        const brain = {
+            'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
+            'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
+            'Riccardo': ['pannolini', 'nido', 'pappa', 'latte', 'giochi', 'asilo', 'biberon', 'scuola', 'riccardo', 'pediatra', 'vestiti bimbo', 'giocattoli', 'bambino'],
+            'Svago': ['cinema', 'svago', 'pub', 'tabacco', 'aperitivo', 'bar', 'caffè', 'birra', 'concerto', 'discoteca', 'drink', 'serata', 'film'],
+            'Lavoro': ['stipendio', 'bonus', 'rimborso', 'lavoro', 'fattura', 'cliente', 'busta paga'],
+            'Gatti': ['gatto', 'gatti', 'croccantini', 'sabbietta', 'veterinario', 'cibo gatti', 'lettiera', 'cibo umido', 'scatolette', 'antiparassitario'],
+            'Macchina': ['benzina', 'diesel', 'parcheggio', 'autostrada', 'meccanico', 'bollo', 'assicurazione', 'macchina', 'auto', 'telepass', 'carburante', 'lavaggio', 'gommista', 'casello'],
+            'Cene': ['pizza', 'ristorante', 'cena', 'cene', 'sushi', 'mcdonald', 'burger', 'kebab', 'pranzo', 'osteria', 'trattoria', 'glovo', 'deliveroo', 'justeat', 'pizzeria'],
+            'Vestiti': ['vestiti', 'scarpe', 'maglia', 'pantaloni', 'abbigliamento', 'zalando', 'zara', 'h&m', 'shopping', 'felpa', 'giubbotto', 'calze', 'intimo', 'vestito'],
+            'Vacanze': ['vacanza', 'vacanze', 'hotel', 'volo', 'aereo', 'treno', 'bnb', 'booking', 'viaggio', 'ryanair', 'airbnb', 'traghetto', 'autobus', 'biglietto', 'frecciarossa'],
+            'Regali': ['regalo', 'regali', 'compleanno', 'anniversario', 'natale', 'festa', 'pensiero', 'dono'],
+            'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
+        };
+
+        // GESTIONE MEMORIA CON PROTEZIONE ANTICRASH
+        let transactions = [];
+        try { 
+            const tSaved = localStorage.getItem('fin_v22_trans');
+            if(tSaved) transactions = JSON.parse(tSaved); 
+        } catch(e) { console.warn("Errore lettura transazioni", e); }
+        if(!Array.isArray(transactions)) transactions = [];
+
+        let quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
+        try { 
+            const qSaved = localStorage.getItem('fin_v22_quick');
+            if(qSaved) quickSettings = JSON.parse(qSaved); 
+        } catch(e) { console.warn("Errore lettura tasti rapidi", e); }
+        if(!Array.isArray(quickSettings) || quickSettings.length === 0) quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
+
+        const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
+        let categories = [];
+        try {
+            const cSaved = localStorage.getItem('fin_v22_cats');
+            if (cSaved) categories = JSON.parse(cSaved);
+            if (!Array.isArray(categories) || categories.length === 0) categories = baseCats;
+            else baseCats.forEach(c => { if (!categories.includes(c)) categories.push(c); });
+        } catch(e) { categories = baseCats; }
+        
+        const now = new Date();
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+        let charts = { pie: null, line: null };
+
+        function vibrate() { try { if (window.navigator?.vibrate) window.navigator.vibrate(20); } catch(e){} }
+
+        function predictCategory(text) {
+            const val = text.toLowerCase();
+            const badge = document.getElementById('ai-badge');
+            const select = document.getElementById('cat');
+            let found = false;
+            for (let categoryName in brain) {
+                if (brain[categoryName].some(k => val.includes(k))) {
+                    if (categories.includes(categoryName)) {
+                        select.value = categoryName;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if(badge) badge.classList.toggle('hidden', !found);
+        }
+
+        function switchTab(p) {
+            vibrate();
+            document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
+            document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
+            document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
+            document.getElementById('btn-dash').classList.toggle('text-slate-400', p !== 'dashboard');
+            document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
+            document.getElementById('btn-set').classList.toggle('text-slate-400', p !== 'settings');
+            if(p === 'dashboard') render(); else renderSettingsPage();
+        }
+
+        function renderSettingsPage() {
+            const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6 18 18" /></svg>`;
+            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-slate-50 border border-slate-100 p-4 rounded-xl text-xs font-semibold"><div class="truncate flex-1">${s.label} - <span class="font-bold text-[#0075EB]">€${s.amt}</span></div><button onclick="removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500">${closeIcon}</button></div>`).join('');
+            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-slate-50 border border-slate-100 p-3 rounded-lg mb-2"><span>${c}</span><button onclick="removeCategory(${i})" class="text-slate-400 hover:text-rose-500">${closeIcon}</button></div>`).join('');
+        }
+
+        function updateDateFilter() {
+            currentMonth = parseInt(document.getElementById('month-select').value);
+            currentYear = parseInt(document.getElementById('year-select').value);
+            render();
+        }
+
+        function render() {
+            const catSelect = document.getElementById('cat');
+            if(catSelect) {
+                const catVal = catSelect.value;
+                catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                if (categories.includes(catVal)) catSelect.value = catVal;
+            }
+
+            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-slate-100 px-5 py-3 rounded-full shrink-0 active:scale-95 transition-all text-center"><p class="text-[11px] font-bold text-slate-900">${s.label}</p></button>`).join('');
+
+            const filtered = transactions.filter(t => {
+                if(!t || !t.date) return false;
+                const d = new Date(t.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+
+            const total = transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
+            const mInc = filtered.filter(t => t.type === 'inc').reduce((s, t) => s + t.amt, 0);
+            const mExp = filtered.filter(t => t.type === 'exp').reduce((s, t) => s + t.amt, 0);
+
+            document.getElementById('date-label').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            document.getElementById('total-balance').innerText = `€ ${total.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
+            document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
+
+            const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6 18 18" /></svg>`;
+
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-sm"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 uppercase tracking-wide">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600' : 'text-slate-900'}">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-300 hover:text-rose-500">${closeIcon}</button></div></div>`).join('');
+            
+            setTimeout(() => { updateCharts(filtered); }, 150);
+        }
+
+        function addQuickSetting() { 
+            const l = document.getElementById('new-q-label').value; 
+            const a = document.getElementById('new-q-amt').value; 
+            if(!l || !a) return; 
+            quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); 
+            try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
+            renderSettingsPage(); 
+            document.getElementById('new-q-label').value = '';
+            document.getElementById('new-q-amt').value = '';
+        }
+
+        function removeQuickSetting(i) { 
+            if(confirm("Vuoi eliminare questo tasto rapido?")) {
+                quickSettings.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_quick', JSON.stringify(quickSettings)); }catch(e){} 
+                renderSettingsPage(); 
+            }
+        }
+
+        function addCategory() { 
+            const v = document.getElementById('new-cat-name').value.trim(); 
+            if(!v) return; 
+            categories.push(v); 
+            try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+            document.getElementById('new-cat-name').value = ''; 
+            renderSettingsPage(); 
+        }
+
+        function removeCategory(i) { 
+            if(confirm("Vuoi eliminare questa categoria?")) {
+                categories.splice(i, 1); 
+                try{ localStorage.setItem('fin_v22_cats', JSON.stringify(categories)); }catch(e){} 
+                renderSettingsPage(); 
+            }
+        }
+
+        function deleteEntry(id) {
+            if(confirm("Vuoi eliminare questa transazione?")) { 
+                transactions = transactions.filter(t => t.id !== id); 
+                try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){} 
+                render(); 
+            }
+        }
+
+        function addQuick(l, a, t) { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; predictCategory(l); save(t); }
+
+        function save(type) {
+            const a = document.getElementById('amt').value, d = document.getElementById('dsc').value;
+            if(!a || !d) return alert("Dati mancanti!");
+            vibrate();
+            transactions.unshift({ id: Date.now(), amt: parseFloat(a), dsc: d, cat: document.getElementById('cat').value, usr: document.getElementById('usr').value, type: type, date: new Date().toISOString() });
+            try{ localStorage.setItem('fin_v22_trans', JSON.stringify(transactions)); }catch(e){}
+            document.getElementById('amt').value = ''; document.getElementById('dsc').value = '';
+            document.getElementById('ai-badge').classList.add('hidden');
+            const card = document.getElementById('input-card');
+            card.classList.add(type === 'inc' ? 'flash-inc' : 'flash-exp');
+            setTimeout(() => card.classList.remove('flash-inc', 'flash-exp'), 1000);
+            render();
+        }
+
+        function updateCharts(data) {
+            if (typeof Chart === 'undefined') return;
+
+            const last6 = [];
+            for(let i = 5; i >= 0; i--) {
+                let d = new Date(currentYear, currentMonth - i, 1);
+                last6.push({ m: d.getMonth(), y: d.getFullYear() });
+            }
+            const lineData = last6.map(obj => transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === obj.m && d.getFullYear() === obj.y && t.type === 'exp';
+            }).reduce((s, t) => s + t.amt, 0));
+
+            const exp = data.filter(t => t.type === 'exp');
+            const catsArr = [...new Set(exp.map(t => t.cat))];
+            const pData = catsArr.map(c => exp.filter(t => t.cat === c).reduce((s, t) => s + t.amt, 0));
+            
+            const pEl = document.getElementById('chartPie');
+            if(pEl && catsArr.length > 0) {
+                if(charts.pie) charts.pie.destroy();
+                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 2, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, cutout: '80%', responsive: true } });
+            }
+
+            const lEl = document.getElementById('chartLine');
+            if(lEl) {
+                if(charts.line) charts.line.destroy();
+                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 2, tension: 0.3, fill: true, backgroundColor: 'rgba(0, 117, 235, 0.03)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10, weight: '600' } } } }, responsive: true } });
+            }
+        }
+
+        // INIT APPLICAZIONE BLINDATA
+        function initApp() {
+            try {
+                const mSel = document.getElementById('month-select');
+                if(mSel) {
+                    mSel.innerHTML = '';
+                    monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
+                }
+                const ySel = document.getElementById('year-select');
+                if(ySel) {
+                    ySel.innerHTML = '';
+                    for(let y = currentYear - 2; y <= currentYear + 2; y++) {
+                        ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
+                    }
+                }
+                render();
+            } catch(e) {
+                console.error("Errore fatale in avvio", e);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+        
+        function clearAllData() { if(confirm("Cancellare tutto definitivamente?")) { localStorage.clear(); location.reload(); } }
+    </script>
+</body>
+</html>
