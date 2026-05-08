@@ -102,7 +102,10 @@
             <p id="date-label" class="text-[10px] text-slate-500 font-bold mt-2 tracking-widest uppercase"></p>
         </div>
 
-        <div class="mb-10 h-32"><canvas id="chartBalanceHistory"></canvas></div>
+        <!-- GRAFICO PATRIMONIO (Y-AXIS ATTIVATA) -->
+        <div class="mb-10 h-40">
+            <canvas id="chartBalanceHistory"></canvas>
+        </div>
 
         <div class="flex justify-around items-center gap-4 border border-slate-200 dark:border-slate-800 p-6 rounded-[2rem] mb-10 bg-white dark:bg-slate-900 shadow-sm">
             <div class="text-center flex-1">
@@ -121,10 +124,10 @@
         </div>
 
         <div id="input-card" class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 border border-slate-200 dark:border-slate-800 shadow-xl mb-10 space-y-4 relative transition-all">
-            <div id="ai-badge" class="hidden absolute top-4 right-8 text-[9px] font-black bg-brand text-white px-2.5 py-1 rounded-md uppercase tracking-tighter shadow-lg shadow-brand/20">AI</div>
+            <div id="ai-badge" class="hidden absolute top-4 right-8 text-[9px] font-black bg-brand text-white px-2.5 py-1 rounded-md uppercase">AI</div>
             <div class="flex gap-2">
                 <input type="number" id="amt" placeholder="0.00 €" class="w-1/2 bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 font-bold text-2xl">
-                <select id="usr" onchange="window.saveCurrentUser(this.value)" class="w-1/2 rv-select bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-xs font-black text-brand uppercase tracking-widest">
+                <select id="usr" onchange="window.saveCurrentUser(this.value)" class="w-1/2 rv-select-blue bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-xs font-black text-brand uppercase tracking-widest">
                     <option value="Stany">Stany</option>
                     <option value="Giulia">Giulia</option>
                 </select>
@@ -132,7 +135,7 @@
             <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-sm font-semibold">
             <select id="cat" class="w-full rv-select bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-sm font-bold text-slate-700 dark:text-slate-200"></select>
             <div class="flex gap-3 pt-2">
-                <button onclick="save('exp')" class="flex-1 bg-brand text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-transform">- Speso</button>
+                <button onclick="save('exp')" class="flex-1 bg-brand text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition-transform">- Speso</button>
                 <button onclick="save('inc')" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white py-4 rounded-2xl font-black text-xs uppercase active:scale-95 transition-transform">+ Ricevuto</button>
             </div>
         </div>
@@ -154,33 +157,32 @@
 
     <!-- PAGE: SETTINGS -->
     <div id="page-settings" class="max-w-xl mx-auto px-6 pt-16 hidden">
-        <h1 class="text-3xl font-extrabold mb-10 tracking-tighter">Opzioni</h1>
-        <div class="space-y-8 pb-24 text-left">
-            
+        <h1 class="text-3xl font-extrabold mb-10 tracking-tighter text-left">Opzioni</h1>
+        <div class="space-y-8 pb-24 text-left text-sm">
             <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
                 <p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">Esportazione Dati</p>
                 <button onclick="exportToCSV()" class="w-full bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase text-[11px] shadow-lg">Scarica CSV</button>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm text-center">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Conti Personali</p>
-                <div id="settings-accounts-list" class="space-y-2 mb-6 text-left"></div>
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">Conti Personali</p>
+                <div id="settings-accounts-list" class="space-y-2 mb-6"></div>
                 <div class="flex gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl">
-                    <input type="text" id="new-account-name" placeholder="Nuovo conto..." class="flex-1 bg-transparent p-2 text-sm font-bold outline-none">
+                    <input type="text" id="new-account-name" placeholder="Nuovo conto..." class="flex-1 bg-transparent p-2 font-bold outline-none">
                     <button onclick="addAccount()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold">+</button>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm text-center">
-                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest">Tasti Rapidi</p>
-                <div id="settings-quick-list" class="space-y-2 mb-6 text-left"></div>
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest text-center">Tasti Rapidi</p>
+                <div id="settings-quick-list" class="space-y-2 mb-6"></div>
                 <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl space-y-3">
-                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl text-sm font-bold shadow-sm">
-                    <input type="number" id="new-q-amt" placeholder="€" class="w-full bg-white dark:bg-slate-700 p-3 rounded-xl font-bold">
-                    <select id="new-q-type" class="w-full rv-select bg-white dark:bg-slate-700 p-3 rounded-xl font-bold text-brand">
+                    <input type="text" id="new-q-label" placeholder="Etichetta" class="w-full p-3 rounded-xl font-bold border-none">
+                    <input type="number" id="new-q-amt" placeholder="€" class="w-full p-3 rounded-xl font-bold border-none">
+                    <select id="new-q-type" class="w-full p-3 rounded-xl font-bold text-brand">
                         <option value="exp">Uscita</option><option value="inc">Entrata</option>
                     </select>
-                    <button onclick="addQuickSetting()" class="w-full bg-brand text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest">Aggiungi</button>
+                    <button onclick="addQuickSetting()" class="w-full bg-brand text-white py-3.5 rounded-xl font-black text-[10px]">AGGIUNGI</button>
                 </div>
             </div>
 
@@ -188,12 +190,12 @@
                 <p class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Categorie</p>
                 <div id="settings-cat-list" class="space-y-2 mb-6 text-left uppercase"></div>
                 <div class="flex gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl">
-                    <input type="text" id="new-cat-name" placeholder="Nuova categoria..." class="flex-1 bg-transparent p-2 text-sm font-bold">
+                    <input type="text" id="new-cat-name" placeholder="Nuova..." class="flex-1 bg-transparent p-2 text-sm font-bold">
                     <button onclick="addCategory()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold">+</button>
                 </div>
             </div>
 
-            <button onclick="confirmAction('Reset impostazioni locali?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-500 text-[10px] font-black uppercase py-6 opacity-60">Reset App</button>
+            <button onclick="confirmAction('Reset impostazioni?', () => { localStorage.clear(); location.reload(); })" class="w-full text-rose-500 text-[10px] font-black uppercase py-6 opacity-60">Reset App</button>
         </div>
     </div>
 
@@ -204,12 +206,12 @@
             <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
         </button>
         <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             <span class="text-[9px] font-black uppercase tracking-widest">Opzioni</span>
         </button>
     </nav>
 
-    <!-- FIREBASE MODULE -->
+    <!-- FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -288,7 +290,6 @@
         window.categories = JSON.parse(localStorage.getItem('fin_v22_cats')) || Object.keys(brain);
         window.quickSettings = JSON.parse(localStorage.getItem('fin_v22_quick')) || [{ label: 'Spesa', amt: 50, type: 'exp' }];
 
-        // GESTORE MODAL
         window.confirmAction = (msg, cb) => {
             document.getElementById('modal-message').innerText = msg;
             window.pendingAction = cb;
@@ -325,7 +326,7 @@
 
             document.getElementById('quick-actions-container').innerHTML = window.quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-6 py-3 rounded-full shrink-0 shadow-sm"><p class="text-[11px] font-black dark:text-white uppercase tracking-tighter">${s.label} (€${s.amt})</p></button>`).join('');
 
-            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-5 rounded-[1.8rem] flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="flex-1 text-left"><b>${t.dsc.toUpperCase()}</b><p class="text-[10px] text-slate-500 uppercase mt-1">${t.usr} • ${t.cat} • ${new Date(t.date).getDate()} ${monthNames[new Date(t.date).getMonth()]}</p></div><div class="flex items-center gap-4"><b class="${t.type === 'inc' ? 'text-emerald-500' : ''}">€ ${t.amt.toFixed(2)}</b><button onclick="window.deleteEntry('${t.id}')" class="text-slate-300 transition-colors">✕</button></div></div>`).join('');
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-5 rounded-[1.8rem] flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="flex-1 text-left"><b>${t.dsc.toUpperCase()}</b><p class="text-[10px] text-slate-500 uppercase mt-1">${t.usr} • ${t.cat} • ${new Date(t.date).getDate()} ${monthNames[new Date(t.date).getMonth()]}</p></div><div class="flex items-center gap-4"><b class="${t.type === 'inc' ? 'text-emerald-500' : ''}">€ ${t.amt.toFixed(2)}</b><button onclick="window.deleteEntry('${t.id}')" class="text-slate-300">✕</button></div></div>`).join('');
             
             const catTotals = filtered.filter(t => t.type === 'exp').reduce((acc, t) => { acc[t.cat] = (acc[t.cat] || 0) + t.amt; return acc; }, {});
             const sorted = Object.entries(catTotals).sort((a,b) => b[1] - a[1]);
@@ -339,9 +340,11 @@
 
         function updateCharts(data) {
             const isDark = document.documentElement.classList.contains('dark');
-            const color = isDark ? '#475569' : '#94a3b8';
+            const labelColor = isDark ? '#475569' : '#94a3b8';
+            const gridColor = isDark ? '#1e293b' : '#f1f5f9';
             const m = parseInt(document.getElementById('month-select').value), y = parseInt(document.getElementById('year-select').value);
 
+            // 1. Pie Chart
             if(charts.pie) charts.pie.destroy();
             const exp = data.filter(t => t.type === 'exp');
             const catTotals = exp.reduce((acc, t) => { acc[t.cat] = (acc[t.cat] || 0) + t.amt; return acc; }, {});
@@ -351,6 +354,7 @@
                 options: { maintainAspectRatio: false, cutout: '82%', plugins: { legend: { display: false } } }
             });
             
+            // 2. Trend Line Chart
             const last6 = [];
             for(let i=5; i>=0; i--) { let d = new Date(y, m-i, 1); last6.push({ m: d.getMonth(), y: d.getFullYear() }); }
             const lineData = last6.map(o => window.transactions.filter(t => { const d = new Date(t.date); return d.getMonth() === o.m && d.getFullYear() === o.y && t.type === 'exp'; }).reduce((s, t) => s + t.amt, 0));
@@ -362,12 +366,13 @@
                 options: { 
                     maintainAspectRatio: false, plugins: { legend: { display: false } },
                     scales: { 
-                        y: { ticks: { callback: (v) => v + ' €', color, font: {size: 9} }, grid: { color: isDark ? '#1e293b' : '#f1f5f9' } },
-                        x: { ticks: { color, font: {size: 9} }, grid: { display: false } }
+                        y: { ticks: { callback: (v) => v + ' €', color: labelColor, font: {size: 9} }, grid: { color: gridColor } },
+                        x: { ticks: { color: labelColor, font: {size: 9} }, grid: { display: false } }
                     } 
                 }
             });
 
+            // 3. History Chart (CON ASSI Y ATTIVATI)
             const historyData = last6.map(o => {
                 return window.transactions.filter(t => {
                     const d = new Date(t.date);
@@ -385,18 +390,38 @@
                     tension: 0.4, 
                     fill: true, 
                     pointRadius: 3,
-                    backgroundColor: (ctx) => {
-                        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150);
-                        g.addColorStop(0, 'rgba(0, 117, 235, 0.15)'); g.addColorStop(1, 'rgba(0, 117, 235, 0)');
-                        return g;
+                    pointBackgroundColor: '#0075EB',
+                    backgroundColor: (context) => {
+                        const ctx = context.chart.ctx;
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 150);
+                        gradient.addColorStop(0, 'rgba(0, 117, 235, 0.15)');
+                        gradient.addColorStop(1, 'rgba(0, 117, 235, 0)');
+                        return gradient;
                     }
                 }] },
                 options: { 
                     maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } },
+                    plugins: { 
+                        legend: { display: false }, 
+                        tooltip: { callbacks: { label: (ctx) => ` € ${ctx.raw.toLocaleString('it-IT')}` } } 
+                    },
                     scales: { 
-                        y: { display: true, position: 'right', ticks: { display: false }, grid: { display: false } }, 
-                        x: { display: true, ticks: { color, font: {size: 8} }, grid: { display: false } } 
+                        y: { 
+                            display: true, 
+                            position: 'right',
+                            ticks: { 
+                                callback: (v) => v.toLocaleString('it-IT') + ' €',
+                                color: labelColor, 
+                                font: {size: 8},
+                                maxTicksLimit: 3
+                            }, 
+                            grid: { display: false } 
+                        }, 
+                        x: { 
+                            display: true, 
+                            ticks: { color: labelColor, font: {size: 8}, padding: 5 }, 
+                            grid: { display: false } 
+                        } 
                     }
                 }
             });
@@ -406,53 +431,20 @@
         window.saveCurrentUser = (v) => localStorage.setItem('fin_v22_currentUser', v);
         window.addQuick = (l, a, t) => { document.getElementById('amt').value = a; document.getElementById('dsc').value = l; window.predictCategory(l); window.save(t); };
         window.addAccount = () => { const n = document.getElementById('new-account-name').value.trim(); if(!n) return; const id = 'local_'+Date.now(); window.accounts.push({ id, name: n, type: 'local' }); localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts)); window.switchAccount(id); window.switchTab('dashboard'); };
-        
-        // CANCELLAZIONI CON CONFERMA
-        window.removeAccount = (i) => { 
-            if(window.accounts[i].id === 'shared') return; 
-            confirmAction(`Eliminare il conto "${window.accounts[i].name}" e tutti i suoi dati?`, () => {
-                localStorage.removeItem('fin_v22_trans_' + window.accounts[i].id);
-                window.accounts.splice(i, 1); 
-                localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts)); 
-                window.switchAccount('shared');
-                window.renderSettingsPage();
-            });
-        };
-
+        window.removeAccount = (i) => { if(window.accounts[i].id === 'shared') return; confirmAction(`Eliminare il conto "${window.accounts[i].name}"?`, () => { localStorage.removeItem('fin_v22_trans_' + window.accounts[i].id); window.accounts.splice(i, 1); localStorage.setItem('fin_v22_accounts', JSON.stringify(window.accounts)); window.switchAccount('shared'); window.renderSettingsPage(); }); };
         window.addQuickSetting = () => { const l = document.getElementById('new-q-label').value, a = document.getElementById('new-q-amt').value; if(!l||!a) return; window.quickSettings.push({ label: l, amt: parseFloat(a), type: document.getElementById('new-q-type').value }); localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); window.renderSettingsPage(); };
-        
-        window.removeQuickSetting = (i) => { 
-            confirmAction(`Eliminare il tasto rapido "${window.quickSettings[i].label}"?`, () => {
-                window.quickSettings.splice(i,1); 
-                localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); 
-                window.renderSettingsPage(); 
-            });
-        };
-
+        window.removeQuickSetting = (i) => { confirmAction(`Eliminare il tasto rapido "${window.quickSettings[i].label}"?`, () => { window.quickSettings.splice(i,1); localStorage.setItem('fin_v22_quick', JSON.stringify(window.quickSettings)); window.renderSettingsPage(); }); };
         window.addCategory = () => { const v = document.getElementById('new-cat-name').value.trim(); if(!v) return; window.categories.push(v); localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); window.renderSettingsPage(); };
-        
-        window.removeCategory = (i) => { 
-            confirmAction(`Eliminare la categoria "${window.categories[i]}"?`, () => {
-                window.categories.splice(i,1); 
-                localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); 
-                window.renderSettingsPage(); 
-            });
-        };
-
+        window.removeCategory = (i) => { confirmAction(`Eliminare la categoria "${window.categories[i]}"?`, () => { window.categories.splice(i,1); localStorage.setItem('fin_v22_cats', JSON.stringify(window.categories)); window.renderSettingsPage(); }); };
         window.updateDateFilter = () => window.render();
-        window.predictCategory = (t) => {
-            const v = t.toLowerCase();
-            for(let c in brain) { if(brain[c].some(k => v.includes(k)) && window.categories.includes(c)) { document.getElementById('cat').value = c; document.getElementById('ai-badge').classList.remove('hidden'); return; } }
-            document.getElementById('ai-badge').classList.add('hidden');
-        };
+        window.predictCategory = (t) => { const v = t.toLowerCase(); for(let c in brain) { if(brain[c].some(k => v.includes(k)) && window.categories.includes(c)) { document.getElementById('cat').value = c; document.getElementById('ai-badge').classList.remove('hidden'); return; } } document.getElementById('ai-badge').classList.add('hidden'); };
         window.exportToCSV = () => {
-            const acc = window.accounts.find(a => a.id === window.currentAccount);
+            const currentAcc = window.accounts.find(a => a.id === window.currentAccount);
             let c = "Data,Tipo,Importo,Categoria,Utente,Descrizione\n";
             window.transactions.forEach(t => c += `${new Date(t.date).toLocaleString('it-IT')},${t.type === 'inc' ? 'Entrata' : 'Uscita'},${t.amt},${t.cat},${t.usr},"${t.dsc.replace(/"/g, '""')}"\n`);
             const b = new Blob([c], {type: 'text/csv;charset=utf-8;'});
             const u = URL.createObjectURL(b);
-            const l = document.createElement("a");
-            l.href = u; l.download = `Wallet_${acc.name.replace(/\s+/g, '_')}.csv`; l.click();
+            const l = document.createElement("a"); l.href = u; l.download = `Wallet_${currentAcc.name.replace(/\s+/g, '_')}.csv`; l.click();
         };
 
         window.switchTab = (p) => {
@@ -465,8 +457,8 @@
 
         window.renderSettingsPage = () => {
             const svgClose = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
-            document.getElementById('settings-accounts-list').innerHTML = window.accounts.filter(a => a.id !== 'shared').map((a, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl mb-2 shadow-sm"><span class="font-bold">${a.name}</span><button onclick="removeAccount(${window.accounts.indexOf(a)})" class="text-rose-500">${svgClose}</button></div>`).join('');
-            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl mb-2 shadow-sm"><span class="font-bold">${s.label} (€${s.amt})</span><button onclick="removeQuickSetting(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
+            document.getElementById('settings-accounts-list').innerHTML = window.accounts.filter(a => a.id !== 'shared').map((a, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2"><span>${a.name}</span><button onclick="removeAccount(${window.accounts.indexOf(a)})" class="text-rose-500">${svgClose}</button></div>`).join('');
+            document.getElementById('settings-quick-list').innerHTML = window.quickSettings.map((s, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-2 shadow-sm"><span>${s.label} (€${s.amt})</span><button onclick="removeQuickSetting(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
             document.getElementById('settings-cat-list').innerHTML = window.categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 p-3 rounded-xl mb-2 shadow-sm uppercase font-bold text-xs"><span>${c}</span><button onclick="removeCategory(${i})" class="text-rose-500">${svgClose}</button></div>`).join('');
         };
 
@@ -474,13 +466,10 @@
             const ms = document.getElementById('month-select'), ys = document.getElementById('year-select'), now = new Date();
             monthNames.forEach((m, i) => ms.innerHTML += `<option value="${i}" ${i === now.getMonth() ? 'selected' : ''}>${m}</option>`);
             for(let y = now.getFullYear()-1; y<=now.getFullYear()+1; y++) ys.innerHTML += `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`;
-            
             const savedUsr = localStorage.getItem('fin_v22_currentUser');
             if(savedUsr) document.getElementById('usr').value = savedUsr;
-            
             const sel = document.getElementById('account-select');
             sel.innerHTML = window.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-            
             window.switchAccount(window.currentAccount);
         };
     </script>
