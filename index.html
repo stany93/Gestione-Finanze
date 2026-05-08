@@ -1,12 +1,28 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Wallet Famiglia</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { brand: '#0075EB' }
+                }
+            }
+        }
+        // Pre-carica il tema per evitare flash bianchi
+        if (localStorage.getItem('fin_theme') === 'dark' || (!('fin_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -15,22 +31,17 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             -webkit-tap-highlight-color: transparent; 
             padding-bottom: 110px; 
-            background: #FFFFFF; 
-            color: #191C1F;
         }
 
         .hidden { display: none !important; }
 
-        /* Revolut inputs: focus styling */
         input, select { transition: all 0.2s; border: 1px solid transparent; }
         input:focus, select:focus {
-            background-color: #FFFFFF !important;
             border-color: #0075EB !important;
             outline: none;
             box-shadow: 0 0 0 1px #0075EB;
         }
 
-        /* Tendine cross-platform ottimizzate per iOS/Android */
         .rv-select {
             appearance: none;
             -webkit-appearance: none;
@@ -54,40 +65,46 @@
         .nav-active { color: #0075EB; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        @keyframes flash-inc { 0% { background: #ECFDF5; } 100% { background: white; } }
-        @keyframes flash-exp { 0% { background: #FEF2F2; } 100% { background: white; } }
+        @keyframes flash-inc { 0% { background: #10b981; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
+        @keyframes flash-exp { 0% { background: #ef4444; opacity: 0.2; } 100% { background: transparent; opacity: 1; } }
         .flash-inc { animation: flash-inc 0.8s ease-out; }
         .flash-exp { animation: flash-exp 0.8s ease-out; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
 
     <div id="page-dashboard" class="max-w-xl mx-auto px-5 pt-8">
-        <div class="flex justify-between items-center mb-10 text-left">
+        
+        <div class="flex justify-between items-start mb-6 text-left">
             <div>
-                <p class="text-xs text-slate-500 font-medium">Conto Principale</p>
-                <h1 class="text-2xl font-bold text-slate-950 tracking-tighter">Wallet</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Conto Principale</p>
+                <h1 class="text-3xl font-bold tracking-tighter">Wallet</h1>
             </div>
-            <div class="flex gap-2">
-                <select id="month-select" onchange="updateDateFilter()" class="rv-select bg-slate-100 py-2 pl-4 rounded-full text-xs font-semibold text-slate-700 cursor-pointer"></select>
-                <select id="year-select" onchange="updateDateFilter()" class="rv-select bg-slate-100 py-2 pl-4 rounded-full text-xs font-semibold text-slate-700 cursor-pointer"></select>
-            </div>
+            <button onclick="toggleTheme()" class="p-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 active:scale-95 transition-transform">
+                <svg id="icon-moon" class="w-5 h-5 hidden dark:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
+                <svg id="icon-sun" class="w-5 h-5 block dark:hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>
+            </button>
+        </div>
+
+        <div class="flex gap-2 justify-center mb-8">
+            <select id="month-select" onchange="updateDateFilter()" class="rv-select bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 py-2 pl-4 rounded-full text-xs font-bold text-slate-700 shadow-sm"></select>
+            <select id="year-select" onchange="updateDateFilter()" class="rv-select bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 py-2 pl-4 rounded-full text-xs font-bold text-slate-700 shadow-sm"></select>
         </div>
 
         <div class="mb-10 text-center">
-            <p id="total-balance" class="text-5xl font-extrabold tracking-tighter text-slate-950">€ 0,00</p>
-            <p id="date-label" class="text-xs text-slate-500 font-medium mt-1 tracking-wide"></p>
+            <p id="total-balance" class="text-5xl font-extrabold tracking-tighter text-slate-950 dark:text-white">€ 0,00</p>
+            <p id="date-label" class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-2 tracking-wide"></p>
         </div>
 
-        <div class="flex justify-around items-center gap-4 border border-slate-100 p-5 rounded-3xl mb-10 shadow-[0_4px_20px_rgba(0,0,0,0.03)] bg-white">
+        <div class="flex justify-around items-center gap-4 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl mb-10 shadow-sm bg-white dark:bg-slate-900">
             <div class="text-center flex-1">
-                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
-                <p id="m-inc" class="font-bold text-emerald-600 text-lg">+ €0</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold mb-1 tracking-widest">Entrate</p>
+                <p id="m-inc" class="font-bold text-emerald-600 dark:text-emerald-400 text-lg">+ €0</p>
             </div>
-            <div class="w-px h-10 bg-slate-200"></div>
+            <div class="w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
             <div class="text-center flex-1">
-                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
-                <p id="m-exp" class="font-bold text-rose-600 text-lg">- €0</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold mb-1 tracking-widest">Uscite</p>
+                <p id="m-exp" class="font-bold text-rose-600 dark:text-rose-400 text-lg">- €0</p>
             </div>
         </div>
 
@@ -95,88 +112,100 @@
             <div id="quick-actions-container" class="flex gap-2"></div>
         </div>
 
-        <div id="input-card" class="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.06)] mb-10 space-y-4 relative transition-all">
-            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[9px] font-bold bg-slate-100 text-[#0075EB] px-2 py-1 rounded-md uppercase tracking-tighter">AI AUTOMATION</div>
+        <div id="input-card" class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg mb-10 space-y-4 relative transition-colors">
+            <div id="ai-badge" class="hidden absolute top-4 right-6 text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-brand px-2 py-1 rounded-md uppercase tracking-tighter">AI AUTOMATION</div>
             <div class="flex gap-2">
-                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100 rounded-xl p-4 font-bold text-2xl">
-                <select id="usr" class="w-1/2 rv-select-blue bg-slate-100 rounded-xl p-4 text-xs font-bold text-[#0075EB]">
+                <input type="number" id="amt" placeholder="0.00" class="w-1/2 bg-slate-100 dark:bg-slate-800 dark:text-white rounded-xl p-4 font-bold text-2xl focus:bg-white dark:focus:bg-slate-900">
+                <select id="usr" class="w-1/2 rv-select-blue bg-slate-100 dark:bg-slate-800 rounded-xl p-4 text-xs font-bold text-brand focus:bg-white dark:focus:bg-slate-900">
                     <option value="Stany">Stany</option>
                     <option value="Giulia">Giulia</option>
                 </select>
             </div>
-            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-100 rounded-xl p-4 text-sm font-medium">
-            <select id="cat" class="w-full rv-select bg-slate-100 rounded-xl p-4 text-sm font-semibold text-slate-700"></select>
+            <input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-100 dark:bg-slate-800 dark:text-white rounded-xl p-4 text-sm font-medium focus:bg-white dark:focus:bg-slate-900">
+            <select id="cat" class="w-full rv-select bg-slate-100 dark:bg-slate-800 dark:text-white rounded-xl p-4 text-sm font-semibold text-slate-700 dark:text-slate-200 focus:bg-white dark:focus:bg-slate-900"></select>
             <div class="flex gap-3 pt-2">
-                <button onclick="save('exp')" class="flex-1 bg-[#0075EB] text-white py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform">- Speso</button>
-                <button onclick="save('inc')" class="flex-1 bg-slate-100 text-slate-900 py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform">+ Ricevuto</button>
+                <button onclick="save('exp')" class="flex-1 bg-brand text-white py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform shadow-md shadow-blue-500/30">- Speso</button>
+                <button onclick="save('inc')" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white py-4 rounded-xl font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform">+ Ricevuto</button>
             </div>
         </div>
 
-        <div id="charts-container" class="bg-white rounded-3xl p-6 mb-10 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-8">
+        <div id="charts-container" class="bg-white dark:bg-slate-900 rounded-3xl p-6 mb-10 border border-slate-200 dark:border-slate-800 shadow-sm space-y-8 transition-colors">
             <canvas id="chartPie" class="max-h-48 mx-auto"></canvas>
-            <div class="pt-8 border-t border-slate-100"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
+            <div class="pt-8 border-t border-slate-200 dark:border-slate-800"><canvas id="chartLine" class="max-h-40 mx-auto"></canvas></div>
         </div>
         
-        <div class="mb-5"><h3 class="text-sm font-semibold text-slate-500">Transazioni Recenti</h3></div>
-        <div id="list" class="space-y-3 pb-20 text-left"></div>
+        <div class="mb-5"><h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Transazioni Recenti</h3></div>
+        <div id="list" class="space-y-3 pb-24 text-left"></div>
     </div>
 
     <div id="page-settings" class="max-w-xl mx-auto px-6 pt-8 hidden text-center">
-        <h1 class="text-2xl font-bold text-slate-950 mb-10 tracking-tighter">Opzioni</h1>
-        <div class="space-y-8 pb-10 text-left">
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-                <p class="text-[10px] font-black text-slate-500 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
+        <h1 class="text-3xl font-bold text-slate-950 dark:text-white mb-10 tracking-tighter text-left">Opzioni</h1>
+        <div class="space-y-8 pb-24 text-left">
+            
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest text-center">Tasti Rapidi</p>
                 <div id="settings-quick-list" class="space-y-3 mb-6"></div>
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3">
-                    <input type="text" id="new-q-label" placeholder="Etichetta (es. Caffè)" class="w-full p-3 rounded-lg text-sm bg-slate-100">
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <input type="text" id="new-q-label" placeholder="Etichetta (es. Caffè)" class="w-full p-3 rounded-lg text-sm bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700">
                     <div class="flex gap-2">
-                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-lg bg-slate-100 font-semibold">
-                        <select id="new-q-type" class="w-1/2 rv-select p-3 rounded-lg bg-slate-100 font-semibold">
+                        <input type="number" id="new-q-amt" placeholder="€" class="w-1/2 p-3 rounded-lg bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 font-semibold">
+                        <select id="new-q-type" class="w-1/2 rv-select p-3 rounded-lg bg-white dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 font-semibold">
                             <option value="exp">Uscita</option>
                             <option value="inc">Entrata</option>
                         </select>
                     </div>
-                    <button onclick="addQuickSetting()" class="w-full bg-[#0075EB] text-white py-3 rounded-lg font-bold uppercase text-[10px] tracking-wide active:opacity-80">Aggiungi Tasto</button>
+                    <button onclick="addQuickSetting()" class="w-full bg-brand text-white py-3 rounded-lg font-bold uppercase text-[10px] tracking-wide active:opacity-80">Aggiungi Tasto</button>
                 </div>
             </div>
             
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] text-center">
-                <p class="text-[10px] font-black text-slate-500 uppercase mb-6 tracking-widest">Categorie</p>
-                <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-semibold uppercase text-slate-700"></div>
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-center">
+                <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest">Categorie</p>
+                <div id="settings-cat-list" class="space-y-2 mb-6 text-xs font-semibold uppercase text-slate-700 dark:text-slate-300"></div>
                 <div class="flex gap-2">
-                    <input type="text" id="new-cat-name" placeholder="Nuova Categoria..." class="flex-1 bg-slate-100 rounded-xl p-3 text-sm font-medium">
-                    <button onclick="addCategory()" class="bg-slate-900 text-white px-5 rounded-xl font-bold active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                    <input type="text" id="new-cat-name" placeholder="Nuova Categoria..." class="flex-1 bg-slate-100 dark:bg-slate-800 dark:text-white border border-transparent dark:border-slate-700 rounded-xl p-3 text-sm font-medium">
+                    <button onclick="addCategory()" class="bg-slate-900 dark:bg-slate-700 text-white px-5 rounded-xl font-bold active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </button>
                 </div>
             </div>
 
-            <button onclick="clearAllData()" class="w-full text-rose-600 text-xs font-bold uppercase py-10 opacity-60 tracking-wider text-center">Resetta Applicazione</button>
+            <button onclick="clearAllData()" class="w-full text-rose-600 dark:text-rose-400 text-xs font-bold uppercase py-6 opacity-80 tracking-wider text-center">Resetta Applicazione</button>
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white h-24 flex items-start justify-around z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.04)] border-t border-slate-100 px-6 pt-4">
-        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1.5 nav-active transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 h-24 flex items-start justify-around z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-none border-t border-slate-200 dark:border-slate-800 px-6 pt-4 transition-colors">
+        <button onclick="switchTab('dashboard')" id="btn-dash" class="flex flex-col items-center gap-1.5 nav-active transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
-            <span class="text-[10px] font-semibold tracking-wide">Home</span>
+            <span class="text-[10px] font-bold tracking-wide">Home</span>
         </button>
-        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1.5 text-slate-400 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+        <button onclick="switchTab('settings')" id="btn-set" class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span class="text-[10px] font-semibold tracking-wide">Opzioni</span>
+            <span class="text-[10px] font-bold tracking-wide">Opzioni</span>
         </button>
     </nav>
 
     <script>
+        // Gestione Tema
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('fin_theme', isDark ? 'dark' : 'light');
+            render(); // Ricarica i grafici con i colori giusti
+        }
+
         const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const catColors = ['#0075EB', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#3B82F6', '#D946EF', '#14B8A6'];
         
+        // Icona di chiusura corretta e ben visibile
+        const closeIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
+
         const brain = {
             'Casa': ['affitto', 'bolletta', 'luce', 'gas', 'acqua', 'fibra', 'wifi', 'internet', 'condominio', 'tari', 'enel', 'ikea', 'leroy', 'casa', 'mutuo'],
             'Spesa': ['esselunga', 'conad', 'coop', 'lidl', 'macellaio', 'verdura', 'frutta', 'pane', 'forno', 'supermercato', 'carne', 'pesce', 'cibo', 'spesa', 'iper', 'eurospin'],
@@ -192,19 +221,18 @@
             'Salute': ['farmacia', 'medico', 'dentista', 'visita', 'analisi', 'salute', 'farmaco', 'medicine', 'ticket', 'terapia', 'dottore', 'ospedale']
         };
 
-        // GESTIONE MEMORIA CON PROTEZIONE ANTICRASH
         let transactions = [];
         try { 
             const tSaved = localStorage.getItem('fin_v22_trans');
             if(tSaved) transactions = JSON.parse(tSaved); 
-        } catch(e) { console.warn("Errore lettura transazioni", e); }
+        } catch(e) {}
         if(!Array.isArray(transactions)) transactions = [];
 
         let quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
         try { 
             const qSaved = localStorage.getItem('fin_v22_quick');
             if(qSaved) quickSettings = JSON.parse(qSaved); 
-        } catch(e) { console.warn("Errore lettura tasti rapidi", e); }
+        } catch(e) {}
         if(!Array.isArray(quickSettings) || quickSettings.length === 0) quickSettings = [{ label: 'Casa', amt: 600, type: 'exp' }, { label: 'Fibra', amt: 30, type: 'exp' }, { label: 'Stipendio', amt: 1800, type: 'inc' }];
 
         const baseCats = ["Casa", "Spesa", "Riccardo", "Svago", "Lavoro", "Gatti", "Macchina", "Cene", "Vestiti", "Vacanze", "Regali", "Salute"];
@@ -244,17 +272,21 @@
             vibrate();
             document.getElementById('page-dashboard').classList.toggle('hidden', p !== 'dashboard');
             document.getElementById('page-settings').classList.toggle('hidden', p !== 'settings');
+            
             document.getElementById('btn-dash').classList.toggle('nav-active', p === 'dashboard');
             document.getElementById('btn-dash').classList.toggle('text-slate-400', p !== 'dashboard');
+            document.getElementById('btn-dash').classList.toggle('dark:text-slate-500', p !== 'dashboard');
+            
             document.getElementById('btn-set').classList.toggle('nav-active', p === 'settings');
             document.getElementById('btn-set').classList.toggle('text-slate-400', p !== 'settings');
+            document.getElementById('btn-set').classList.toggle('dark:text-slate-500', p !== 'settings');
+            
             if(p === 'dashboard') render(); else renderSettingsPage();
         }
 
         function renderSettingsPage() {
-            const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6 18 18" /></svg>`;
-            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-slate-50 border border-slate-100 p-4 rounded-xl text-xs font-semibold"><div class="truncate flex-1">${s.label} - <span class="font-bold text-[#0075EB]">€${s.amt}</span></div><button onclick="removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500">${closeIcon}</button></div>`).join('');
-            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-slate-50 border border-slate-100 p-3 rounded-lg mb-2"><span>${c}</span><button onclick="removeCategory(${i})" class="text-slate-400 hover:text-rose-500">${closeIcon}</button></div>`).join('');
+            document.getElementById('settings-quick-list').innerHTML = quickSettings.map((s, i) => `<div class="flex items-center justify-between gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-xs font-semibold shadow-sm"><div class="truncate flex-1">${s.label} - <span class="font-bold text-brand">€${s.amt}</span></div><button onclick="removeQuickSetting(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
+            document.getElementById('settings-cat-list').innerHTML = categories.map((c, i) => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl mb-2 shadow-sm"><span>${c}</span><button onclick="removeCategory(${i})" class="text-slate-400 hover:text-rose-500 p-1">${closeIconSvg}</button></div>`).join('');
         }
 
         function updateDateFilter() {
@@ -271,7 +303,7 @@
                 if (categories.includes(catVal)) catSelect.value = catVal;
             }
 
-            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-slate-100 px-5 py-3 rounded-full shrink-0 active:scale-95 transition-all text-center"><p class="text-[11px] font-bold text-slate-900">${s.label}</p></button>`).join('');
+            document.getElementById('quick-actions-container').innerHTML = quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-5 py-3 rounded-full shrink-0 active:scale-95 transition-transform shadow-sm text-center"><p class="text-[11px] font-bold text-slate-900 dark:text-white">${s.label}</p></button>`).join('');
 
             const filtered = transactions.filter(t => {
                 if(!t || !t.date) return false;
@@ -288,9 +320,7 @@
             document.getElementById('m-inc').innerText = `+ €${mInc.toFixed(0)}`;
             document.getElementById('m-exp').innerText = `- €${mExp.toFixed(0)}`;
 
-            const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6 18 18" /></svg>`;
-
-            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-sm"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 uppercase tracking-wide">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600' : 'text-slate-900'}">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-300 hover:text-rose-500">${closeIcon}</button></div></div>`).join('');
+            document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="truncate flex-1 pr-4"><p class="font-semibold text-slate-900 dark:text-white truncate">${t.dsc}</p><p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-0.5">${t.usr} • ${t.cat}</p></div><div class="flex items-center gap-3"><p class="font-bold ${t.type === 'inc' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'}">€${t.amt.toFixed(2)}</p><button onclick="vibrate(); deleteEntry(${t.id})" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 p-1">${closeIconSvg}</button></div></div>`).join('');
             
             setTimeout(() => { updateCharts(filtered); }, 150);
         }
@@ -358,6 +388,9 @@
         function updateCharts(data) {
             if (typeof Chart === 'undefined') return;
 
+            const isDark = document.documentElement.classList.contains('dark');
+            const chartBorderColor = isDark ? '#0f172a' : '#ffffff'; // slate-900 o white
+
             const last6 = [];
             for(let i = 5; i >= 0; i--) {
                 let d = new Date(currentYear, currentMonth - i, 1);
@@ -375,17 +408,33 @@
             const pEl = document.getElementById('chartPie');
             if(pEl && catsArr.length > 0) {
                 if(charts.pie) charts.pie.destroy();
-                charts.pie = new Chart(pEl.getContext('2d'), { type: 'doughnut', data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 2, borderColor: '#ffffff' }] }, options: { plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, cutout: '80%', responsive: true } });
+                charts.pie = new Chart(pEl.getContext('2d'), { 
+                    type: 'doughnut', 
+                    data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 3, borderColor: chartBorderColor }] }, 
+                    options: { 
+                        plugins: { legend: { position: 'bottom', labels: { color: isDark ? '#f1f5f9' : '#0f172a', usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, 
+                        cutout: '80%', responsive: true 
+                    } 
+                });
             }
 
             const lEl = document.getElementById('chartLine');
             if(lEl) {
                 if(charts.line) charts.line.destroy();
-                charts.line = new Chart(lEl.getContext('2d'), { type: 'line', data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 2, tension: 0.3, fill: true, backgroundColor: 'rgba(0, 117, 235, 0.03)', pointRadius: 0 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10, weight: '600' } } } }, responsive: true } });
+                charts.line = new Chart(lEl.getContext('2d'), { 
+                    type: 'line', 
+                    data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 3, tension: 0.3, fill: true, backgroundColor: isDark ? 'rgba(0, 117, 235, 0.1)' : 'rgba(0, 117, 235, 0.05)', pointRadius: 0 }] }, 
+                    options: { 
+                        plugins: { legend: { display: false } }, 
+                        scales: { 
+                            y: { display: false }, 
+                            x: { grid: { display: false }, border: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { size: 10, weight: '600' } } } 
+                        }, responsive: true 
+                    } 
+                });
             }
         }
 
-        // INIT APPLICAZIONE BLINDATA
         function initApp() {
             try {
                 const mSel = document.getElementById('month-select');
@@ -401,9 +450,7 @@
                     }
                 }
                 render();
-            } catch(e) {
-                console.error("Errore fatale in avvio", e);
-            }
+            } catch(e) {}
         }
 
         if (document.readyState === 'loading') {
