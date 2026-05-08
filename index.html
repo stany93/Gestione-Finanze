@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h1 class="text-2xl font-bold text-center mb-6 text-indigo-600">Gestione Finanze</h1>
+        
+        <div class="bg-indigo-50 p-4 rounded-lg mb-6 text-center">
+            <p class="text-sm text-indigo-500 uppercase font-semibold">Budget Attuale</p>
+            <h2 id="total-balance" class="text-3xl font-bold text-gray-800">€ 0.00</h2>
+        </div>
+
+        <div class="space-y-4 mb-8">
+            <input type="number" id="amount" placeholder="Importo (€)" class="w-full border p-2 rounded">
+            <input type="text" id="description" placeholder="Descrizione" class="w-full border p-2 rounded">
+            <select id="category" class="w-full border p-2 rounded">
+                <option value="Affitto/Mutuo">Affitto/Mutuo</option>
+                <option value="Spesa">Spesa</option>
+                <option value="Stipendio">Stipendio</option>
+                <option value="Svago">Svago</option>
+            </select>
+            <div class="flex gap-2">
+                <button onclick="addTransaction('income')" class="flex-1 bg-green-500 text-white p-2 rounded font-bold">+ Entrata</button>
+                <button onclick="addTransaction('expense')" class="flex-1 bg-red-500 text-white p-2 rounded font-bold">- Uscita</button>
+            </div>
+        </div>
+
+        <canvas id="financeChart" width="400" height="400"></canvas>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
