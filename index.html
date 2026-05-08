@@ -6,7 +6,7 @@
     <title>Wallet Famiglia</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Wallet">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -16,16 +16,37 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { brand: '#0075EB' }
-                }
-            }
+            theme: { extend: { colors: { brand: '#0075EB' } } }
         }
-        // Pre-carica il tema per evitare flash bianchi
         if (localStorage.getItem('fin_theme') === 'dark' || (!('fin_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
+
+        // GENERAZIONE DINAMICA DEL MANIFEST PER INSTALLAZIONE STANDALONE (SENZA BARRA DI RICERCA)
+        const appManifest = {
+            "name": "Wallet Famiglia",
+            "short_name": "Wallet",
+            "start_url": window.location.href.split('?')[0],
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#0075EB",
+            "icons": [{
+                "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230075eb'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold' font-size='260' dy='.35em'%3EW%3C/text%3E%3C/svg%3E",
+                "sizes": "512x512",
+                "type": "image/svg+xml",
+                "purpose": "any maskable"
+            }]
+        };
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(appManifest));
+        document.head.appendChild(manifestLink);
+
+        // Icona specifica per dispositivi Apple
+        const appleIcon = document.createElement('link');
+        appleIcon.rel = 'apple-touch-icon';
+        appleIcon.href = appManifest.icons[0].src;
+        document.head.appendChild(appleIcon);
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -479,4 +500,87 @@
             if(pEl && catsArr.length > 0) {
                 if(charts.pie) charts.pie.destroy();
                 charts.pie = new Chart(pEl.getContext('2d'), { 
-                    type:
+                    type: 'doughnut', 
+                    data: { labels: catsArr, datasets: [{ data: pData, backgroundColor: catColors, borderWidth: 3, borderColor: chartBorderColor }] }, 
+                    options: { 
+                        plugins: { legend: { position: 'bottom', labels: { color: isDark ? '#f1f5f9' : '#0f172a', usePointStyle: true, boxWidth: 6, font: { size: 10, weight: '600' } } } }, 
+                        cutout: '80%', responsive: true 
+                    } 
+                });
+            }
+
+            const lEl = document.getElementById('chartLine');
+            if(lEl) {
+                if(charts.line) charts.line.destroy();
+                charts.line = new Chart(lEl.getContext('2d'), { 
+                    type: 'line', 
+                    data: { labels: last6.map(o => monthNames[o.m].substring(0,3)), datasets: [{ label: 'Uscite', data: lineData, borderColor: '#0075EB', borderWidth: 3, tension: 0.3, fill: true, backgroundColor: isDark ? 'rgba(0, 117, 235, 0.1)' : 'rgba(0, 117, 235, 0.05)', pointRadius: 0 }] }, 
+                    options: { 
+                        plugins: { legend: { display: false } }, 
+                        scales: { 
+                            y: { display: false }, 
+                            x: { grid: { display: false }, border: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { size: 10, weight: '600' } } } 
+                        }, responsive: true 
+                    } 
+                });
+            }
+        }
+
+        function checkInstallPrompt() {
+            if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) return;
+            if (localStorage.getItem('hide_install_prompt')) return;
+
+            const ua = window.navigator.userAgent;
+            const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+            const isAndroid = /Android/.test(ua);
+
+            if (isIOS || isAndroid) {
+                const popup = document.getElementById('install-popup');
+                const text = document.getElementById('install-instructions');
+                
+                if (isIOS) {
+                    text.innerHTML = `Tocca l'icona <b class="text-brand font-bold">Condividi</b> in basso al browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi alla schermata Home"</b>.`;
+                } else {
+                    text.innerHTML = `Tocca il <b class="text-brand font-bold">Menu (⋮)</b> del browser e seleziona <br><b class="text-slate-900 dark:text-white font-bold">"Aggiungi a schermata Home"</b>.`;
+                }
+                
+                setTimeout(() => {
+                    popup.classList.remove('translate-y-[200%]');
+                }, 2000);
+            }
+        }
+
+        function dismissInstallPrompt() {
+            document.getElementById('install-popup').classList.add('translate-y-[200%]');
+            localStorage.setItem('hide_install_prompt', 'true');
+        }
+
+        function initApp() {
+            try {
+                const mSel = document.getElementById('month-select');
+                if(mSel) {
+                    mSel.innerHTML = '';
+                    monthNames.forEach((m, i) => { mSel.innerHTML += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m.substring(0,3)}</option>`; });
+                }
+                const ySel = document.getElementById('year-select');
+                if(ySel) {
+                    ySel.innerHTML = '';
+                    for(let y = currentYear - 2; y <= currentYear + 2; y++) {
+                        ySel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
+                    }
+                }
+                render();
+                checkInstallPrompt();
+            } catch(e) {}
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+        
+        function clearAllData() { if(confirm("Cancellare tutto definitivamente?")) { localStorage.clear(); location.reload(); } }
+    </script>
+</body>
+</html>
