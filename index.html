@@ -84,8 +84,8 @@
                     <h1 class="text-4xl font-extrabold tracking-tighter">Wallet</h1>
                 </div>
                 <button onclick="toggleTheme()" class="p-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm active:scale-95 transition-transform">
-                    <svg id="sun-icon" class="hidden dark:block w-6 h-6 text-sun overflow-visible" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
-                    <svg id="moon-icon" class="block dark:hidden w-6 h-6 text-slate-600 overflow-visible" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <svg id="sun-icon" class="hidden dark:block w-6 h-6 text-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+                    <svg id="moon-icon" class="block dark:hidden w-6 h-6 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
             </div>
             <div class="flex gap-2 justify-center mb-8">
@@ -94,7 +94,7 @@
             </div>
             <div class="mb-4 text-center"><p id="total-balance" class="text-5xl font-extrabold tracking-tighter text-slate-950 dark:text-white">€ 0,00</p><p id="date-label" class="text-[10px] text-slate-500 font-bold mt-2 tracking-widest uppercase"></p></div>
             <div class="mb-10 h-32"><canvas id="chartBalanceHistory"></canvas></div>
-            <div class="flex justify-around items-center gap-4 border border-slate-200 dark:border-slate-800 p-6 rounded-[2rem] mb-10 bg-white dark:bg-slate-900 shadow-sm"><div class="text-center flex-1"><p class="text-[10px] uppercase font-black text-slate-400 mb-1">Entrate</p><p id="m-inc" class="font-bold text-emerald-600 dark:text-emerald-400 text-lg">€ 0</p></div><div class="w-px h-10 bg-slate-100 dark:bg-slate-800"></div><div class="text-center flex-1"><p class="text-[10px] uppercase font-black text-slate-400 mb-1">Uscite</p><p id="m-exp" class="font-bold text-rose-600 dark:text-rose-400 text-lg">€ 0</p></div></div>
+            <div class="flex justify-around items-center gap-4 border border-slate-200 dark:border-slate-800 p-6 rounded-[2rem] mb-10 bg-white dark:bg-slate-900 shadow-sm"><div class="text-center flex-1"><p class="text-[10px] uppercase font-black text-slate-400 mb-1">Entrate</p><p id="m-inc" class="font-bold text-emerald-600 dark:text-emerald-400 text-lg">€ 0,00</p></div><div class="w-px h-10 bg-slate-100 dark:bg-slate-800"></div><div class="text-center flex-1"><p class="text-[10px] uppercase font-black text-slate-400 mb-1">Uscite</p><p id="m-exp" class="font-bold text-rose-600 dark:text-rose-400 text-lg">€ 0,00</p></div></div>
             
             <div class="mb-10 overflow-x-auto pb-6">
                 <div id="quick-actions-container" class="flex gap-2"></div>
@@ -124,17 +124,22 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAV CON VIEWBOX ESTESO PER EVITARE TAGLI -->
+    <!-- BOTTOM NAV CON VIEWBOX ESAGERATO PER NON TAGLIARE LE ICONE -->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/95 backdrop-blur-2xl border-t border-slate-200 dark:border-slate-800 px-6 pb-safe transition-colors z-50 flex justify-around items-center" style="height: 100px;">
         <div id="nav-glass" class="glass-pill"></div>
         <button onclick="switchTab('dashboard')" id="btn-dash" class="nav-btn nav-active">
-            <!-- viewBox allargato a -1.5 -1.5 27 27 per dare spazio allo spessore -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1.5 -1.5 27 27" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1 overflow-visible"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+            <!-- La tela è allargata da -4 a +32 per ammortizzare lo spessore del bordo (stroke) -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-4 -4 32 32" stroke-width="2.5" stroke="currentColor" class="w-9 h-9 mb-0.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
             <span class="text-[10px] font-extrabold uppercase tracking-widest">Home</span>
         </button>
         <button onclick="switchTab('settings')" id="btn-set" class="nav-btn text-slate-400 dark:text-slate-600">
-            <!-- viewBox allargato a -1.5 -1.5 27 27 per dare spazio allo spessore -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1.5 -1.5 27 27" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1 overflow-visible"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+            <!-- La tela è allargata da -4 a +32 per ammortizzare lo spessore del bordo (stroke) -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-4 -4 32 32" stroke-width="2.5" stroke="currentColor" class="w-9 h-9 mb-0.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <circle cx="12" cy="12" r="3" stroke-width="2"/>
+            </svg>
             <span class="text-[10px] font-extrabold uppercase tracking-widest">Opzioni</span>
         </button>
     </nav>
@@ -239,7 +244,6 @@
             const mExp = filtered.filter(t => t.type === 'exp').reduce((s,t)=>s+t.amt,0);
             const mInc = filtered.filter(t => t.type === 'inc').reduce((s,t)=>s+t.amt,0);
             
-            // FIX DECIMALI: Forza sempre 2 zeri finali (es. 552,9 diventa 552,90)
             document.getElementById('m-inc').innerText = `€ ${mInc.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('m-exp').innerText = `€ ${mExp.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('date-label').innerText = `${monthNames[m]} ${y}`;
