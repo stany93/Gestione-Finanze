@@ -77,10 +77,8 @@
         <div class="page-container px-5 pt-16">
             <div class="flex justify-between items-start mb-8">
                 <div class="space-y-4">
-                    <!-- FIX: CONTENITORE FLEX PER PALLINO E TESTO -->
                     <div class="relative inline-flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-full shadow-sm">
                         <select id="account-select" onchange="window.switchAccount(this.value)" class="select-brand bg-transparent text-[11px] font-extrabold uppercase tracking-widest text-brand outline-none border-none p-0 m-0"></select>
-                        <!-- PALLINO ORA POSIZIONATO RELATIVAMENTE AL TESTO (NON PIU' ABSOLUTE) -->
                         <span id="sync-status" class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shrink-0"></span>
                     </div>
                     <h1 class="text-4xl font-extrabold tracking-tighter">Wallet</h1>
@@ -103,8 +101,15 @@
             </div>
 
             <div id="input-card" class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 border border-slate-200 dark:border-slate-800 shadow-xl mb-10 space-y-4 relative transition-all"><div id="ai-badge" class="hidden absolute top-4 right-8 text-[9px] font-black bg-brand text-white px-2.5 py-1 rounded-md uppercase tracking-tighter">AI</div><div class="flex gap-2"><input type="number" id="amt" placeholder="0.00 €" class="w-1/2 bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 font-bold text-2xl outline-none"><select id="usr" onchange="window.saveCurrentUser(this.value)" class="select-brand w-1/2 bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-xs font-black text-brand uppercase tracking-widest outline-none"></select></div><input type="text" id="dsc" oninput="predictCategory(this.value)" placeholder="Cosa hai comprato?" class="w-full bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-sm font-semibold outline-none"><select id="cat" class="w-full bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 text-sm font-bold text-slate-700 dark:text-slate-200 outline-none"></select><div class="flex gap-3 pt-2"><button onclick="save('exp')" class="flex-1 bg-brand text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition-transform">- Speso</button><button onclick="save('inc')" class="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition-transform">+ Ricevuto</button></div></div>
-            <div id="charts-container" class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 mb-10 border border-slate-200 dark:border-slate-800 shadow-sm space-y-12 text-center"><div class="space-y-6"><p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Distribuzione Spese</p><div class="h-56"><canvas id="chartPie"></canvas></div></div><div class="pt-10 border-t border-slate-100 dark:border-slate-800 space-y-6"><p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Trend Uscite (6 Mesi)</p><div class="h-56"><canvas id="chartLine"></canvas></div></div></div>
+            
+            <div id="charts-container" class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 mb-10 border border-slate-200 dark:border-slate-800 shadow-sm space-y-12 text-center">
+                <div class="space-y-6"><p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Distribuzione Spese</p><div class="h-56"><canvas id="chartPie"></canvas></div></div>
+                <div class="pt-10 border-t border-slate-100 dark:border-slate-800 space-y-6"><p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Trend Uscite (6 Mesi)</p><div class="h-56"><canvas id="chartLine"></canvas></div></div>
+            </div>
+            
             <div id="list" class="space-y-3 mb-12 px-1"></div>
+
+            <!-- IL RIEPILOGO CATEGOIRE RIPRISTINATO -->
             <div id="category-recap-list" class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 mb-10 mx-1"></div>
         </div>
 
@@ -129,7 +134,7 @@
             <span class="text-[10px] font-extrabold uppercase tracking-widest">Home</span>
         </button>
         <button onclick="switchTab('settings')" id="btn-set" class="nav-btn text-slate-400 dark:text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7 mb-1"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 00 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
             <span class="text-[10px] font-extrabold uppercase tracking-widest">Opzioni</span>
         </button>
     </nav>
@@ -230,11 +235,25 @@
             const filtered = window.transactions.filter(t => { const d = new Date(t.date); return d.getMonth() === m && d.getFullYear() === y; });
             const total = window.transactions.reduce((s, t) => t.type === 'inc' ? s + t.amt : s - t.amt, 0);
             animateBalance(total);
-            document.getElementById('m-inc').innerText = `€ ${filtered.filter(t => t.type === 'inc').reduce((s,t)=>s+t.amt,0).toLocaleString('it-IT')}`;
-            document.getElementById('m-exp').innerText = `€ ${filtered.filter(t => t.type === 'exp').reduce((s,t)=>s+t.amt,0).toLocaleString('it-IT')}`;
+            
+            // Variabili utilizzate anche per il category-recap-list
+            const mExp = filtered.filter(t => t.type === 'exp').reduce((s,t)=>s+t.amt,0);
+            const mInc = filtered.filter(t => t.type === 'inc').reduce((s,t)=>s+t.amt,0);
+            
+            document.getElementById('m-inc').innerText = `€ ${mInc.toLocaleString('it-IT')}`;
+            document.getElementById('m-exp').innerText = `€ ${mExp.toLocaleString('it-IT')}`;
             document.getElementById('date-label').innerText = `${monthNames[m]} ${y}`;
             document.getElementById('quick-actions-container').innerHTML = window.quickSettings.map(s => `<button onclick="addQuick('${s.label}', ${s.amt}, '${s.type}')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-6 py-3 rounded-full shrink-0 shadow-sm"><p class="text-[11px] font-black dark:text-white uppercase tracking-tighter">${s.label} (€${s.amt})</p></button>`).join('');
             document.getElementById('list').innerHTML = filtered.map(t => `<div class="bg-white dark:bg-slate-900 p-5 rounded-[1.8rem] flex justify-between items-center border border-slate-200 dark:border-slate-800 shadow-sm text-sm mb-3"><div class="flex-1 text-left"><b>${t.dsc.toUpperCase()}</b><p class="text-[10px] text-slate-500 uppercase mt-1">${t.usr} • ${t.cat} • ${new Date(t.date).getDate()} ${monthNames[new Date(t.date).getMonth()]}</p></div><div class="flex items-center gap-4"><b class="${t.type === 'inc' ? 'text-emerald-500' : ''}">€ ${t.amt.toFixed(2)}</b><button onclick="window.deleteEntry('${t.id}')" class="text-slate-300">✕</button></div></div>`).join('');
+            
+            // LA LOGICA DEL RIEPILOGO CATEGORIE CHE ERA SPARITA
+            const catTotals = filtered.filter(t => t.type === 'exp').reduce((acc, t) => { acc[t.cat] = (acc[t.cat] || 0) + t.amt; return acc; }, {});
+            const sorted = Object.entries(catTotals).sort((a,b) => b[1] - a[1]);
+            document.getElementById('category-recap-list').innerHTML = sorted.length > 0 ? sorted.map(([name, val], i) => {
+                const perc = mExp > 0 ? (val/mExp*100).toFixed(0) : 0;
+                return `<div class="space-y-2 text-left"><div class="flex justify-between text-xs font-black uppercase"><span>${name}</span><span>€ ${val.toFixed(2)} (${perc}%)</span></div><div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden"><div class="h-full transition-all duration-1000" style="width:${perc}%; background:${catColors[i % catColors.length]}"></div></div></div>`;
+            }).join('') : '<p class="text-xs text-center font-bold text-slate-400 uppercase mt-4">Nessuna spesa nel mese selezionato</p>';
+
             updateCharts(filtered);
         };
 
